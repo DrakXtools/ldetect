@@ -1,7 +1,7 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
-%define version 0.4.0
-%define release 2mdk
+%define version 0.4.1
+%define release 1mdk
 
 Name: %{name}
 Version: %{version}
@@ -53,6 +53,20 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Thu Jul  4 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.1-1mdk
+- let prevent useless copy
+- stricter checking compilation and fix warnings
+- make some code paths simpler mainly in pciusb.c
+- remove useless {pci,usb}_find_modules() wrappers
+- when multiples cards're identical, just return the cached description
+  and text
+- skip comments in {usb,pci}table
+- remove uneeded test/free
+- move some stuff outside fast paths into exception paths
+- this result in:
+	- a bug fix (regarding null description with -f) as a side effect
+	- saving 9% of the binary & library size
+
 * Wed Jun 26 2002 Gwenole Beauchesne <gbeauchesne@mandrakesoft.com> 0.4.0-2mdk
 - sanitize specfile
 
