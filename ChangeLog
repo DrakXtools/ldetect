@@ -1,8 +1,83 @@
+2003-01-06 15:34  tvignaud
+
+	* ldetect.spec: add pixel changes
+
+2003-01-06 15:32  tvignaud
+
+	* ldetect.spec: 0.4.8-1mdk
+
+2003-01-06 15:24  tvignaud
+
+	* pciusb.c: special case for buggy 0x0 usb entry so that we
+	eventually got a class, thus normalizing lspcidrake & harddrake
+	output
+
+2002-11-05 16:12  prigaux
+
+	* pci.c, usb.c: no error message when -p is not used and there is
+	neither pci nor usb bus
+
+2002-11-05 15:27  tvignaud
+
+	* usb.c: fix access check
+
+2002-10-15 16:40  tvignaud
+
+	* ldetect.spec: 0.4.7-1mdk
+
+2002-10-07 11:32  tvignaud
+
+	* pciusb.c: enforce gc coding rules
+
+2002-10-07 11:21  tvignaud
+
+	* pciusb.c: - remove gc hack that tried to fix my bug  (which i
+	fixed in last commit)
+	
+	- simplify subids match; explay why we can only test for nb==4
+
+2002-10-07 09:47  tvignaud
+
+	* pciusb.c: fix "skipping already handled device" (aka kill stupid
+	remaining test)
+
+2002-10-04 17:30  gc
+
+	* pciusb.c: try to detect correctly the module when subv/subd
+	differ with non-subv/subd
+
+2002-09-12 12:20  tvignaud
+
+	* AUTHORS: fix gc
+
+2002-09-05 13:25  prigaux
+
+	* ldetect.spec, pciusb.c: fix ugly case for snd-usb-audio which
+	should have made titi think that something was broken. Really
+	fixing the right way (this fixes automatic detection of unknown usb
+	controllers)
+
+2002-08-29 14:18  prigaux
+
+	* ldetect.spec: fix getting the Product name in usb (occurs when
+	there is no entry in usbtable)
+
+2002-08-29 14:17  prigaux
+
+	* usb.c: fix getting the Product name
+
+2002-08-29 14:17  tvignaud
+
+	* pci.c: fix PCI_CLASS_PROG offset
+
+2002-08-26 04:50  tvignaud
+
+	* ChangeLog, ldetect.spec: 0.4.6-4mdk
+
 2002-08-26 00:47  tvignaud
 
-	* pci.c: - kill last fseek
-	- change if(cdt) cascade into if(!cdt) 	continue
-	- move loop invariant out of loop
+	* pci.c: - kill last fseek - change if(cdt) cascade into if(!cdt)
+	continue - move loop invariant out of loop
 
 2002-08-22 12:31  tvignaud
 
