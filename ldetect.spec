@@ -52,6 +52,8 @@ rm -rf $RPM_BUILD_ROOT
 * Mon Jan  6 2003 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.8-1mdk
 - require an usbutils recent enough to have working hub class
 - fix hubs detection
+- no error message when -p is not used and there is neither pci nor
+  usb bus (pixel)
 
 * Tue Oct 15 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.7-1mdk
 - simplify pci configuration parsing
