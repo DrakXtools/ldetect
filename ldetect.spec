@@ -1,7 +1,7 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
 %define version 0.2.3
-%define release 13mdk
+%define release 14mdk
 
 Name: %{name}
 Version: %{version}
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Wed Aug 29 2001 Pixel <pixel@mandrakesoft.com> 0.2.3-14mdk
+- fix when 2 similar devices are there
+
 * Thu Apr 12 2001 Pixel <pixel@mandrakesoft.com> 0.2.3-13mdk
 - close fdno's of the pipe which are unused or dup2'ed
 
