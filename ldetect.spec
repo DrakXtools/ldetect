@@ -1,5 +1,5 @@
 Name:    ldetect
-Version:  0.4.8
+Version:  0.4.9
 Release: 1mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
@@ -49,6 +49,19 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Tue Apr 22 2003 Pixel <pixel@mandrakesoft.com> 0.4.9-1mdk
+- Use read() instead of fread() to read from "/proc/bus/pci/%02x/%02x.%d".
+  Thanks a lot to Tom Cox for finding this bug:
+
+	  The proc.c module in the kernel source clearly states that
+	  reading more than 64 bytes can cause problems. The pci.c
+	  module in the ldetect library uses the buffered fread()
+	  function. This function always reads in blocks, so when
+	  run as root, the read always tried to read more than the
+	  user requested amount.
+
+  This should fix freezes when doing a full probe
+
 * Mon Jan  6 2003 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.8-1mdk
 - require an usbutils recent enough to have working hub class
 - fix hubs detection
