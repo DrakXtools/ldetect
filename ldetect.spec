@@ -52,6 +52,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Feb 17 2005 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.5.5-1mdk
 - handle a few more special cases (gdth, snd-vx222, 8139too, and agp bridges)
+- detect new VIA SATA controllers like kernel does
 
 * Tue Dec  7 2004 Pixel <pixel@mandrakesoft.com> 0.5.4-1mdk
 - all PCI_CLASS_BRIDGE_CARDBUS cards are yenta_socket (says kudzu)
