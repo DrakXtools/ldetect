@@ -1,6 +1,6 @@
 %define name ldetect
 %define version 0.2.3
-%define release 4mdk
+%define release 5mdk
 
 Name: %{name}
 Version: %{version}
@@ -9,6 +9,7 @@ Summary: Light hardware detection library
 Source: %{name}.tar.bz2
 Group: System/Libraries
 BuildRoot: %{_tmppath}/%{name}-buildroot
+BuildRequires: usbutils
 Requires: ldetect-lst
 Copyright: GPL
 Prefix: %{_prefix}
@@ -47,6 +48,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Tue Mar  6 2001 François Pons <fpons@mandrakesoft.com> 0.2.3-5mdk
+- added support for SHARE_PATH
+- add BuildRequires: usbutils
+
 * Tue Feb 13 2001 Pixel <pixel@mandrakesoft.com> 0.2.3-4mdk
 - fix ifree
 

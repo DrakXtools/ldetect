@@ -6,7 +6,14 @@
 #include "common.h"
 
 static void usb_find_modules(struct pciusb_entries entries) {
-  pciusb_find_modules(entries, "/usr/share/ldetect-lst/usbtable");
+  char *share_path = getenv("SHARE_PATH");
+  char *usbtable;
+
+  if (!share_path || !*share_path) share_path = "/usr/share";
+  usbtable = alloca(strlen(share_path) + 32); /* enough for /ldetect-lst/pcitable and EOS */
+  sprintf(usbtable, "%s/ldetect-lst/usbtable", share_path);
+
+  pciusb_find_modules(entries, usbtable);
 }
 
 extern struct pciusb_entries usb_probe(void) {

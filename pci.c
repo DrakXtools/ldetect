@@ -6,7 +6,14 @@
 #include "common.h"
 
 static void pci_find_modules(struct pciusb_entries entries) {
-  pciusb_find_modules(entries, "/usr/share/ldetect-lst/pcitable");
+  char *share_path = getenv("SHARE_PATH");
+  char *pcitable;
+
+  if (!share_path || !*share_path) share_path = "/usr/share";
+  pcitable = alloca(strlen(share_path) + 32); /* enough for /ldetect-lst/pcitable and EOS */
+  sprintf(pcitable, "%s/ldetect-lst/pcitable", share_path);
+
+  pciusb_find_modules(entries, pcitable);
 }
 
 extern struct pciusb_entries pci_probe(int probe_type) {
