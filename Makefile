@@ -6,7 +6,7 @@ includedir = $(prefix)/include
 
 binaries = lspcidrake
 libraries = libldetect.a
-CFLAGS = -Wall -W -Wstrict-prototypes -Os -g
+CFLAGS = -Wall -W -Wstrict-prototypes -Os -fPIC
 
 RPM ?= $(HOME)/rpm
 
