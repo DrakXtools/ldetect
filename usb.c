@@ -8,7 +8,7 @@
 
 extern struct pciusb_entries usb_probe(void) {
 	FILE *f;
-	char buf[512];
+	char buf[BUF_SIZE];
 	int line;
 	const char *file = "/proc/bus/usb/devices";
 	struct pciusb_entry t[MAX_DEVICES];
@@ -37,14 +37,15 @@ extern struct pciusb_entries usb_probe(void) {
 		} else if (e && buf[0] == 'S') {
 			int offset;
 			char dummy;
+			size_t length = strlen(buf) -1;
 			if (sscanf(buf, "S:  Manufacturer=%n%c", &offset, &dummy) == 1) {
-				buf[strlen(buf) - 1] = '|'; /* replacing '\n' by '|' */
+				buf[length] = '|'; /* replacing '\n' by '|' */
 				e->text = strdup(buf + offset);
 			} else if (sscanf(buf, "S:  Product=%n%c", &offset, &dummy) == 1) {
 				if (!e->text) 
 					e->text = strdup("Unknown|");
-				buf[strlen(buf) - 1] = 0; /* removing '\n' */
-				e->text = realloc(e->text, strlen(e->text) + strlen(buf + offset) + 1);
+				buf[length - 1] = 0; /* removing '\n' */
+				e->text = realloc(e->text, strlen(e->text) + length-offset) + 2);
 				strcat(e->text, buf + offset);
 			}
 		}
