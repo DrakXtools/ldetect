@@ -27,11 +27,11 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 		e.pci_bus = devbusfn >> 8;
 		e.pci_device = (devbusfn & 0xff) >> 3;
 		e.pci_function = (devbusfn & 0xff) & 0x07;
-		{
+		if (probe_type == 1) {
 			char file[25];
 			FILE *f;
 			snprintf(file, sizeof(file), "/proc/bus/pci/%02x/%02x.%d", e.pci_bus, e.pci_device, e.pci_function);
-			if (probe_type == 1 && (f = fopen(file, "r"))) {
+			if ((f = fopen(file, "r"))) {
 				if (fseek(f, 10, SEEK_SET) == 0) 
 					fread(&e.class_, 2, 1, f);
 				if (fseek(f, 0x2c, SEEK_SET) == 0) 
