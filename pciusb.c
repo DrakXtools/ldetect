@@ -107,9 +107,6 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 				continue;	// skip since already found with sub ids
 			if (vendor != e->vendor ||  device != e->device)
 				continue; // main ids differ
-			if (nb < 4 && e->module)
-				continue; // already found a match and this match isn't a subid one (so it's not potentially more precise)
-
 			if (nb == 4 && e->subvendor == 0xffff && e->subdevice == 0xffff && !no_subid) {
 				pciusb_free(entries);
 				fh_close(&f);
@@ -128,8 +125,9 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 
 			ifree(e->text); /* usb.c set it so that we display something when usbtable doesn't refer that hw*/
 			e->text = strndup(q+2, strlen(q)-4);
-			if (e->subvendor != 0xffff && e->subdevice != 0xffff &&
-				subdevice == e->subdevice && subvendor == e->subvendor)
+			/* if subids read on pcitable line, we know that subids matches :
+			   (see "subids differ" test above) */
+			if (nb==4)
 				e->already_found = 1;
 		}
 	}
