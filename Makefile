@@ -25,6 +25,10 @@ usbclass.c: /usr/share/usb.ids
 	perl generate_usbclass.pl $^ > $@
 	chmod a-w $@
 
+pciusb.o:	pciusb.c libldetect.h libldetect-private.h common.h
+pci.o:	pci.c libldetect.h libldetect-private.h common.h
+usb.o:	usb.c libldetect.h libldetect-private.h common.h
+
 clean:
 	rm -f *~ *.o pciclass.c usbclass.c $(binaries) $(libraries)
 
