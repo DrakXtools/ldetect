@@ -33,7 +33,8 @@ extern struct pciusb_entries pci_probe(void) {
 		    perror(err_msg);
 		    free(err_msg);
 		}
-		r.entries = NULL;
+		r.nb = 0;
+		r.entries = NULL; // is that needed?
 		return r;
 	}
 	r.entries = malloc(sizeof(struct pciusb_entry) * MAX_DEVICES);
