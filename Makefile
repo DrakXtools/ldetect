@@ -6,7 +6,7 @@ includedir = $(prefix)/include
 
 binaries = lspcidrake
 libraries = libldetect.a
-CFLAGS = -Wall -Wstrict-prototypes -g
+CFLAGS = -Wall -W -Wstrict-prototypes -g
 
 build: $(binaries) $(libraries)
 
