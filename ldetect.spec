@@ -1,6 +1,6 @@
 Name:    ldetect
 Version:  0.5.1
-Release: 1mdk
+Release: 2mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
 Group: System/Libraries
@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Thu Nov 20 2003 Pixel <pixel@mandrakesoft.com> 0.5.1-2mdk
+- don't display "Vendor Specific Class" usb class
+
 * Thu Nov 20 2003 Pixel <pixel@mandrakesoft.com> 0.5.1-1mdk
 - new usb_class code (breaks compatibility!)
 

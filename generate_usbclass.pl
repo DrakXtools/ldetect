@@ -71,7 +71,7 @@ struct class_text {
 extern struct class_text usb_class2text(unsigned long class_) {
   const char *p[3] = { NULL, NULL, NULL };
   int a_class[3] = { (class_ >> 16) & 0xff, (class_ >> 8) & 0xff, class_ & 0xff };
-  lookup(p, a_class, 0, nb_classes, classes);
+  if (a_class[0] != 0xff) lookup(p, a_class, 0, nb_classes, classes);
   {
     struct class_text r = { p[0], p[1], p[2] };
     return r;
