@@ -1,6 +1,6 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
-%define version 0.4.5
+%define version 0.4.6
 %define release 1mdk
 
 Name: %{name}
@@ -52,6 +52,13 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Sat Aug 17 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.6-1mdk
+- homogenize pci and usb memory managment
+- add hints for documentation
+- usb audio devices can use new alsa modules snd-usb-audio (once alsa
+  rc3 is in kernel)
+- binary is 18% smaller
+
 * Thu Aug  8 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.5-1mdk
 - fix mis catchinf of "vendor dev" line in table when there's also a
   matching "vendor dev suvvendor subdev" line
