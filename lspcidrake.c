@@ -66,15 +66,13 @@ int main(int argc, char **argv) {
       full_probe = 1;
     ptr++;
   }
-  {
-    struct pciusb_entries entries = pci_probe(full_probe);
-    pci_printit(entries);
-    pciusb_free(entries);
-  }
-  {
-    struct pciusb_entries entries = usb_probe();
-    usb_printit(entries);
-    pciusb_free(entries);
-  }
+
+  struct pciusb_entries entries = pci_probe(full_probe);
+  pci_printit(entries);
+  pciusb_free(entries);
+
+  entries = usb_probe();
+  usb_printit(entries);
+  pciusb_free(entries);
   exit(0);
 }
