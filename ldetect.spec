@@ -1,6 +1,6 @@
 %define name ldetect
 %define version 0.2.3
-%define release 3mdk
+%define release 4mdk
 
 Name: %{name}
 Version: %{version}
@@ -47,6 +47,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Tue Feb 13 2001 Pixel <pixel@mandrakesoft.com> 0.2.3-4mdk
+- fix ifree
+
 * Tue Feb  6 2001 Pixel <pixel@mandrakesoft.com> 0.2.3-3mdk
 - fix missing fclose's
 
