@@ -1,12 +1,12 @@
 Name:    ldetect
-Version:  0.4.7
+Version:  0.4.8
 Release: 1mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
 Group: System/Libraries
 URL:	  http://www.mandrakelinux.com
 BuildRoot: %_tmppath/%{name}-buildroot
-BuildRequires: usbutils => 0.11,  pciutils-devel
+BuildRequires: usbutils => 0.11-2mdk,  pciutils-devel
 Requires: ldetect-lst common-licenses
 License: GPL
 
@@ -49,6 +49,10 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Mon Jan  6 2003 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.8-1mdk
+- require an usbutils recent enough to have working hub class
+- fix hubs detection
+
 * Tue Oct 15 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.7-1mdk
 - simplify pci configuration parsing
 - build with newer usb ids
