@@ -38,9 +38,9 @@ static fh fh_open(char *fname) {
 			int ip = 0;
 			char *ld_loader = getenv("LD_LOADER");
 
-			if (ld_loader && *ld_loader) {
+			if (ld_loader && *ld_loader)
 				cmd[ip++] = ld_loader;
-			}
+
 			cmd[ip++] = "gzip";
 			cmd[ip++] = "-dc";
 			cmd[ip++] = fname_gz;
@@ -59,13 +59,13 @@ static fh fh_open(char *fname) {
 	return ret;
 }
 
-static void fh_close(fh f) {
-	fclose(f.f);
-	if (f.pid > 0)
-		waitpid(f.pid, NULL, 0);
+static void fh_close(fh *f) {
+	fclose(f->f);
+	if (f->pid > 0)
+		waitpid(f->pid, NULL, 0);
 }
 
-extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpciusbtable, int no_subid) {
+extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, int no_subid) {
 	fh f;
 	char buf[2048];
 	int line;
@@ -81,7 +81,7 @@ extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpcius
 
 	for (line = 1; fgets(buf, sizeof(buf) - 1, f.f); line++) {
 		unsigned short vendor, device, subvendor, subdevice;
-		int offset, i;
+		int offset; unsigned int i;
 		int nb = sscanf(buf, "0x%hx\t0x%hx\t0x%hx\t0x%hx\t%n", &vendor, &device, &subvendor, &subdevice, &offset);
 		if (nb != 4) {
 			nb = sscanf(buf, "0x%hx\t0x%hx\t%n", &vendor, &device, &offset);
@@ -91,12 +91,12 @@ extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpcius
 				continue;
 			}
 		}
-		for (i = 0; i < entries.nb; i++) {
-			struct pciusb_entry *e = &entries.entries[i];
+		for (i = 0; i < entries->nb; i++) {
+			struct pciusb_entry *e = &entries->entries[i];
 			if (vendor == e->vendor && device == e->device) {
 				if (nb == 4 && e->subvendor == 0xffff && e->subdevice == 0xffff && !no_subid) {
-					pciusb_free(&entries);
-					fh_close(f);
+					pciusb_free(entries);
+					fh_close(&f);
 					return 0; /* leave, let the caller call again with subids */
 				}
 
@@ -114,7 +114,7 @@ extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpcius
 			}      
 		}
 	}
-	fh_close(f);
+	fh_close(&f);
 	return 1;
 }
 
@@ -132,7 +132,7 @@ extern void pciusb_initialize(struct pciusb_entry *e) {
 }
 
 extern void pciusb_free(struct pciusb_entries *entries) {
-	int i;
+	unsigned int i;
 	for (i = 0; i < entries->nb; i++) {
 		struct pciusb_entry *e = &entries->entries[i];
 		ifree(e->module);

@@ -60,7 +60,7 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 	fclose(f);
 	r.entries = memdup(t, sizeof(struct pciusb_entry) * r.nb);
 
-	if (pciusb_find_modules(r, "pcitable", probe_type))
+	if (pciusb_find_modules(&r, "pcitable", probe_type))
 		return r;
 
 	/* ok, let's try again with subids */
