@@ -6,32 +6,55 @@
 #include "libldetect-private.h"
 #include "common.h"
 
-extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpciusbtable, int no_subid) {
+typedef struct {
   FILE *f;
-  char buf[2048];
-  int line, length;
+  enum { fh_normal, fh_pipe } type;
+} fh;
 
-  char *share_path = getenv("SHARE_PATH");
-  char *fname, *fname_gz;
-  if (!share_path || !*share_path) share_path = "/usr/share";
-
-  length = strlen(share_path) + sizeof("/ldetect-lst/") + strlen(fpciusbtable);
-  fname    = alloca(length); 
-  fname_gz = alloca(length + sizeof(".gz"));
-  sprintf(fname,    "%s/ldetect-lst/%s",    share_path, fpciusbtable);
-  sprintf(fname_gz, "%s/ldetect-lst/%s.gz", share_path, fpciusbtable);
+static fh fh_open(char *fname) {
+  fh ret;
+  int length = strlen(fname);
+  char *fname_gz = alloca(length + sizeof(".gz"));
+  sprintf(fname_gz, "%s.gz", fname);
 
   if (access(fname, R_OK) == 0) {
-    f = fopen(fname, "r");
+    ret.f = fopen(fname, "r");
+    ret.type = fh_normal;
   } else if (access(fname_gz, R_OK) == 0) {    
     char *cmd = alloca(sizeof("gzip -dc %s") + strlen(fname_gz));
     sprintf(cmd, "gzip -dc %s", fname_gz);
-    f = popen(cmd, "r");
+    ret.f = popen(cmd, "r");
+    ret.type = fh_pipe;
   } else {
     fprintf(stderr, "Missing pciusbtable (should be %s)\n", fname);
     exit(1);
-  }  
-  for (line = 1; fgets(buf, sizeof(buf) - 1, f); line++) {
+  }
+  return ret;
+}
+
+static void fh_close(fh f) {
+  switch (f.type) 
+    {
+    case fh_normal: fclose(f.f); break;
+    case fh_pipe: pclose(f.f); break;
+    }
+}
+
+extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpciusbtable, int no_subid) {
+  fh f;
+  char buf[2048];
+  int line;
+
+  char *share_path = getenv("SHARE_PATH");
+  char *fname;
+  if (!share_path || !*share_path) share_path = "/usr/share";
+
+  fname = alloca(strlen(share_path) + sizeof("/ldetect-lst/") + strlen(fpciusbtable)); 
+  sprintf(fname, "%s/ldetect-lst/%s", share_path, fpciusbtable);
+
+  f = fh_open(fname);
+
+  for (line = 1; fgets(buf, sizeof(buf) - 1, f.f); line++) {
     unsigned short vendor, device, subvendor, subdevice;
     int offset, i;
     int nb = sscanf(buf, "0x%hx\t0x%hx\t0x%hx\t0x%hx\t%n", &vendor, &device, &subvendor, &subdevice, &offset);
@@ -47,7 +70,7 @@ extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpcius
       if (vendor == e->vendor && device == e->device) {
 	if (nb == 4 && e->subvendor == 0xffff && e->subdevice == 0xffff && !no_subid) {
 	  pciusb_free(entries);
-	  fclose(f);
+	  fh_close(f);
 	  return 0; /* leave, let the caller call again with subids */
 	}
 
@@ -64,7 +87,7 @@ extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpcius
       }      
     }
   }
-  fclose(f);
+  fh_close(f);
   return 1;
 }
 

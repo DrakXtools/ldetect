@@ -1,7 +1,7 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
 %define version 0.2.3
-%define release 9mdk
+%define release 10mdk
 
 Name: %{name}
 Version: %{version}
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Sat Mar 24 2001 Pixel <pixel@mandrakesoft.com> 0.2.3-10mdk
+- nasty C, fclose on popen'ed gets a segfault, in /some/ cases :-(
+
 * Fri Mar 23 2001 Pixel <pixel@mandrakesoft.com> 0.2.3-9mdk
 - handle gzip'ed pcitable/usbtable
 
