@@ -1,4 +1,37 @@
-2005-02-17 15:16  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2005-03-30 17:03  Thierry Vignaud <tvignaud at mandrakesoft.com>
+
+	* pci.c: oops: sata_via doesn't support for CLASS probing whereas
+	  sata_nv does
+
+2005-03-14 18:20  Pixel <pixel at mandrakesoft.com>
+
+	* Makefile, common.c, common.h, dmi.c, ldetect.spec,
+	  libldetect-private.h, libldetect.h, lspcidrake.c, pci.c,
+	  pciusb.c, usb.c: libify and simplify
+
+2005-03-14 14:10  Pixel <pixel at mandrakesoft.com>
+
+	* pciusb.c: fix running on a empty pci/usb devices source
+
+2005-03-14 13:34  Pixel <pixel at mandrakesoft.com>
+
+	* lspcidrake.c: fix typo
+
+2005-03-14 13:33  Pixel <pixel at mandrakesoft.com>
+
+	* pciusb.c: fix a memory leak
+
+2005-03-14 13:32  Pixel <pixel at mandrakesoft.com>
+
+	* Makefile, common.c, common.h, dmi.c, ldetect.spec,
+	  libldetect-private.h, libldetect.h, lspcidrake.c, pciusb.c: add
+	  dmitable use
+
+2005-03-11 10:43  Pixel <pixel at mandrakesoft.com>
+
+	* pci.c: setting .nb to 0 seems a better idea than setting .entries
+
+2005-02-17 15:16  Thierry Vignaud <tvignaud at mandrakesoft.com>
 
 	* ldetect.spec: fill in 0.5.5-1mdk's changelog
 
