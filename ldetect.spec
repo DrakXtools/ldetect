@@ -1,6 +1,6 @@
 Name:    ldetect
 Version:  0.4.9
-Release: 1mdk
+Release: 2mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
 Group: System/Libraries
@@ -49,6 +49,10 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Thu Jul 31 2003 Pixel <pixel@mandrakesoft.com> 0.4.9-2mdk
+- detect ohci1394 & ehci-hcd based on the pci class
+  (as done in RedHat's kudzu)
+
 * Tue Apr 22 2003 Pixel <pixel@mandrakesoft.com> 0.4.9-1mdk
 - Use read() instead of fread() to read from "/proc/bus/pci/%02x/%02x.%d".
   Thanks a lot to Tom Cox for finding this bug:

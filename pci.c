@@ -65,8 +65,19 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 			e->subdevice = 0xffff;
 		}
 		class_prog = buf[0x9];
-		if (e->class_ == PCI_CLASS_SERIAL_USB) /* taken from kudzu's pci.c */
-			e->module = strdup(class_prog == 0 ? "usb-uhci" : "usb-ohci");
+		if (e->class_ == PCI_CLASS_SERIAL_USB) {
+		  /* taken from kudzu's pci.c */
+		  char *module = 
+		    class_prog == 0 ? "usb-uhci" : 
+		    class_prog == 0x10 ? "usb-ohci" :
+		    class_prog == 0x20 ? "ehci-hcd" : NULL;
+		  if (module) e->module = strdup(module);
+		}
+		if (e->class_ == PCI_CLASS_SERIAL_FIREWIRE) {    
+		  /* taken from kudzu's pci.c */
+		  if (class_prog == 0x10) e->module = strdup("ohci1394");
+		}
+
 		close(devf);
 	}
 	fclose(f);
