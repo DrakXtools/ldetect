@@ -42,14 +42,26 @@ extern struct pciusb_entries usb_probe(void) {
 		return r;
 	}
   
-	for(r.nb = line = 0; fgets(buf, sizeof(buf) - 1, f) && r.nb < psizeof(t); line++) {
-		if (buf[0] == 'P') {
+	for(r.nb = 0, line = 1; fgets(buf, sizeof(buf) - 1, f) && r.nb < psizeof(t); line++) {
+		if (buf[0] == 'T') {
+		        unsigned short pci_bus, pci_device;
 			e = &t[r.nb++];
 			pciusb_initialize(e);
 
-			if (sscanf(buf, "P:  Vendor=%hx ProdID=%hx", &e->vendor, &e->device) != 2) {
+			if (sscanf(buf, "T:  Bus=%02hd Lev=%*02d Prnt=%*02d Port=%*02d Cnt=%*02d Dev#=%3hd Spd=%*3s MxCh=%*2d", &pci_bus, &pci_device) == 2) {
+				e->pci_bus = pci_bus;
+				e->pci_device = pci_device;
+			} else {
+				fprintf(stderr, "%s %d: unknown ``T'' line\n", proc_usb_path, line);
+			}
+
+		} else if (buf[0] == 'P') {
+		        unsigned short vendor, device;
+			if (sscanf(buf, "P:  Vendor=%hx ProdID=%hx", &vendor, &device) == 2) {
+				e->vendor = vendor;
+				e->device = device;
+			} else {
 				fprintf(stderr, "%s %d: unknown ``P'' line\n", proc_usb_path, line);
-				pciusb_initialize(e);
 			}
 		} else if (e && buf[0] == 'I' && e->class_ == 0) {
 			int class_, sub, prot = 0;

@@ -1,7 +1,7 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
 %define version 0.4.4
-%define release 1mdk
+%define release 2mdk
 
 Name: %{name}
 Version: %{version}
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Tue Jul 30 2002 Pixel <pixel@mandrakesoft.com> 0.4.4-2mdk
+- fill in pci_bus and pci_device for USB
+
 * Thu Jul 25 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.4-1mdk
 - fix "(null) description" bug: don't skip entries where module has
   already be set by pci.c workaround
