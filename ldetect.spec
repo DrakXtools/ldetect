@@ -1,6 +1,6 @@
 Name:    ldetect
 Version:  0.4.6
-Release: 5mdk
+Release: 6mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
 Group: System/Libraries
@@ -49,6 +49,11 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Thu Sep  5 2002 Pixel <pixel@mandrakesoft.com> 0.4.6-6mdk
+- fix ugly case for snd-usb-audio which should have made titi think that
+something was broken. Really fixing the right way (this fixes automatic
+detection of unknown usb controllers)
+
 * Thu Aug 29 2002 Pixel <pixel@mandrakesoft.com> 0.4.6-5mdk
 - fix getting the Product name in usb (occurs when there is no entry in usbtable)
 
