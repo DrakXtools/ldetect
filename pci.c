@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pci/pci.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "libldetect.h"
 #include "libldetect-private.h"
 #include "common.h"
@@ -11,7 +15,7 @@ char *proc_pci_path_default = "/proc/bus/pci/devices";
 char *proc_pci_path = NULL;
 
 extern struct pciusb_entries pci_probe(int probe_type) {
-	FILE *f, *devf;
+	FILE *f; int devf;
 	char buf[BUF_SIZE];
 	unsigned short *bufi = (unsigned short *) &buf;
 	unsigned short devbusfn;
@@ -48,9 +52,9 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 		if (probe_type != 1)
 			continue;
 		snprintf(file, sizeof(file), "/proc/bus/pci/%02x/%02x.%d", e->pci_bus, e->pci_device, e->pci_function);
-		if ((devf = fopen(file, "r")) == NULL)
+		if ((devf = open(file, O_RDONLY)) == -1)
 			continue;
-		fread(&buf, 0x30, 1, devf); /* these files're 256 bytes but we only need first 48 bytes*/
+		read(devf, &buf, 0x30); /* these files're 256 bytes but we only need first 48 bytes*/
 		e->class_ = bufi[0x5];
 		e->subvendor = bufi[0x16];
 		e->subdevice = bufi[0x17];
@@ -63,7 +67,7 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 		class_prog = buf[0x9];
 		if (e->class_ == PCI_CLASS_SERIAL_USB) /* taken from kudzu's pci.c */
 			e->module = strdup(class_prog == 0 ? "usb-uhci" : "usb-ohci");
-		fclose(devf);
+		close(devf);
 	}
 	fclose(f);
 	realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
