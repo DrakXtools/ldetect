@@ -1,7 +1,7 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
-%define version 0.4.4
-%define release 2mdk
+%define version 0.4.5
+%define release 1mdk
 
 Name: %{name}
 Version: %{version}
@@ -52,6 +52,11 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Thu Aug  8 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.5-1mdk
+- fix mis catchinf of "vendor dev" line in table when there's also a
+  matching "vendor dev suvvendor subdev" line
+  thus we don't depend of the order of the tables
+
 * Tue Jul 30 2002 Pixel <pixel@mandrakesoft.com> 0.4.4-2mdk
 - fill in pci_bus and pci_device for USB
 
