@@ -1,6 +1,6 @@
 %define name ldetect
 %define version 0.2.3
-%define release 1mdk
+%define release 2mdk
 
 Name: %{name}
 Version: %{version}
@@ -47,6 +47,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Fri Dec 22 2000 Guillaume Cottenceau <gc@mandrakesoft.com> 0.2.3-2mdk
+- prettier printing for lspcidrake
+
 * Sat Dec 16 2000 Pixel <pixel@mandrakesoft.com> 0.2.3-1mdk
 - now detect usb
 
