@@ -49,8 +49,10 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 				p = buf + offset + 1;
 				q = strchr(p, '\t');
 			}
-			if (strncmp(p, "unknown", q-p-1))
+			if (strncmp(p, "unknown", q-p-1)) {
+				ifree(e->module);
 				e->module = strndup(p,q-p-1);
+			}
 			/* special case for buggy 0x0 usb entry */
 			if (2 < strlen(q+2) && vendor != 0 && device != 0 && e->class_ != 0x90000d) { /* Hub class */
 				ifree(e->text); /* usb.c set it so that we display something when usbtable doesn't refer that hw*/
