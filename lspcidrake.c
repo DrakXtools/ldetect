@@ -36,7 +36,6 @@ int main(int argc, char **argv) {
 	while (ptr && *ptr) {
 		if (!strcmp(*ptr, "-h") || !strcmp(*ptr, "--help")) {
 			printf("usage: lspcidrake [-v|-u]\n"
-				"-f : full probe [aka look for pci subids & class]\n"
 				"-p <file>: pci devices source [/proc/bus/pci/devices by default]\n"
 				"-u <file>: usb devices source [/proc/bus/usb/devices by default]\n"
 				"-v : verbose mode [print ids and sub-ids], implies full probe\n"
