@@ -1,0 +1,332 @@
+2002-07-16 16:54  tvignaud
+
+	* libldetect-private.h, lspcidrake.c, usb.c: - move usb devices
+	proc entry path into   libldetect-private.h::proc_usb_path
+	
+	- add -u option so that lspcidrake can read usb devices from a file
+	in   order to understand what happened to remote testers
+	
+	- make if (test) action clearer by rejecting action singleton in
+	next   line
+	
+	- lspcidrake: describe all options
+
+2002-07-16 16:51  tvignaud
+
+	* pci.c: - change memory pattern : MAX*sizeof(entry) on stack +
+	REAL_NB*sizeof() in heap	to MAX*sizeof(entry) on heap then
+	downsized to real size
+	
+	- make if (test) action clearer by rejecting action singleton in
+	next line
+
+2002-07-16 16:39  tvignaud
+
+	* pci.c: don't do useless stuff when full probe isn't requires: -
+	allocatestuff on stack - call snprintf
+
+2002-07-15 18:26  tvignaud
+
+	* lspcidrake.c: compacificazion
+
+2002-07-09 23:28  tvignaud
+
+	* lspcidrake.c: fix for "gcc-2.95.3 don't compile" (reported by Ian
+	White)
+
+2002-07-05 11:02  tvignaud
+
+	* Makefile: add explicit depandancies so that make rebuild files if
+	needed when header're altered
+
+2002-07-05 10:56  tvignaud
+
+	* Makefile: compile with -Os (which results in saving 12% of text
+	size)
+
+2002-07-04 17:15  tvignaud
+
+	* pci.c: factorize common constants in private header
+
+2002-07-04 17:14  tvignaud
+
+	* usb.c: typo fix
+
+2002-07-04 17:14  tvignaud
+
+	* usb.c: - factorize common constants in private header
+	
+	- factorize strlen() call
+
+2002-07-04 17:04  tvignaud
+
+	* libldetect-private.h, pci.c, usb.c, pci.c: factorize common
+	constants in private header
+
+2002-07-04 16:59  tvignaud
+
+	* lspcidrake.c: we don't really need stdlib.h
+
+2002-07-04 16:58  tvignaud
+
+	* lspcidrake.c: move full_probe definition nearer its usage, aka in
+	main()
+	
+	- kill print_name() and print_id() [used only once]
+
+2002-07-04 16:53  tvignaud
+
+	* lspcidrake.c: - merge {pci,usb}_printit into printit
+	
+	- kill usage()
+
+2002-07-04 13:44  tvignaud
+
+	* ldetect.spec: 0.4.1-1mdk
+
+2002-07-04 13:29  tvignaud
+
+	* usb.c: make an if clearer
+
+2002-07-03 14:03  tvignaud
+
+	* pciusb.c: s/zcat/gzip -cd/ back for lord pixou
+
+2002-07-03 12:20  tvignaud
+
+	* pciusb.c: ifree(e->text) to prevent mem leak with usb
+
+2002-07-03 12:09  tvignaud
+
+	* pciusb.c: - fix pipe() error path
+	
+	- make pciusb_find_modules() normal path clearer: rewrite tests  
+	cascade into a single path were exceptions're just "go away"
+
+2002-07-03 12:01  tvignaud
+
+	* pciusb.c: - make gzip path in fh_open() be clearer
+	
+	- pciusb_find_modules() optimization / cleanups :
+	
+		- only calc module and description once so that if there're
+		  multiples identical cards, we just gives the same result
+	
+		- do less copies :
+			- only copy when setting e->{text,module}
+	
+			- it's useless to do copies on the stack, just play
+	with
+			  strndup() instead of strdup()
+	
+		- skip comments in {usb,pci}table
+	
+		- remove if (q) test which is uneeded since we've already
+	parsed
+		  the buffer with sscanf() and we've skipped comments
+	
+		- remove uneeded ifree (it's impossible to get valid
+	pointer a
+		  this point)
+
+2002-07-03 11:14  tvignaud
+
+	* pciusb.c: - no need to allocate fname_gz in fast path
+	
+	- reduce cmd size
+	
+	- use zcat rather than gzip
+
+2002-07-03 11:06  tvignaud
+
+	* libldetect-private.h, pci.c, pciusb.c, usb.c: get rid of more
+	uneeded copies
+
+2002-07-03 11:05  tvignaud
+
+	* AUTHORS: list all contributors
+
+2002-07-03 10:54  tvignaud
+
+	* pci.c, usb.c: get rid of {pci,usb}_find_modules()
+
+2002-07-03 10:53  tvignaud
+
+	* libldetect.h, lspcidrake.c: prevent signed vs unsigned comp
+	warnings
+
+2002-07-03 10:49  tvignaud
+
+	* lspcidrake.c, pci.c, pciusb.c, usb.c: indent-region
+
+2002-07-03 10:42  tvignaud
+
+	* libldetect.h, lspcidrake.c, pciusb.c: don't do uneeded copies
+	(saves 2% of text size)
+
+2002-07-03 10:41  tvignaud
+
+	* Makefile: be more strict
+
+2002-07-03 10:27  tvignaud
+
+	* lspcidrake.c: simplify (source is clearer, binary isn't really
+	altered)
+
+2002-06-26 16:10  gbeauchesne
+
+	* ldetect.spec: sanitize specfile
+
+2002-06-10 20:39  prigaux
+
+	* generate_pciclass.pl, generate_usbclass.pl, ldetect.spec,
+	libldetect.h, lspcidrake.c, pci.c, pciusb.c, usb.c: ensure the
+	header file are C++ compliant (do not use "class" for struct field
+	name)
+
+2002-05-06 20:48  prigaux
+
+	* AUTHORS: [no log message]
+
+2001-12-28 13:04  prigaux
+
+	* ldetect.spec, pci.c: in probe_type=1, recognize usb controllers
+	(is either usb-uhci or usb-ohci)
+
+2001-11-23 00:16  gc
+
+	* generate_usbclass.pl: - don't limitate to CLASS ID's with a
+	Protocol number - fix bug that made ID's with a-f not appear (\d
+	not very   good to parse  hexadecimal)
+
+2001-10-11 17:44  prigaux
+
+	* ldetect.spec: s/Copyright/License/
+
+2001-09-13 15:40  prigaux
+
+	* generate_pciclass.pl, generate_usbclass.pl, libldetect.h, usb.c,
+	ldetect.spec: use the sub-category for usb probing
+
+2001-09-11 00:11  gc
+
+	* ldetect.spec, lspcidrake.c: add "-v" and "-f" options to
+	lspcidrake for (v)erbose mode and (f)ull probe
+
+2001-08-29 18:33  prigaux
+
+	* ldetect.spec: fix when 2 similar devices are there
+
+2001-07-03 22:28  prigaux
+
+	* pciusb.c: fix pb when 2 similar cards are there
+
+2001-04-12 17:15  prigaux
+
+	* generate_usbclass.pl: add the line in comment
+
+2001-04-12 17:13  prigaux
+
+	* pciusb.c, ldetect.spec: close fdno's of the pipe which are unused
+	or dup2'ed
+
+2001-04-11 18:53  fpons
+
+	* ldetect.spec, pciusb.c: [no log message]
+
+2001-04-05 02:12  chmouel
+
+	* usb.c: Don't print ugly can't open.
+
+2001-03-29 12:38  prigaux
+
+	* ldetect.spec: fix some memory leak and a few segfaults
+
+2001-03-29 12:36  prigaux
+
+	* pciusb.c: fix some memory leak a few segfaults
+
+2001-03-24 11:48  prigaux
+
+	* ldetect.spec, pciusb.c: nasty C, fclose on popen'ed gets a
+	segfault, in /some/ cases :-(
+
+2001-03-23 16:17  prigaux
+
+	* ldetect.spec, pciusb.c: handle gzip'ed pcitable/usbtable
+
+2001-03-21 19:05  prigaux
+
+	* ldetect.spec: use subids if they are needed
+
+2001-03-21 19:03  prigaux
+
+	* libldetect-private.h, lspcidrake.c, pci.c, pciusb.c, usb.c: if
+	subid can be useful, use them. use probe_type==-1 to ensure no
+	subid is used
+
+2001-03-15 15:11  fpons
+
+	* ldetect.spec: [no log message]
+
+2001-03-15 15:00  fpons
+
+	* ldetect.spec, libldetect.h, pci.c, pciusb.c: added
+	pci(bus,device,function) for DrakX.
+
+2001-03-06 17:17  fpons
+
+	* ldetect.spec, pci.c, usb.c: [no log message]
+
+2001-03-06 17:05  prigaux
+
+	* ldetect.spec: [no log message]
+
+2001-02-13 13:25  uid553
+
+	* common.h: ifree must be a macro, so let it be
+
+2001-02-10 12:53  prigaux
+
+	* pci.c: fix the fclose
+
+2001-02-06 17:56  prigaux
+
+	* ldetect.spec: add missing fclose's
+
+2001-02-06 17:55  prigaux
+
+	* pci.c, pciusb.c: add some fclose where it should
+
+2000-12-22 15:53  gc
+
+	* ldetect.spec, lspcidrake.c: see changelog
+
+2000-12-16 19:22  prigaux
+
+	* .cvsignore, Makefile, common.h, generate_usbclass.pl,
+	ldetect.spec, libldetect-private.h, libldetect.h, lspcidrake.c,
+	pci.c, pciusb.c, usb.c: now detect usb
+
+2000-12-15 19:19  prigaux
+
+	* Makefile: [no log message]
+
+2000-12-15 16:32  prigaux
+
+	* ldetect.spec: - add requires ldetect-lst
+
+2000-12-15 16:30  prigaux
+
+	* ldetect.spec: fix description tag
+
+2000-12-15 16:25  prigaux
+
+	* Makefile, ldetect.spec: put the version in .spec too, otherwise
+	can't use rpm C-c e :)
+
+2000-12-15 16:19  prigaux
+
+	* Makefile, generate_pciclass.pl, ldetect.spec, libldetect.h,
+	lspcidrake.c, pci.c: creation
+

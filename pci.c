@@ -6,6 +6,7 @@
 #include "libldetect-private.h"
 #include "common.h"
 
+char *proc_pci_path = "/proc/bus/pci/devices";
 
 extern struct pciusb_entries pci_probe(int probe_type) {
 	FILE *f;
@@ -15,7 +16,7 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 	struct pciusb_entries r;
 	r.entries = malloc(sizeof(struct pciusb_entry) * MAX_DEVICES);
 
-	if (!(f = fopen("/proc/bus/pci/devices", "r"))) 
+	if (!(f = fopen(proc_pci_path, "r"))) 
 		exit(1);
 
 	for (r.nb = 0; fgets(buf, sizeof(buf) - 1, f) && r.nb < MAX_DEVICES; r.nb++) {
