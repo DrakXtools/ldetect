@@ -14,7 +14,7 @@
 char *proc_pci_path_default = "/proc/bus/pci/devices";
 char *proc_pci_path = NULL;
 
-extern struct pciusb_entries pci_probe(int probe_type) {
+extern struct pciusb_entries pci_probe(void) {
 	FILE *f; int devf;
 	char buf[BUF_SIZE];
 	unsigned short *bufi = (unsigned short *) &buf;
@@ -49,8 +49,6 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 		e->pci_bus = devbusfn >> 8;
 		e->pci_device = (devbusfn & 0xff) >> 3;
 		e->pci_function = (devbusfn & 0xff) & 0x07;
-		if (probe_type != 1)
-			continue;
 		snprintf(file, sizeof(file), "/proc/bus/pci/%02x/%02x.%d", e->pci_bus, e->pci_device, e->pci_function);
 		if ((devf = open(file, O_RDONLY)) == -1)
 			continue;
@@ -83,12 +81,8 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 	fclose(f);
 	realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
 
-	if (pciusb_find_modules(&r, "pcitable", probe_type))
+	if (pciusb_find_modules(&r, "pcitable"))
 		return r;
-
-	/* ok, let's try again with subids */
-	if (probe_type == 0) 
-		return pci_probe(1);
 
 	/* should not happen */
 	exit(1);

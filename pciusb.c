@@ -71,7 +71,7 @@ static void fh_close(fh *f) {
 		waitpid(f->pid, NULL, 0);
 }
 
-extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, int no_subid) {
+extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable) {
 	fh f;
 	char buf[2048];
 	int line;
@@ -107,11 +107,6 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 				continue;	// skip since already found with sub ids
 			if (vendor != e->vendor ||  device != e->device)
 				continue; // main ids differ
-			if (nb == 4 && e->subvendor == 0xffff && e->subdevice == 0xffff && !no_subid) {
-				pciusb_free(entries);
-				fh_close(&f);
-				return 0; /* leave, let the caller call again with subids */
-			}
 
 			if (nb == 4 && !(subvendor == e->subvendor && subdevice == e->subdevice))
 				continue; // subids differ

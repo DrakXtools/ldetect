@@ -1,3 +1,46 @@
+2003-07-31 15:36  Pixel <pixel@mandrakesoft.com>
+
+	* ldetect.spec, pci.c: - detect ohci1394 & ehci-hcd based on the
+	pci class   (as done in RedHat's kudzu)
+
+2003-04-22 11:45  Pixel <pixel@mandrakesoft.com>
+
+	* ldetect.spec: - Use read() instead of fread() to read from
+	"/proc/bus/pci/%02x/%02x.%d".	 Thanks a lot to Tom Cox for
+	finding this bug:
+	
+		  The proc.c module in the kernel source clearly states
+	that
+		  reading more than 64 bytes can cause problems. The pci.c
+		  module in the ldetect library uses the buffered fread()
+		  function. This function always reads in blocks, so when
+		  run as root, the read always tried to read more than the
+		  user requested amount.
+	
+	  This should fix freezes when doing a full probe
+
+2003-04-22 11:04  Pixel <pixel@mandrakesoft.com>
+
+	* pci.c: Use read() instead of fread() to read from
+	"/proc/bus/pci/%02x/%02x.%d".  Thanks a lot to Tom Cox for finding
+	this bug:
+	
+		  The proc.c module in the kernel source clearly states
+	that
+		  reading more than 64 bytes can cause problems. The pci.c
+		  module in the ldetect library uses the buffered fread()
+		  function. This function always reads in blocks, so when
+		  run as root, the read always tried to read more than the
+		  user requested amount.
+
+2003-01-28 16:44  Thierry Vignaud <tvignaud@mandrakesoft.com>
+
+	* Makefile: only check for latest logs
+
+2003-01-28 15:39  Thierry Vignaud <tvignaud@mandrakesoft.com>
+
+	* Makefile: - sanitize ChangeLog - add log rule
+
 2003-01-06 15:34  Thierry Vignaud <tvignaud@mandrakesoft.com>
 
 	* ldetect.spec: add pixel changes

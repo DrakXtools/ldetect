@@ -28,7 +28,7 @@ extern void pciusb_free(struct pciusb_entries *entries);
 /******************************************************************************/
 /* pci ************************************************************************/
 /******************************************************************************/
-extern struct pciusb_entries pci_probe(int probe_type); /* probe_type is boolean */
+extern struct pciusb_entries pci_probe(void);
 extern const char *pci_class2text(unsigned long class_);
 
 /******************************************************************************/

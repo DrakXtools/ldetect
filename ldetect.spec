@@ -1,12 +1,13 @@
 Name:    ldetect
 Version:  0.4.9
-Release: 2mdk
+Release: 3mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
 Group: System/Libraries
 URL:	  http://www.mandrakelinux.com
 BuildRoot: %_tmppath/%{name}-buildroot
 BuildRequires: usbutils => 0.11-2mdk,  pciutils-devel
+Conflicts: drakxtools < 9.2-0.32mdk
 Requires: ldetect-lst common-licenses
 License: GPL
 
@@ -49,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Tue Aug 19 2003 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.9-3mdk
+- do full-probe by default
+
 * Thu Jul 31 2003 Pixel <pixel@mandrakesoft.com> 0.4.9-2mdk
 - detect ohci1394 & ehci-hcd based on the pci class
   (as done in RedHat's kudzu)

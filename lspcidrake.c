@@ -32,11 +32,10 @@ static void printit(struct pciusb_entries entries, const char *(find_class)(unsi
 
 int main(int argc, char **argv) {
 	char ** ptr = argv;
-	int full_probe = 0;
 
 	while (ptr && *ptr) {
 		if (!strcmp(*ptr, "-h") || !strcmp(*ptr, "--help")) {
-			printf("usage: lspcidrake [-v|-f|-u]\n"
+			printf("usage: lspcidrake [-v|-u]\n"
 				"-f : full probe [aka look for pci subids & class]\n"
 				"-p <file>: pci devices source [/proc/bus/pci/devices by default]\n"
 				"-u <file>: usb devices source [/proc/bus/usb/devices by default]\n"
@@ -44,12 +43,8 @@ int main(int argc, char **argv) {
 				);	
 			return 0;	
 		}
-		if (!strcmp(*ptr, "-v")) {
+		if (!strcmp(*ptr, "-v"))
 			verboze = 1;
-			full_probe = 1;
-		}
-		if (!strcmp(*ptr, "-f"))
-			full_probe = 1;
 		if (!strcmp(*ptr, "-u")) {
 			proc_usb_path = *++ptr;
 			continue;
@@ -59,7 +54,7 @@ int main(int argc, char **argv) {
 		ptr++;
 	}
 
-	printit(pci_probe(full_probe), pci_class2text);
+	printit(pci_probe(), pci_class2text);
 	printit(usb_probe(), usb_class2text);
 	return 0;
 }

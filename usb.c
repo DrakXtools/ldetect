@@ -88,7 +88,7 @@ extern struct pciusb_entries usb_probe(void) {
 	fclose(f);
 	realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
 
-	pciusb_find_modules(&r, "usbtable", 1 /* no_subid */);
+	pciusb_find_modules(&r, "usbtable");
 	return r;
 }
 
