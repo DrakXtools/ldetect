@@ -1,5 +1,5 @@
 Name:    ldetect
-Version:  0.5.4
+Version:  0.5.5
 Release: 1mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Thu Feb 17 2005 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.5.5-1mdk
+- handle a few more special cases (gdth, snd-vx222, 8139too, and agp bridges)
+
 * Tue Dec  7 2004 Pixel <pixel@mandrakesoft.com> 0.5.4-1mdk
 - all PCI_CLASS_BRIDGE_CARDBUS cards are yenta_socket (says kudzu)
 
