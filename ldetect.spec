@@ -1,12 +1,12 @@
 Name:    ldetect
-Version:  0.4.6
-Release: 6mdk
+Version:  0.4.7
+Release: 1mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
 Group: System/Libraries
 URL:	  http://www.mandrakelinux.com
 BuildRoot: %_tmppath/%{name}-buildroot
-BuildRequires: usbutils pciutils-devel
+BuildRequires: usbutils => 0.11,  pciutils-devel
 Requires: ldetect-lst common-licenses
 License: GPL
 
@@ -49,6 +49,10 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Tue Oct 15 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.7-1mdk
+- simplify pci configuration parsing
+- build with newer usb ids
+
 * Thu Sep  5 2002 Pixel <pixel@mandrakesoft.com> 0.4.6-6mdk
 - fix ugly case for snd-usb-audio which should have made titi think that
 something was broken. Really fixing the right way (this fixes automatic
