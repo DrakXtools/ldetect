@@ -40,10 +40,13 @@ install: build
 	install $(libraries) $(libdir)
 	install libldetect.h $(includedir)
 
-rpm: clean $(RPM)
+rpm: srpm
+	rpm -bb --clean --rmsource --rmspec $(RPM)/SPECS/$(project).spec
+
+srpm: clean $(RPM)
 	(echo "# !! DON'T MODIFY HERE, MODIFY IN THE CVS !!" ; \
          cat $(project).spec \
         ) > $(RPM)/SPECS/$(project).spec
 
 	(cd .. ; tar cfj $(RPM)/SOURCES/$(project).tar.bz2 $(project))
-	rpm -ba --clean --rmsource --rmspec $(RPM)/SPECS/$(project).spec
+	rpm -bs $(RPM)/SPECS/$(project).spec
