@@ -1,5 +1,5 @@
 Name:    ldetect
-Version:  0.5.2
+Version:  0.5.3
 Release: 1mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
@@ -50,6 +50,10 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Thu Oct 28 2004 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.5.3-1mdk
+- keep existing description string if already reported by USB devices
+  when usbtable description is empty (eg: freebox)
+
 * Thu Jun 17 2004 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.5.2-1mdk
 - display driver reported by the kernel rather than "unknown"
 
