@@ -34,10 +34,10 @@ print '
 
 int nb_usbclasses = sizeof(usbclasses) / sizeof(*usbclasses);
 
-extern const char *usb_class2text(unsigned long class) {
+extern const char *usb_class2text(unsigned long class_) {
   int i;
   for (i = 0; i < nb_usbclasses; i++)
-    if (usbclasses[i].id == class) return usbclasses[i].name;
+    if (usbclasses[i].id == class_) return usbclasses[i].name;
 
   return "";
 }

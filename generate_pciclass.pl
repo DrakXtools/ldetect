@@ -15,10 +15,10 @@ print '
 
 int nb_pciclasses = sizeof(pciclasses) / sizeof(*pciclasses);
 
-extern const char *pci_class2text(unsigned long class) {
+extern const char *pci_class2text(unsigned long class_) {
   int i;
   for (i = 0; i < nb_pciclasses; i++)
-    if (pciclasses[i].id == class) return pciclasses[i].name;
+    if (pciclasses[i].id == class_) return pciclasses[i].name;
 
   return pci_class2text(0);
 }

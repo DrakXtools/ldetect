@@ -121,7 +121,7 @@ extern void pciusb_initialize(struct pciusb_entry *e) {
   e->device = 0xffff;
   e->subvendor = 0xffff;
   e->subdevice = 0xffff;
-  e->class = 0;
+  e->class_ = 0;
   e->pci_bus = 0xffff;
   e->pci_device = 0xffff;
   e->pci_function = 0xffff;

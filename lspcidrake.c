@@ -33,9 +33,9 @@ void pci_printit(struct pciusb_entries entries) {
   for (i = 0; i < entries.nb; i++) {
     struct pciusb_entry e = entries.entries[i];
     print_name(e);
-    if (e.class) {
-      const char *class = pci_class2text(e.class);
-      if (strcmp(class, "NOT_DEFINED") != 0) printf(" [%s]", class);
+    if (e.class_) {
+      const char *class_ = pci_class2text(e.class_);
+      if (strcmp(class_, "NOT_DEFINED") != 0) printf(" [%s]", class_);
     }
     print_id(e);
     printf("\n");
@@ -47,7 +47,7 @@ void usb_printit(struct pciusb_entries entries) {
   for (i = 0; i < entries.nb; i++) {
     struct pciusb_entry e = entries.entries[i];
     print_name(e);
-    if (e.class) printf(" [%s]", usb_class2text(e.class));
+    if (e.class_) printf(" [%s]", usb_class2text(e.class_));
     print_id(e);
     printf("\n");
   }

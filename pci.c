@@ -36,7 +36,7 @@ extern struct pciusb_entries pci_probe(int probe_type) {
       snprintf(file, sizeof(file), "/proc/bus/pci/%02x/%02x.%d", e.pci_bus, e.pci_device, e.pci_function);
       if (probe_type == 1 && (f = fopen(file, "r"))) {
         if (fseek(f, 10, SEEK_SET) == 0) 
-	  fread(&e.class, 2, 1, f);
+	  fread(&e.class_, 2, 1, f);
         if (fseek(f, 0x2c, SEEK_SET) == 0) 
 	  fread(&e.subvendor, 2, 1, f), fread(&e.subdevice, 2, 1, f);
 
@@ -49,7 +49,7 @@ extern struct pciusb_entries pci_probe(int probe_type) {
         if (fseek(f, 9, SEEK_SET) == 0) {
 	  unsigned char class_prog = 0;
 	  fread(&class_prog, 1, 1, f);
-	  if (e.class == PCI_CLASS_SERIAL_USB) {
+	  if (e.class_ == PCI_CLASS_SERIAL_USB) {
 	    /* taken from kudzu's pci.c */
 	    e.module = strdup(class_prog == 0 ? "usb-uhci" : "usb-ohci");
 	  }
