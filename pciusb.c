@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "libldetect.h"
 #include "libldetect-private.h"
 #include "common.h"
@@ -8,16 +9,25 @@
 extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpciusbtable, int no_subid) {
   FILE *f;
   char buf[2048];
-  int line;
+  int line, length;
 
   char *share_path = getenv("SHARE_PATH");
-  char *fname;
+  char *fname, *fname_gz;
   if (!share_path || !*share_path) share_path = "/usr/share";
 
-  fname = alloca(strlen(share_path) + sizeof("/ldetect-lst/") + strlen(fpciusbtable));
-  sprintf(fname, "%s/ldetect-lst/%s", share_path, fpciusbtable);
+  length = strlen(share_path) + sizeof("/ldetect-lst/") + strlen(fpciusbtable);
+  fname    = alloca(length); 
+  fname_gz = alloca(length + sizeof(".gz"));
+  sprintf(fname,    "%s/ldetect-lst/%s",    share_path, fpciusbtable);
+  sprintf(fname_gz, "%s/ldetect-lst/%s.gz", share_path, fpciusbtable);
 
-  if (!(f = fopen(fname, "r"))) {
+  if (access(fname, R_OK) == 0) {
+    f = fopen(fname, "r");
+  } else if (access(fname_gz, R_OK) == 0) {    
+    char *cmd = alloca(sizeof("gzip -dc %s") + strlen(fname_gz));
+    sprintf(cmd, "gzip -dc %s", fname_gz);
+    f = popen(cmd, "r");
+  } else {
     fprintf(stderr, "Missing pciusbtable (should be %s)\n", fname);
     exit(1);
   }  
