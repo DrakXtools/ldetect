@@ -1,6 +1,6 @@
 Name:    ldetect
-Version:  0.4.9
-Release: 3mdk
+Version:  0.5.1
+Release: 1mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
 Group: System/Libraries
@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Thu Nov 20 2003 Pixel <pixel@mandrakesoft.com> 0.5.1-1mdk
+- new usb_class code (breaks compatibility!)
+
 * Tue Aug 19 2003 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.9-3mdk
 - do full-probe by default
 

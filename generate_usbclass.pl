@@ -2,44 +2,80 @@
 
 print q(/* This is auto-generated from </usr/share/usb.ids>, don't modify! */
 
-static struct {
-  unsigned long id;
+#define NULL 0
+
+struct node {
+  int id;
   const char *name;
-} classes[] = {
+  int nb_subnodes;
+  struct node *subnodes;
+};
+
 );
 
+my (@l, $sub, $subsub);
 while (<>) {
     chomp;
     if (/^C\s+([\da-f]+)\s+(.*)/) {  #- I want alphanumeric but I can't get this [:alnum:] to work :-(
-	($cat, $cat_descr) = ($1, $2);
-    } elsif (/^\t([\da-f]+)\s+(.*)/ && defined $cat) {
-	($sub, $sub_descr) = ($1, $2);
-	$sub =~ /^[\da-f]{2}$/ or die "bad line $.: sub category number badly formatted ($_)\n";
-	push @without_prot, [ "0x$cat$sub"."00", "/* $. */  { 0x$cat$sub".qq(00, "$cat_descr|$sub_descr" },\n) ];
-    } elsif (/^\t\t([\da-f]+)\s+(.*)/ && defined $cat) {
-	push @everything, qq(/* $. */  { 0x$cat$sub$1, "$cat_descr|$sub_descr|$2" },\n);
+	push @l, [ $1, $2, $sub = [] ];
+	undef $subsub;
+    } elsif (/^\t([\da-f]+)\s+(.*)/ && defined $sub) {
+	my ($sub_id, $sub_descr) = ($1, $2);
+	$sub_id =~ /^[\da-f]{2}$/ or die "bad line $.: sub category number badly formatted ($_)\n";
+	push @$sub, [ $sub_id, $sub_descr, $subsub = [] ];
+    } elsif (/^\t\t([\da-f]+)\s+(.*)/ && defined $subsub) {
+	push @$subsub, [ $1, $2, [] ];
     } elsif (/^\S/) {
-      undef $cat;
+	undef $sub;
+	undef $subsub;
     }
 }
 
-foreach $l (@without_prot) {
-    grep { /{ $l->[0], / } @everything or push @everything, $l->[1];
+sub dump_it {
+    my ($l, $name, $prefix) = @_;
+
+    my @l = sort { $a->[0] cmp $b->[0] } @$l or return;
+
+    dump_it($_->[2], $name . '_' . $_->[0], "$prefix  ") foreach @l;
+
+    print "${prefix}static struct node $name\[] = {\n";
+    foreach (@l) {
+	my $nb = @{$_->[2]};
+	my $sub = $nb ? $name . '_' . $_->[0] : 'NULL';
+	printf qq($prefix  { 0x%x, "%s", $nb, $sub },\n), hex($_->[0]), $_->[1];
+    }
+    print "$prefix};\n";
 }
 
-print sort @everything;
+dump_it(\@l, "classes", '');
 
 print '
-};
 
 static int nb_classes = sizeof(classes) / sizeof(*classes);
 
-extern const char *usb_class2text(unsigned long class_) {
+static void lookup(const char **p, int *a_class, int kind, int nb_nodes, struct node *nodes) {
   int i;
-  for (i = 0; i < nb_classes; i++)
-    if (classes[i].id == class_) return classes[i].name;
+  for (i = 0; i < nb_nodes; i++)
+    if (nodes[i].id == a_class[kind]) {
+      p[kind] = nodes[i].name;
+      return lookup(p, a_class, kind + 1, nodes[i].nb_subnodes, nodes[i].subnodes);
+    }
+}
 
-  return "";
+struct class_text {
+  const char *class_text;
+  const char *sub_text;
+  const char *prot_text;
+};
+
+extern struct class_text usb_class2text(unsigned long class_) {
+  const char *p[3] = { NULL, NULL, NULL };
+  int a_class[3] = { (class_ >> 16) & 0xff, (class_ >> 8) & 0xff, class_ & 0xff };
+  lookup(p, a_class, 0, nb_classes, classes);
+  {
+    struct class_text r = { p[0], p[1], p[2] };
+    return r;
+  }
 }
 
 ';

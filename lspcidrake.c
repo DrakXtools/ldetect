@@ -5,7 +5,7 @@
 
 static int verboze = 0;
 
-static void printit(struct pciusb_entries entries, const char *(find_class)(unsigned long )) {
+static void printit(struct pciusb_entries entries, void print_class(unsigned long )) {
 	unsigned int i;
 	for (i = 0; i < entries.nb; i++) {
 		struct pciusb_entry *e = &entries.entries[i];
@@ -14,9 +14,7 @@ static void printit(struct pciusb_entries entries, const char *(find_class)(unsi
 			printf(e->text);
 		else	printf("unknown (%04x/%04x/%04x/%04x)", e->vendor, e->device, e->subvendor, e->subdevice);
 		if (e->class_) {
-			const char *class_ = find_class(e->class_);
-			if (strcmp(class_, "NOT_DEFINED") != 0) 
-				printf(" [%s]", class_);
+			print_class(e->class_);
 		}
 		if (verboze && e->text) {
 			printf(" (vendor:%04x device:%04x", e->vendor, e->device);
@@ -27,6 +25,23 @@ static void printit(struct pciusb_entries entries, const char *(find_class)(unsi
 		printf("\n");
 	}
 	pciusb_free(&entries);
+}
+
+static void print_pci_class(unsigned long class_) {
+  const char *s = pci_class2text(class_);
+  if (strcmp(s, "NOT_DEFINED") != 0) 
+     printf(" [%s]", s);
+}
+
+static void print_usb_class(unsigned long class_) {
+  struct usb_class_text s = usb_class2text(class_);
+  if (s.usb_class_text) {
+    printf(" [");
+    printf("%s", s.usb_class_text);
+    if (s.usb_sub_text) printf("|%s", s.usb_sub_text);
+    if (s.usb_prot_text) printf("|%s", s.usb_prot_text);
+    printf("]");
+  }
 }
 
 
@@ -51,7 +66,7 @@ int main(int argc, char **argv) {
 		ptr++;
 	}
 
-	printit(pci_probe(), pci_class2text);
-	printit(usb_probe(), usb_class2text);
+	printit(pci_probe(), print_pci_class);
+	printit(usb_probe(), print_usb_class);
 	return 0;
 }

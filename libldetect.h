@@ -35,4 +35,11 @@ extern const char *pci_class2text(unsigned long class_);
 /* usb ************************************************************************/
 /******************************************************************************/
 extern struct pciusb_entries usb_probe(void);
-extern const char *usb_class2text(unsigned long class_);
+
+struct usb_class_text {
+  const char *usb_class_text;
+  const char *usb_sub_text;
+  const char *usb_prot_text;
+};
+
+extern struct usb_class_text usb_class2text(unsigned long class_);
