@@ -1,5 +1,8 @@
+#define _GNU_SOURCE
+
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -96,7 +99,7 @@ extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpcius
 	}
 
 	if ((nb != 4 || (subvendor == e->subvendor && subdevice == e->subdevice)) && !e->module) {
-	  char *p = buf + offset + 1;
+	  char *p = strdupa(buf + offset + 1);
 	  char *q = strchr(p, '\t');
 	  if (q) {
 	    q[-1] = 0;
