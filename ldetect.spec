@@ -1,5 +1,5 @@
 %define lib_major 0.6
-%define lib_minor 0
+%define lib_minor 1
 %define lib_name %mklibname %{name} %{lib_major}
 
 Name:    ldetect
@@ -69,6 +69,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*.so
 
 %changelog
+* Wed Mar 30 2005 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.6.1-1mdk
+- fix SATA detection of latest NVidia controllers
+
 * Mon Mar 14 2005 Pixel <pixel@mandrakesoft.com> 0.6.0-1mdk
 - add dmitable parsing and use
 - libldetect.so instead of libldetect.a
