@@ -1,7 +1,7 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
-%define version 0.2.3
-%define release 14mdk
+%define version 0.2.4
+%define release 1mdk
 
 Name: %{name}
 Version: %{version}
@@ -53,6 +53,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Tue Sep 11 2001 Guillaume Cottenceau <gc@mandrakesoft.com> 0.2.4-1mdk
+- add "-v" and "-f" options to lspcidrake for (v)erbose mode and (f)ull
+  probe
+
 * Wed Aug 29 2001 Pixel <pixel@mandrakesoft.com> 0.2.3-14mdk
 - fix when 2 similar devices are there
 
