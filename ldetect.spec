@@ -1,7 +1,7 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
 %define version 0.4.2
-%define release 1mdk
+%define release 2mdk
 
 Name: %{name}
 Version: %{version}
@@ -53,6 +53,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Tue Jul 16 2002 Pixel <pixel@mandrakesoft.com> 0.4.2-2mdk
+- pciusb.c: teach titi that !(a && !b) is not (!a && !b) but (!a || b)
+  (the other solution is to teach him to *test*)
+  (oh, remind me to teach him not to re-indent the whole code until he
+   doesn't make stupid bugs)
+
 * Tue Jul 16 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.2-1mdk
 - pci.c:
 	o move exception stuff from the fast path into the probe all patch

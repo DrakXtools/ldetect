@@ -111,7 +111,7 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 				return 0; /* leave, let the caller call again with subids */
 			}
 
-			if ((nb == 4 && !(subvendor == e->subvendor && subdevice == e->subdevice)) && !e->module)
+			if ((nb == 4 && !(subvendor == e->subvendor && subdevice == e->subdevice)) || e->module)
 				continue; // subids differ
 			if (!p) { // only calc text & module if not already done
 				p = buf + offset + 1;
