@@ -16,6 +16,7 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 	unsigned int id;
 	struct pciusb_entries r;
 
+	r.nb = 0;
 	if (!(f = fopen(proc_pci_path, "r"))) {
 		char *err_msg;
 		asprintf(&err_msg, "unable to open \"%s\"\n"
@@ -23,12 +24,12 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 			    "fopen() sets errno to", proc_pci_path);
 		perror(err_msg);
 		free(err_msg);
-		r.nb = 0; r.entries = NULL;
+		r.entries = NULL;
 		return r;
 	}
 	r.entries = malloc(sizeof(struct pciusb_entry) * MAX_DEVICES);
 
-	for (r.nb = 0; fgets(buf, sizeof(buf) - 1, f) && r.nb < MAX_DEVICES; r.nb++) {
+	for (; fgets(buf, sizeof(buf) - 1, f) && r.nb < MAX_DEVICES; r.nb++) {
 		struct pciusb_entry *e = &r.entries[r.nb];
 		pciusb_initialize(e);
 
@@ -57,10 +58,9 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 				if (fseek(f, 9, SEEK_SET) == 0) {
 					unsigned char class_prog = 0;
 					fread(&class_prog, 1, 1, f);
-					if (e->class_ == PCI_CLASS_SERIAL_USB) {
-						/* taken from kudzu's pci.c */
+					
+					if (e->class_ == PCI_CLASS_SERIAL_USB) /* taken from kudzu's pci.c */
 						e->module = strdup(class_prog == 0 ? "usb-uhci" : "usb-ohci");
-					}
 				}
 				fclose(f);
 			}
@@ -79,4 +79,3 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 	/* should not happen */
 	exit(1);
 }
-
