@@ -1,7 +1,7 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
-%define version 0.4.2
-%define release 3mdk
+%define version 0.4.3
+%define release 1mdk
 
 Name: %{name}
 Version: %{version}
@@ -53,6 +53,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Wed Jul 24 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.3-1mdk
+- lspcidrake.c: enhanced help
+- don't die when missing /proc/bus/pci/devices
+  (resp. /proc/bus/usb/devices), since on some boxes, this is
+  *normal*! free error messages obtained via asprintf (pixel)
+ - remove debugging message (pixel)
+
 * Mon Jul 22 2002 Pixel <pixel@mandrakesoft.com> 0.4.2-3mdk
 - don't die when missing /proc/bus/pci/devices (resp. /proc/bus/usb/devices), 
   since on some boxes, this is *normal*!
