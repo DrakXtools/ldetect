@@ -7,7 +7,8 @@
 #include "libldetect-private.h"
 #include "common.h"
 
-char *proc_pci_path = "/proc/bus/pci/devices";
+char *proc_pci_path_default = "/proc/bus/pci/devices";
+char *proc_pci_path = NULL;
 
 extern struct pciusb_entries pci_probe(int probe_type) {
 	FILE *f, *devf;
@@ -19,13 +20,15 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 	char file[25];
 
 	r.nb = 0;
-	if (!(f = fopen(proc_pci_path, "r"))) {
-		char *err_msg;
-		asprintf(&err_msg, "unable to open \"%s\"\n"
-			    "You may have passed a wrong argument to the \"-p\" option.\n"
-			    "fopen() sets errno to", proc_pci_path);
-		perror(err_msg);
-		free(err_msg);
+	if (!(f = fopen(proc_pci_path ? proc_pci_path : proc_pci_path_default, "r"))) {
+	        if (proc_pci_path) {
+		    char *err_msg;
+		    asprintf(&err_msg, "unable to open \"%s\"\n"
+			     "You may have passed a wrong argument to the \"-p\" option.\n"
+			     "fopen() sets errno to", proc_pci_path);
+		    perror(err_msg);
+		    free(err_msg);
+		}
 		r.entries = NULL;
 		return r;
 	}

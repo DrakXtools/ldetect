@@ -7,7 +7,8 @@
 #include "libldetect-private.h"
 #include "common.h"
 
-char *proc_usb_path = "/proc/bus/usb/devices";
+char *proc_usb_path_default = "/proc/bus/usb/devices";
+char *proc_usb_path = NULL;
 
 
 extern struct pciusb_entries usb_probe(void) {
@@ -17,14 +18,10 @@ extern struct pciusb_entries usb_probe(void) {
 	struct pciusb_entries r;
 	struct pciusb_entry *e = NULL;
 	r.nb = 0;
-	if (access(proc_usb_path, R_OK) != 0) {
-		r.entries = NULL;
-		return r;
-	}
 
-	if (!(f = fopen(proc_usb_path, "r"))) {
-		char *err_msg;
-		if (proc_usb_path==NULL || strcmp(proc_usb_path, "/proc/bus/usb/devices")) {
+	if (!(f = fopen(proc_usb_path ? proc_usb_path : proc_usb_path_default, "r"))) {
+		if (proc_usb_path) {
+		        char *err_msg;
 			asprintf(&err_msg, "unable to open \"%s\"\n"
 				    "You may have passed a wrong argument to the \"-u\" option.\n"
 				    "fopen() sets errno to", proc_usb_path);
