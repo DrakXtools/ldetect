@@ -33,8 +33,10 @@ static fh fh_open(char *fname) {
 			fprintf(stderr, "Missing pciusbtable (should be %s)\n", fname);
 			exit(1);
 		}
-		if (pipe(fdno))
-			perror("pciusb"); exit(1);
+		if (pipe(fdno)) {
+			perror("pciusb");
+			exit(1);
+		}
 
 		if ((ret.pid = fork()) != 0) {
 			ret.f = fdopen(fdno[0], "r");
@@ -94,30 +96,28 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 		if (nb != 4) {
 			nb = sscanf(buf, "0x%hx\t0x%hx\t%n", &vendor, &device, &offset);
 			if (nb != 2) {
-				if (buf[0] != '#') 
-					fprintf(stderr, "%s %d: bad line\n", fpciusbtable, line);
-				continue;
+				fprintf(stderr, "%s %d: bad line\n", fpciusbtable, line);
+				continue; // skip bad line
 			}
 		}
 		for (i = 0; i < entries->nb; i++) {
 			struct pciusb_entry *e = &entries->entries[i];
-			if (vendor == e->vendor && device == e->device) {
-				if (nb == 4 && e->subvendor == 0xffff && e->subdevice == 0xffff && !no_subid) {
-					pciusb_free(entries);
-					fh_close(&f);
-					return 0; /* leave, let the caller call again with subids */
-				}
+			if (vendor != e->vendor ||  device != e->device)
+				continue; // main ids differ
+			if (nb == 4 && e->subvendor == 0xffff && e->subdevice == 0xffff && !no_subid) {
+				pciusb_free(entries);
+				fh_close(&f);
+				return 0; /* leave, let the caller call again with subids */
+			}
 
-				if ((nb != 4 || (subvendor == e->subvendor && subdevice == e->subdevice)) && !e->module) {
-					if (!p) {
-						/* only do that search if not already done */ 
-						p = buf + offset + 1;
-						q = strchr(p, '\t');
-					}
-					e->module = strcmp(p, "unknown") ? strndup(p,q-p-1) : NULL;
-					e->text = strndup(q+2, strlen(q)-4);
-				}
-			}      
+			if ((nb == 4 && !(subvendor == e->subvendor && subdevice == e->subdevice)) && !e->module)
+				continue; // subids differ
+			if (!p) { // only calc text & module if not already done
+				p = buf + offset + 1;
+				q = strchr(p, '\t');
+			}
+			e->module = strcmp(p, "unknown") ? strndup(p,q-p-1) : NULL;
+			e->text = strndup(q+2, strlen(q)-4);
 		}
 	}
 	fh_close(&f);
