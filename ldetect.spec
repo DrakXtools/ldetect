@@ -1,7 +1,7 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
 %define version 0.2.3
-%define release 7mdk
+%define release 8mdk
 
 Name: %{name}
 Version: %{version}
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Wed Mar 21 2001 Pixel <pixel@mandrakesoft.com> 0.2.3-8mdk
+- use subids if they are needed
+
 * Thu Mar 15 2001 François Pons <fpons@mandrakesoft.com> 0.2.3-7mdk
 - added pci_bus, pci_device and pci_function for DrakX
 - added back Francis into cvs, please Francis do it yourself!
