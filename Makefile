@@ -50,3 +50,6 @@ srpm: clean $(RPM)
 
 	(cd .. ; tar cfj $(RPM)/SOURCES/$(project).tar.bz2 $(project))
 	rpm -bs $(RPM)/SPECS/$(project).spec
+
+log:
+	cvs2cl -U ../common/username -I ChangeLog -W 400
