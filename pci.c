@@ -63,6 +63,9 @@ extern struct pciusb_entries pci_probe(void) {
 			e->subdevice = 0xffff;
 		}
 		class_prog = buf[0x9];
+
+		/* special rules below must be in sync with gi/mdk-stage1/probing.c */
+
 		if (e->class_ == PCI_CLASS_SERIAL_USB) {
 		  /* taken from kudzu's pci.c */
 		  char *module = 
@@ -70,10 +73,13 @@ extern struct pciusb_entries pci_probe(void) {
 		    class_prog == 0x10 ? "usb-ohci" :
 		    class_prog == 0x20 ? "ehci-hcd" : NULL;
 		  if (module) e->module = strdup(module);
-		}
-		if (e->class_ == PCI_CLASS_SERIAL_FIREWIRE) {    
+
+		} else if (e->class_ == PCI_CLASS_SERIAL_FIREWIRE) {    
 		  /* taken from kudzu's pci.c */
 		  if (class_prog == 0x10) e->module = strdup("ohci1394");
+
+		} else if (e->class_ == PCI_CLASS_BRIDGE_CARDBUS) {
+			e->module = strdup("yenta_socket");
 		}
 
 		close(devf);

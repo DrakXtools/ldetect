@@ -1,5 +1,5 @@
 Name:    ldetect
-Version:  0.5.3
+Version:  0.5.4
 Release: 1mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Tue Dec  7 2004 Pixel <pixel@mandrakesoft.com> 0.5.4-1mdk
+- all PCI_CLASS_BRIDGE_CARDBUS cards are yenta_socket (says kudzu)
+
 * Thu Oct 28 2004 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.5.3-1mdk
 - keep existing description string if already reported by USB devices
   when usbtable description is empty (eg: freebox)
