@@ -1,7 +1,7 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
 %define version 0.4.2
-%define release 2mdk
+%define release 3mdk
 
 Name: %{name}
 Version: %{version}
@@ -53,6 +53,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Mon Jul 22 2002 Pixel <pixel@mandrakesoft.com> 0.4.2-3mdk
+- don't die when missing /proc/bus/pci/devices (resp. /proc/bus/usb/devices), 
+  since on some boxes, this is *normal*!
+- free error messages obtained via asprintf
+- remove debugging message "TOTO"
+
 * Tue Jul 16 2002 Pixel <pixel@mandrakesoft.com> 0.4.2-2mdk
 - pciusb.c: teach titi that !(a && !b) is not (!a && !b) but (!a || b)
   (the other solution is to teach him to *test*)

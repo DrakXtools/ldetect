@@ -15,7 +15,6 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 	unsigned short devbusfn;
 	unsigned int id;
 	struct pciusb_entries r;
-	r.entries = malloc(sizeof(struct pciusb_entry) * MAX_DEVICES);
 
 	if (!(f = fopen(proc_pci_path, "r"))) {
 		char *err_msg;
@@ -23,8 +22,11 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 			    "You may have passed a wrong argument to the \"-p\" option.\n"
 			    "fopen() sets errno to", proc_pci_path);
 		perror(err_msg);
-		exit(1);
+		free(err_msg);
+		r.nb = 0; r.entries = NULL;
+		return r;
 	}
+	r.entries = malloc(sizeof(struct pciusb_entry) * MAX_DEVICES);
 
 	for (r.nb = 0; fgets(buf, sizeof(buf) - 1, f) && r.nb < MAX_DEVICES; r.nb++) {
 		struct pciusb_entry *e = &r.entries[r.nb];

@@ -19,8 +19,8 @@ extern struct pciusb_entries usb_probe(void) {
 	struct pciusb_entry *e = NULL;
 
 	if (access(proc_pci_path, R_OK) != 0) {
-		printf( "TOTO\n");
-		exit(1);
+		r.nb = 0; r.entries = NULL;
+		return r;
 	}
 
 	if (!(f = fopen(proc_usb_path, "r"))) {
@@ -30,13 +30,16 @@ extern struct pciusb_entries usb_probe(void) {
 				    "You may have passed a wrong argument to the \"-u\" option.\n"
 				    "fopen() sets errno to", proc_usb_path);
 			perror(err_msg);
+			free(err_msg);
 		} /*else {
 			asprintf(&err_msg, "unable to open \"%s\"\n"
 				    "You should enable the usb service (as root, type 'service usb start'.\n"
 				    "fopen() sets errno to", proc_usb_path);
 			perror(err_msg);
+			free(err_msg);
 		} */
-		exit(1);
+		r.nb = 0; r.entries = NULL;
+		return r;
 	}
   
 	for(r.nb = line = 0; fgets(buf, sizeof(buf) - 1, f) && r.nb < psizeof(t); line++) {
