@@ -21,40 +21,43 @@ typedef struct {
 static fh fh_open(char *fname) {
 	fh ret;
 	int length = strlen(fname);
-	char *fname_gz = alloca(length + sizeof(".gz"));
-	sprintf(fname_gz, "%s.gz", fname);
 
 	if (access(fname, R_OK) == 0) {
 		ret.f = fopen(fname, "r");
 		ret.pid = 0;
-	} else if (access(fname_gz, R_OK) == 0) {
-		int fdno[2];
-		if (pipe(fdno)) { perror("pciusb"); exit(1); }
-		if ((ret.pid = fork()) != 0) {
-			ret.f = fdopen(fdno[0], "r");
-			close(fdno[1]);
-		} else {
-			char *cmd[8];
-			int ip = 0;
-			char *ld_loader = getenv("LD_LOADER");
-
-			if (ld_loader && *ld_loader)
-				cmd[ip++] = ld_loader;
-
-			cmd[ip++] = "gzip";
-			cmd[ip++] = "-dc";
-			cmd[ip++] = fname_gz;
-			cmd[ip++] = NULL;
-
-			dup2(fdno[1], STDOUT_FILENO);
-			close(fdno[0]);
-			close(fdno[1]);
-			execvp(cmd[0], cmd);
-			perror("pciusb"); exit(2);
-		}
 	} else {
-		fprintf(stderr, "Missing pciusbtable (should be %s)\n", fname);
-		exit(1);
+		char *fname_gz = alloca(length + sizeof(".gz"));
+		sprintf(fname_gz, "%s.gz", fname);
+		if (access(fname_gz, R_OK) == 0) {
+			int fdno[2];
+			if (pipe(fdno)) {
+				perror("pciusb"); exit(1);
+			}
+			if ((ret.pid = fork()) != 0) {
+				ret.f = fdopen(fdno[0], "r");
+				close(fdno[1]);
+			} else {
+				char* cmd[4];
+				int ip = 0;
+				char *ld_loader = getenv("LD_LOADER");
+
+				if (ld_loader && *ld_loader)
+					cmd[ip++] = ld_loader;
+
+				cmd[ip++] = "zcat";
+				cmd[ip++] = fname_gz;
+				cmd[ip++] = NULL;
+
+				dup2(fdno[1], STDOUT_FILENO);
+				close(fdno[0]);
+				close(fdno[1]);
+				execvp(cmd[0], cmd);
+				perror("pciusb"); exit(2);
+			}
+		} else {
+			fprintf(stderr, "Missing pciusbtable (should be %s)\n", fname);
+			exit(1);
+		}
 	}
 	return ret;
 }
