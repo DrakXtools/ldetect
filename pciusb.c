@@ -109,6 +109,9 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 			}
 			if (vendor != e->vendor ||  device != e->device)
 				continue; // main ids differ
+			if (nb < 4 && e->module)
+				continue; // already found a match and this match isn't a subid one (so it's not potentially more precise)
+
 			if (nb == 4 && e->subvendor == 0xffff && e->subdevice == 0xffff && !no_subid) {
 				pciusb_free(entries);
 				fh_close(&f);
