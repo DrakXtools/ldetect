@@ -9,6 +9,10 @@ struct pciusb_entry {
   unsigned short subdevice; /* 0xffff if not probe_type'd or no subid */
   unsigned short class; /* 0 if not probe_type'd */
 
+  unsigned short pci_bus; /* pci bus id 8 bits wide */
+  unsigned short pci_device; /* pci device id 5 bits wide */
+  unsigned short pci_function; /* pci function id 3 bits wide */
+
   char *module;
   char *text;
 };

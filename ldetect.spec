@@ -1,6 +1,6 @@
 %define name ldetect
 %define version 0.2.3
-%define release 5mdk
+%define release 6mdk
 
 Name: %{name}
 Version: %{version}
@@ -48,6 +48,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Thu Mar 15 2001 François Pons <fpons@mandrakesoft.com> 0.2.3-6mdk
+- added pci_bus, pci_device and pci_function for DrakX.
+
 * Tue Mar  6 2001 François Pons <fpons@mandrakesoft.com> 0.2.3-5mdk
 - added support for SHARE_PATH
 - add BuildRequires: usbutils
