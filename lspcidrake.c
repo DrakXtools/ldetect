@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include "libldetect.h"
 
@@ -38,7 +37,7 @@ int main(int argc, char **argv) {
 	while (ptr && *ptr) {
 		if (!strcmp(*ptr, "-h") || !strcmp(*ptr, "--help")) {
 			printf("usage: lspcidrake [-v] [-f]\n");	
-			exit(0);	
+			return 0;	
 		}
 		if (!strcmp(*ptr, "-v")) {
 			verboze = 1;
@@ -56,5 +55,5 @@ int main(int argc, char **argv) {
 	entries = usb_probe();
 	printit(&entries, usb_class2text);
 	pciusb_free(&entries);
-	exit(0);
+	return 0;
 }
