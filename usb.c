@@ -17,7 +17,7 @@ extern struct pciusb_entries usb_probe(void) {
 	struct pciusb_entries r;
 	struct pciusb_entry *e = NULL;
 	r.nb = 0;
-	if (access(proc_pci_path, R_OK) != 0) {
+	if (access(proc_usb_path, R_OK) != 0) {
 		r.entries = NULL;
 		return r;
 	}
