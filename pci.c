@@ -6,9 +6,6 @@
 #include "libldetect-private.h"
 #include "common.h"
 
-static int pci_find_modules(struct pciusb_entries entries, int no_subid) {
-	return pciusb_find_modules(entries, "pcitable", no_subid);
-}
 
 extern struct pciusb_entries pci_probe(int probe_type) {
 	FILE *f;
@@ -63,7 +60,8 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 	fclose(f);
 	r.entries = memdup(t, sizeof(struct pciusb_entry) * r.nb);
 
-	if (pci_find_modules(r, probe_type)) return r;
+	if (pciusb_find_modules(r, "pcitable", probe_type))
+		return r;
 
 	/* ok, let's try again with subids */
 	if (probe_type == 0) return pci_probe(1);

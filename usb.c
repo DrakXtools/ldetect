@@ -5,9 +5,6 @@
 #include "libldetect-private.h"
 #include "common.h"
 
-static int usb_find_modules(struct pciusb_entries entries) {
-	return pciusb_find_modules(entries, "usbtable", 1 /* no_subid */);
-}
 
 extern struct pciusb_entries usb_probe(void) {
 	FILE *f;
@@ -54,7 +51,7 @@ extern struct pciusb_entries usb_probe(void) {
 	fclose(f);
 	r.entries = memdup(t, sizeof(struct pciusb_entry) * r.nb);
 
-	usb_find_modules(r);
+	pciusb_find_modules(r, "usbtable", 1 /* no_subid */);
 	return r;
 }
 
