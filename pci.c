@@ -80,6 +80,8 @@ extern struct pciusb_entries pci_probe(void) {
 
 		} else if (e->class_ == PCI_CLASS_BRIDGE_CARDBUS) {
 			e->module = strdup("yenta_socket");
+		} else if (e->vendor == 0x1106 && e->class_ == PCI_CLASS_STORAGE_IDE) {
+			e->module = strdup("sata_via");
 		}
 
 		close(devf);
