@@ -44,6 +44,11 @@ static void print_usb_class(unsigned long class_) {
   }
 }
 
+static void print_dmi_entries(struct dmi_entries entries) {
+	unsigned int i;
+	for (i = 0; i < entries.nb; i++)
+		printf("%-16s: %s\n", entries.entries[i].module, entries.entries[i].constraints);
+}
 
 int main(int argc, char **argv) {
 	char ** ptr = argv;
@@ -54,6 +59,7 @@ int main(int argc, char **argv) {
 				"-p <file>: pci devices source [/proc/bus/pci/devices by default]\n"
 				"-u <file>: usb devices source [/proc/bus/usb/devices by default]\n"
 				"-v : verbose mode [print ids and sub-ids], implies full probe\n"
+				"--dmidecode <file>: to use this dmidecode output instead of calling dmidecode\n"
 				);	
 			return 0;	
 		}
@@ -63,10 +69,17 @@ int main(int argc, char **argv) {
 		  proc_usb_path = *++ptr;
 		else if (!strcmp(*ptr, "-p"))
 		  proc_pci_path = *++ptr;
+		else if (!strcmp(*ptr, "--dmidecode"))
+		  dmidecode_file = *++ptr;
 		ptr++;
 	}
 
 	printit(pci_probe(), print_pci_class);
 	printit(usb_probe(), print_usb_class);
+	
+	struct dmi_entries dmi_entries = dmi_probe();
+	print_dmi_entries(dmi_entries);
+	free_dmi_entries(dmi_entries);
+
 	return 0;
 }

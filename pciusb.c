@@ -1,5 +1,4 @@
 #define _GNU_SOURCE
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -13,77 +12,12 @@
 #include "libldetect-private.h"
 #include "common.h"
 
-typedef struct {
-	FILE *f;
-	pid_t pid;
-} fh;
-
-static fh fh_open(char *fname) {
-	fh ret;
-	int length = strlen(fname);
-
-	if (access(fname, R_OK) == 0) {
-		ret.f = fopen(fname, "r");
-		ret.pid = 0;
-	} else {
-		int fdno[2];
-		char *fname_gz = alloca(length + sizeof(".gz"));
-		sprintf(fname_gz, "%s.gz", fname);
-		if (access(fname_gz, R_OK) != 0) {
-			fprintf(stderr, "Missing pciusbtable (should be %s)\n", fname);
-			exit(1);
-		}
-		if (pipe(fdno)) {
-			perror("pciusb");
-			exit(1);
-		}
-
-		if ((ret.pid = fork()) != 0) {
-			ret.f = fdopen(fdno[0], "r");
-			close(fdno[1]);
-		} else {
-			char* cmd[5];
-			int ip = 0;
-			char *ld_loader = getenv("LD_LOADER");
-
-			if (ld_loader && *ld_loader)
-				cmd[ip++] = ld_loader;
-
-			cmd[ip++] = "gzip";
-			cmd[ip++] = "-cd";
-			cmd[ip++] = fname_gz;
-			cmd[ip++] = NULL;
-
-			dup2(fdno[1], STDOUT_FILENO);
-			close(fdno[0]);
-			close(fdno[1]);
-			execvp(cmd[0], cmd);
-			perror("pciusb"); 
-			exit(2);
-		}
-	}
-	return ret;
-}
-
-static void fh_close(fh *f) {
-	fclose(f->f);
-	if (f->pid > 0)
-		waitpid(f->pid, NULL, 0);
-}
-
 extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable) {
 	fh f;
 	char buf[2048];
 	int line;
 
-	char *share_path = getenv("SHARE_PATH");
-	char *fname;
-	if (!share_path || !*share_path) share_path = "/usr/share";
-
-	fname = alloca(strlen(share_path) + sizeof("/ldetect-lst/") + strlen(fpciusbtable)); 
-	sprintf(fname, "%s/ldetect-lst/%s", share_path, fpciusbtable);
-
-	f = fh_open(fname);
+	f = fh_open(fpciusbtable);
 
 	for (line = 1; fgets(buf, sizeof(buf) - 1, f.f); line++) {
 		unsigned short vendor, device, subvendor, subdevice;

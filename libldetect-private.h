@@ -7,3 +7,4 @@ extern void pciusb_initialize(struct pciusb_entry *e);
 
 extern char *proc_usb_path;
 extern char *proc_pci_path;
+extern char *dmidecode_file;

@@ -43,3 +43,18 @@ struct usb_class_text {
 };
 
 extern struct usb_class_text usb_class2text(unsigned long class_);
+
+/******************************************************************************/
+/* dmi ************************************************************************/
+/******************************************************************************/
+struct dmi_entry {
+  char *constraints;
+  char *module;
+};
+struct dmi_entries {
+  struct dmi_entry *entries;
+  unsigned int nb;
+};
+
+extern struct dmi_entries dmi_probe(void);
+extern void dmi_entries_free(struct dmi_entries entries);

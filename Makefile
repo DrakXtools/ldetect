@@ -14,7 +14,7 @@ build: $(binaries) $(libraries)
 
 lspcidrake: lspcidrake.c libldetect.a
 
-libldetect.a: pciusb.o pci.o usb.o pciclass.o usbclass.o
+libldetect.a: common.o pciusb.o pci.o usb.o pciclass.o usbclass.o dmi.o
 	ar rsc $@ $^
 
 pciclass.c: /usr/include/linux/pci.h /usr/include/linux/pci_ids.h
@@ -30,6 +30,7 @@ usbclass.c: /usr/share/usb.ids
 pciusb.o:	pciusb.c libldetect.h libldetect-private.h common.h
 pci.o:	pci.c libldetect.h libldetect-private.h common.h
 usb.o:	usb.c libldetect.h libldetect-private.h common.h
+dmi.o:	dmi.c libldetect.h libldetect-private.h common.h
 
 clean:
 	rm -f *~ *.o pciclass.c usbclass.c $(binaries) $(libraries)

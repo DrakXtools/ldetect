@@ -1,5 +1,5 @@
 Name:    ldetect
-Version:  0.5.5
+Version:  0.5.6
 Release: 1mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Mon Mar 14 2005 Pixel <pixel@mandrakesoft.com> 0.5.6-1mdk
+- add dmitable parsing and use
+
 * Thu Feb 17 2005 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.5.5-1mdk
 - handle a few more special cases (gdth, snd-vx222, 8139too, and agp bridges)
 - detect new VIA SATA controllers like kernel does
