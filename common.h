@@ -5,6 +5,4 @@ static inline void *memdup(void *src, size_t size) {
   memcpy(r, src, size);
   return r;
 }
-static inline void ifree(void *p) {
-  if (p) { free(p); p = NULL; }
-}
+#define ifree(p) do { if (p) { free(p); p = NULL; } } while (0)
