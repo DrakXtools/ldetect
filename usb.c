@@ -18,11 +18,8 @@ extern struct pciusb_entries usb_probe(void) {
   struct pciusb_entries r;
   struct pciusb_entry *e = NULL;
 
-  if (!(f = fopen(file, "r"))) {
-    fprintf(stderr, "can't open %s\n", file);
-    exit(1);
-  }
-
+  if (!(f = fopen(file, "r")))   exit(1);
+  
   for(r.nb = line = 0; fgets(buf, sizeof(buf) - 1, f) && r.nb < psizeof(t); line++) {
     if (buf[0] == 'P') {
       e = &t[r.nb++];
