@@ -1,6 +1,7 @@
+# !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
 %define version 0.2.3
-%define release 6mdk
+%define release 7mdk
 
 Name: %{name}
 Version: %{version}
@@ -29,7 +30,11 @@ see %{name}
 %setup -n %{name}
 
 %build
+%ifnarch ia64
 %make
+%else
+%make CFLAGS="$CFLAGS -fPIC"
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -48,8 +53,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
-* Thu Mar 15 2001 François Pons <fpons@mandrakesoft.com> 0.2.3-6mdk
-- added pci_bus, pci_device and pci_function for DrakX.
+* Thu Mar 15 2001 François Pons <fpons@mandrakesoft.com> 0.2.3-7mdk
+- added pci_bus, pci_device and pci_function for DrakX
+- added back Francis into cvs, please Francis do it yourself!
+
+* Tue Mar 15 2001 Francis Galiegue <fg@mandrakesoft.com> 0.2.3-6mdk
+- -fPIC in CFLAGS for ia64
 
 * Tue Mar  6 2001 François Pons <fpons@mandrakesoft.com> 0.2.3-5mdk
 - added support for SHARE_PATH
