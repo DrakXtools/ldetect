@@ -18,7 +18,7 @@ struct pciusb_entry {
 };
 struct pciusb_entries {
   struct pciusb_entry *entries;
-  int nb;
+  unsigned int nb;
 };
 
 extern void pciusb_free(struct pciusb_entries *entries);

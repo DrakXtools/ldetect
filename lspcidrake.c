@@ -28,7 +28,7 @@ void print_id(struct pciusb_entry *e) {
 }
 
 void pci_printit(struct pciusb_entries *entries) {
-	int i;
+	unsigned int i;
 	for (i = 0; i < entries->nb; i++) {
 		struct pciusb_entry *e = &entries->entries[i];
 		print_name(e);
@@ -42,7 +42,7 @@ void pci_printit(struct pciusb_entries *entries) {
 }
 
 void usb_printit(struct pciusb_entries *entries) {
-	int i;
+	unsigned int i;
 	for (i = 0; i < entries->nb; i++) {
 		struct pciusb_entry *e = &entries->entries[i];
 		print_name(e);
