@@ -9,7 +9,7 @@
 
 extern struct pciusb_entries pci_probe(int probe_type) {
 	FILE *f;
-	char buf[512];
+	char buf[BUF_SIZE];
 	unsigned short devbusfn;
 	unsigned int id;
 	struct pciusb_entry t[MAX_DEVICES];
