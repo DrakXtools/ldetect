@@ -13,7 +13,7 @@ Copyright: GPL
 Prefix: %{_prefix}
 
 %package devel
-Summary: development package for ldetect
+Summary: Development package for ldetect
 Group: Development/C
 
 %description
