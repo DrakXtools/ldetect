@@ -5,17 +5,18 @@
 #include "libldetect-private.h"
 #include "common.h"
 
+char *proc_usb_path = "/proc/bus/usb/devices";
+
 
 extern struct pciusb_entries usb_probe(void) {
 	FILE *f;
 	char buf[BUF_SIZE];
 	int line;
-	const char *file = "/proc/bus/usb/devices";
 	struct pciusb_entry t[MAX_DEVICES];
 	struct pciusb_entries r;
 	struct pciusb_entry *e = NULL;
 
-	if (!(f = fopen(file, "r")))
+	if (!(f = fopen(proc_usb_path, "r")))
 		exit(1);
   
 	for(r.nb = line = 0; fgets(buf, sizeof(buf) - 1, f) && r.nb < psizeof(t); line++) {
@@ -24,7 +25,7 @@ extern struct pciusb_entries usb_probe(void) {
 			pciusb_initialize(e);
 
 			if (sscanf(buf, "P:  Vendor=%hx ProdID=%hx", &e->vendor, &e->device) != 2) {
-				fprintf(stderr, "%s %d: unknown ``P'' line\n", file, line);
+				fprintf(stderr, "%s %d: unknown ``P'' line\n", proc_usb_path, line);
 				pciusb_initialize(e);
 			}
 		} else if (e && buf[0] == 'I' && e->class_ == 0) {
@@ -32,7 +33,7 @@ extern struct pciusb_entries usb_probe(void) {
 			if (sscanf(buf, "I:  If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x", &class_, &sub, &prot) == 3) {
 				e->class_ = (class_ * 0x100 + sub) * 0x100 + prot;
 			} else {
-				fprintf(stderr, "%s %d: unknown ``I'' line\n", file, line);
+				fprintf(stderr, "%s %d: unknown ``I'' line\n", proc_usb_path, line);
 			}
 		} else if (e && buf[0] == 'S') {
 			int offset;

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "libldetect.h"
+#include "libldetect-private.h"
 
 static int verboze = 0;
 
@@ -14,7 +15,8 @@ static void printit(struct pciusb_entries entries, const char *(find_class)(unsi
 		else	printf("unknown (%04x/%04x/%04x/%04x)", e->vendor, e->device, e->subvendor, e->subdevice);
 		if (e->class_) {
 			const char *class_ = find_class(e->class_);
-			if (strcmp(class_, "NOT_DEFINED") != 0) printf(" [%s]", class_);
+			if (strcmp(class_, "NOT_DEFINED") != 0) 
+				printf(" [%s]", class_);
 		}
 		if (verboze && e->text) {
 			printf(" (vendor:%04x device:%04x", e->vendor, e->device);
@@ -25,7 +27,6 @@ static void printit(struct pciusb_entries entries, const char *(find_class)(unsi
 		printf("\n");
 	}
 	pciusb_free(&entries);
-
 }
 
 
@@ -35,7 +36,11 @@ int main(int argc, char **argv) {
 
 	while (ptr && *ptr) {
 		if (!strcmp(*ptr, "-h") || !strcmp(*ptr, "--help")) {
-			printf("usage: lspcidrake [-v] [-f]\n");	
+			printf("usage: lspcidrake [-v|-f|-u]\n"
+				"-f : full probe\n"
+				"-u : usb devices source [/proc/usb/devices by default\n"
+				"-v : verbose mode [print ids and sub-ids], implies full probe\n"
+				);	
 			return 0;	
 		}
 		if (!strcmp(*ptr, "-v")) {
@@ -44,6 +49,8 @@ int main(int argc, char **argv) {
 		}
 		if (!strcmp(*ptr, "-f"))
 			full_probe = 1;
+		if (!strcmp(*ptr, "-u"))
+			proc_usb_path = *++ptr;
 		ptr++;
 	}
 
