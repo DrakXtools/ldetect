@@ -31,9 +31,8 @@ see %{name}
 
 %build
 # Add PIC code in static library because it could be linked into a DSO
-%ifarch ia64 x86_64
 PICFLAGS="-DPIC -fPIC"
-%endif
+
 %make CFLAGS="-Wall -Wstrict-prototypes $PICFLAGS"
 
 %install
