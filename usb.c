@@ -30,10 +30,9 @@ extern struct pciusb_entries usb_probe(void) {
 	pciusb_initialize(e);
       }
     } else if (e && buf[0] == 'I' && e->class == 0) {
-      int class, prot = 0;
-      if (sscanf(buf, "I:  If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%*02x Prot=%02x", &class, &prot) == 2) {
-	/* we fake a class based on class and proto, subclass unneeded? */
-	e->class = class * 0x100 + prot;
+      int class, sub, prot = 0;
+      if (sscanf(buf, "I:  If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x", &class, &sub, &prot) == 3) {
+	e->class = (class * 0x100 + sub) * 0x100 + prot;
       } else {
 	fprintf(stderr, "%s %d: unknown ``I'' line\n", file, line);
       }
