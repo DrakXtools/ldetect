@@ -6,10 +6,6 @@
 int verboze = 0;
 int full_probe = 0;
 
-void usage(void) {
-	printf("usage: lspcidrake [-v] [-f]\n");
-	exit(0);
-}
 
 void print_name(struct pciusb_entry *e) {
 	printf("%-16s: ", e->module ? e->module : "unknown");
@@ -27,13 +23,15 @@ void print_id(struct pciusb_entry *e) {
 	}
 }
 
-void pci_printit(struct pciusb_entries *entries) {
+typedef  const char *(f_t)(unsigned long );
+
+void printit(struct pciusb_entries *entries, f_t find_class) {
 	unsigned int i;
 	for (i = 0; i < entries->nb; i++) {
 		struct pciusb_entry *e = &entries->entries[i];
 		print_name(e);
 		if (e->class_) {
-			const char *class_ = pci_class2text(e->class_);
+			const char *class_ = find_class(e->class_);
 			if (strcmp(class_, "NOT_DEFINED") != 0) printf(" [%s]", class_);
 		}
 		print_id(e);
@@ -41,23 +39,14 @@ void pci_printit(struct pciusb_entries *entries) {
 	}
 }
 
-void usb_printit(struct pciusb_entries *entries) {
-	unsigned int i;
-	for (i = 0; i < entries->nb; i++) {
-		struct pciusb_entry *e = &entries->entries[i];
-		print_name(e);
-		if (e->class_) 
-			printf(" [%s]", usb_class2text(e->class_));
-		print_id(e);
-		printf("\n");
-	}
-}
 
 int main(int argc, char **argv) {
 	char ** ptr = argv;
 	while (ptr && *ptr) {
-		if (!strcmp(*ptr, "-h") || !strcmp(*ptr, "--help"))
-			usage();
+		if (!strcmp(*ptr, "-h") || !strcmp(*ptr, "--help")) {
+			printf("usage: lspcidrake [-v] [-f]\n");	
+			exit(0);	
+		}
 		if (!strcmp(*ptr, "-v")) {
 			verboze = 1;
 			full_probe = 1;
@@ -68,11 +57,11 @@ int main(int argc, char **argv) {
 	}
 
 	struct pciusb_entries entries = pci_probe(full_probe);
-	pci_printit(&entries);
+	printit(&entries, pci_class2text);
 	pciusb_free(&entries);
 
 	entries = usb_probe();
-	usb_printit(&entries);
+	printit(&entries, usb_class2text);
 	pciusb_free(&entries);
 	exit(0);
 }
