@@ -60,8 +60,8 @@ extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpcius
     int nb = sscanf(buf, "0x%hx\t0x%hx\t0x%hx\t0x%hx\t%n", &vendor, &device, &subvendor, &subdevice, &offset);
     if (nb != 4) {
       nb = sscanf(buf, "0x%hx\t0x%hx\t%n", &vendor, &device, &offset);
-      if (nb != 2 && buf[0] != '#') {
-	fprintf(stderr, "%s %d: bad line\n", fpciusbtable, line);
+      if (nb != 2) {
+	if (buf[0] != '#') fprintf(stderr, "%s %d: bad line\n", fpciusbtable, line);
 	continue;
       }
     }
@@ -80,6 +80,7 @@ extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpcius
 	  if (q) {
 	    q[-1] = 0;
 	    q[strlen(q)-2] = 0;
+	    ifree(e->module); ifree(e->text);
 	    e->module = strcmp(p, "unknown") ? strdup(p) : NULL;
 	    e->text = strdup(q+2);
 	  }
