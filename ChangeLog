@@ -1,3 +1,32 @@
+2005-02-17 15:16  Thierry Vignaud <tvignaud@mandrakesoft.com>
+
+	* ldetect.spec: fill in 0.5.5-1mdk's changelog
+
+2005-02-17 15:15  Thierry Vignaud <tvignaud@mandrakesoft.com>
+
+	* ldetect.spec: 0.5.5-1mdk
+
+2005-02-17 15:15  Thierry Vignaud <tvignaud@mandrakesoft.com>
+
+	* pci.c: handle a few more special cases (gdth, snd-vx222, 8139too,
+	  and agp bridges)
+
+2005-02-17 15:15  Thierry Vignaud <tvignaud@mandrakesoft.com>
+
+	* pci.c: handle a few more special cases (gdth, snd-vx222, 8139too,
+	  and agp bridges)
+
+2005-02-17 13:26  Thierry Vignaud <tvignaud@mandrakesoft.com>
+
+	* pci.c: detect VIA SATA controllers since new sata_via.c driver
+	  probes them this way... (we should really add a class/...
+	  matching table like kernel's pcimap is)
+
+2004-12-07 17:06  Pixel <pixel@mandrakesoft.com>
+
+	* ldetect.spec, pci.c: all PCI_CLASS_BRIDGE_CARDBUS cards are
+	  yenta_socket (says kudzu)
+
 2004-10-28 10:07  Thierry Vignaud <tvignaud@mandrakesoft.com>
 
 	* ldetect.spec: 0.5.3-1mdk
