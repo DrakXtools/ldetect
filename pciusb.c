@@ -103,10 +103,8 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 		}
 		for (i = 0; i < entries->nb; i++) {
 			struct pciusb_entry *e = &entries->entries[i];
-			if (e->already_found) {
-				if (e->device == 0x0525 &&e->device == device)
-					continue;	// skip since already found with sub ids
-			}
+			if (e->already_found)
+				continue;	// skip since already found with sub ids
 			if (vendor != e->vendor ||  device != e->device)
 				continue; // main ids differ
 			if (nb < 4 && e->module)
