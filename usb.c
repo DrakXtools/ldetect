@@ -11,7 +11,7 @@ extern struct pciusb_entries usb_probe(void) {
 	char buf[512];
 	int line;
 	const char *file = "/proc/bus/usb/devices";
-	struct pciusb_entry t[100];
+	struct pciusb_entry t[MAX_DEVICES];
 	struct pciusb_entries r;
 	struct pciusb_entry *e = NULL;
 

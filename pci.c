@@ -12,7 +12,7 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 	char buf[512];
 	unsigned short devbusfn;
 	unsigned int id;
-	struct pciusb_entry t[100];
+	struct pciusb_entry t[MAX_DEVICES];
 	struct pciusb_entries r;
 
 	if (!(f = fopen("/proc/bus/pci/devices", "r"))) exit(1);
