@@ -1,6 +1,6 @@
 %define name ldetect
 %define version 0.2.0
-%define release 1mdk
+%define release 2mdk
 
 Name: %{name}
 Version: %{version}
@@ -9,6 +9,7 @@ Summary: Light hardware detection library
 Source: %{name}.tar.bz2
 Group: System/Libraries
 BuildRoot: %{_tmppath}/%{name}-buildroot
+Requires: ldetect-lst
 Copyright: GPL
 Prefix: %{_prefix}
 
@@ -46,5 +47,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Fri Dec 15 2000 Pixel <pixel@mandrakesoft.com> 0.2.0-2mdk
+- add requires ldetect-lst
+
 * Fri Dec 15 2000 Pixel <pixel@mandrakesoft.com> 0.2.0-1mdk
 - first release
