@@ -1,7 +1,7 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
-%define version 0.2.4
-%define release 2mdk
+%define version 0.2.5
+%define release 1mdk
 
 Name: %{name}
 Version: %{version}
@@ -10,7 +10,7 @@ Summary: Light hardware detection library
 Source: %{name}.tar.bz2
 Group: System/Libraries
 BuildRoot: %{_tmppath}/%{name}-buildroot
-BuildRequires: usbutils
+BuildRequires: usbutils pciutils-devel
 Requires: ldetect-lst
 License: GPL
 Prefix: %{_prefix}
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Fri Dec 28 2001 Pixel <pixel@mandrakesoft.com> 0.2.5-1mdk
+- in probe_type=1, recognize usb controllers (is either usb-uhci or usb-ohci)
+
 * Thu Sep 13 2001 Pixel <pixel@mandrakesoft.com> 0.2.4-2mdk
 - use the sub-category for usb probing
 

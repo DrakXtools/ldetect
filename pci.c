@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pci/pci.h>
 #include "libldetect.h"
 #include "libldetect-private.h"
 #include "common.h"
@@ -44,6 +45,16 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 	  e.subvendor = 0xffff;
 	  e.subdevice = 0xffff;
 	}
+
+        if (fseek(f, 9, SEEK_SET) == 0) {
+	  unsigned char class_prog = 0;
+	  fread(&class_prog, 1, 1, f);
+	  if (e.class == PCI_CLASS_SERIAL_USB) {
+	    /* taken from kudzu's pci.c */
+	    e.module = strdup(class_prog == 0 ? "usb-uhci" : "usb-ohci");
+	  }
+	}
+
 	fclose(f);
       }
     }
