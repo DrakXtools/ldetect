@@ -1,3 +1,13 @@
+2002-08-26 00:47  tvignaud
+
+	* pci.c: - kill last fseek
+	- change if(cdt) cascade into if(!cdt) 	continue
+	- move loop invariant out of loop
+
+2002-08-22 12:31  tvignaud
+
+	* ChangeLog, ldetect.spec: 0.4.6-3mdk
+
 2002-08-22 12:27  tvignaud
 
 	* pci.c: try to not freeze on buggy motherboard by preventing:

@@ -1,6 +1,6 @@
 Name:    ldetect
 Version:  0.4.6
-Release: 3mdk
+Release: 4mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
 Group: System/Libraries
@@ -49,6 +49,10 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Mon Aug 26 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.6-4mdk
+- kill last remaining lseek in pci configuration space to prevent
+  buggy motherboard from freezing
+
 * Thu Aug 22 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.6-3mdk
 - prevent freeze on buggy motherboards
 
