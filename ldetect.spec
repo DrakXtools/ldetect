@@ -1,6 +1,6 @@
 Name:    ldetect
 Version:  0.4.6
-Release: 4mdk
+Release: 5mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
 Group: System/Libraries
@@ -49,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Thu Aug 29 2002 Pixel <pixel@mandrakesoft.com> 0.4.6-5mdk
+- fix getting the Product name in usb (occurs when there is no entry in usbtable)
+
 * Mon Aug 26 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.6-4mdk
 - kill last remaining lseek in pci configuration space to prevent
   buggy motherboard from freezing
