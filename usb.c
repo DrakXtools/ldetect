@@ -81,7 +81,7 @@ extern struct pciusb_entries usb_probe(void) {
 			} else if (sscanf(buf, "S:  Product=%n%c", &offset, &dummy) == 1) {
 				if (!e->text) 
 					e->text = strdup("Unknown|");
- 				buf[length - 1] = 0; /* removing '\n' */
+				buf[length] = 0; /* removing '\n' */
 				e->text = realloc(e->text, strlen(e->text) + length-offset + 2);
 				strcat(e->text, buf + offset);
 			}
