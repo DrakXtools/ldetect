@@ -95,8 +95,8 @@ extern struct pciusb_entries pci_probe(void) {
                    || e->subvendor == 0x1186 && e->subdevice == 0x1300
                    || e->subvendor == 0x13d1 && e->subdevice == 0xab06)
                     e->module = strdup("8139too");
-		} else if (e->vendor == 0x1106 && e->class_ == PCI_CLASS_STORAGE_IDE) {
-			e->module = strdup("sata_via");
+		} else if (e->vendor == 0x10de && e->class_ == PCI_CLASS_STORAGE_IDE) {
+			e->module = strdup("sata_nv");
 		} else if (e->vendor == 0x10b5 && (e->device == 0x9030 || e->device == 0x9050) && e->subvendor == 0x1369) {
 			e->module = strdup("snd-vx222");
 		} else if (e->vendor == 0x1119) {   /* Vortex only makes RAID controllers. */
