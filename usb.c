@@ -1,3 +1,5 @@
+#include <unistd.h>
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,8 +18,26 @@ extern struct pciusb_entries usb_probe(void) {
 	struct pciusb_entries r;
 	struct pciusb_entry *e = NULL;
 
-	if (!(f = fopen(proc_usb_path, "r")))
+	if (access(proc_pci_path, R_OK) != 0) {
+		printf( "TOTO\n");
 		exit(1);
+	}
+
+	if (!(f = fopen(proc_usb_path, "r"))) {
+		char *err_msg;
+		if (proc_usb_path==NULL || strcmp(proc_usb_path, "/proc/bus/usb/devices")) {
+			asprintf(&err_msg, "unable to open \"%s\"\n"
+				    "You may have passed a wrong argument to the \"-u\" option.\n"
+				    "fopen() sets errno to", proc_usb_path);
+			perror(err_msg);
+		} /*else {
+			asprintf(&err_msg, "unable to open \"%s\"\n"
+				    "You should enable the usb service (as root, type 'service usb start'.\n"
+				    "fopen() sets errno to", proc_usb_path);
+			perror(err_msg);
+		} */
+		exit(1);
+	}
   
 	for(r.nb = line = 0; fgets(buf, sizeof(buf) - 1, f) && r.nb < psizeof(t); line++) {
 		if (buf[0] == 'P') {

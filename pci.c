@@ -1,3 +1,5 @@
+#include <unistd.h>
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,8 +18,14 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 	struct pciusb_entries r;
 	r.entries = malloc(sizeof(struct pciusb_entry) * MAX_DEVICES);
 
-	if (!(f = fopen(proc_pci_path, "r"))) 
+	if (!(f = fopen(proc_pci_path, "r"))) {
+		char *err_msg;
+		asprintf(&err_msg, "unable to open \"%s\"\n"
+			    "You may have passed a wrong argument to the \"-p\" option.\n"
+			    "fopen() sets errno to", proc_pci_path);
+		perror(err_msg);
 		exit(1);
+	}
 
 	for (r.nb = 0; fgets(buf, sizeof(buf) - 1, f) && r.nb < MAX_DEVICES; r.nb++) {
 		struct pciusb_entry *e = &r.entries[r.nb];

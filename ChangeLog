@@ -1,3 +1,13 @@
+2002-07-16 17:07  tvignaud
+
+	* ChangeLog, ldetect.spec, libldetect-private.h, lspcidrake.c,
+	pci.c: - pci.c: add the ability to read pci devices list from a
+	file instead   of /proc/bus/pci/devices
+	
+	- spec: prepare for next release
+	
+	- add ChangeLog
+
 2002-07-16 16:54  tvignaud
 
 	* libldetect-private.h, lspcidrake.c, usb.c: - move usb devices
