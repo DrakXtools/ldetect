@@ -44,6 +44,8 @@ static fh fh_open(char *fname) {
       cmd[ip++] = NULL;
 
       dup2(fdno[1], STDOUT_FILENO);
+      close(fdno[0]);
+      close(fdno[1]);
       execvp(cmd[0], cmd);
       perror("pciusb"); exit(2);
     }
