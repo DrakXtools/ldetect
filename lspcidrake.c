@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 			printf("usage: lspcidrake [-v|-f|-u]\n"
 				"-f : full probe\n"
 				"-p : pci devices source [/proc/bus/pci/devices by default\n"
-				"-u : usb devices source [/proc/usb/devices by default\n"
+				"-u : usb devices source [/proc/bus/usb/devices by default\n"
 				"-v : verbose mode [print ids and sub-ids], implies full probe\n"
 				);	
 			return 0;	
@@ -50,8 +50,10 @@ int main(int argc, char **argv) {
 		}
 		if (!strcmp(*ptr, "-f"))
 			full_probe = 1;
-		if (!strcmp(*ptr, "-u"))
+		if (!strcmp(*ptr, "-u")) {
 			proc_usb_path = *++ptr;
+			continue;
+		}
 		if (!strcmp(*ptr, "-p"))
 			proc_pci_path = *++ptr;
 		ptr++;
