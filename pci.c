@@ -41,7 +41,7 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 	  e.subvendor = 0xffff;
 	  e.subdevice = 0xffff;
 	}
-	fclose(file);
+	fclose(f);
       }
     }
     t[r.nb] = e;
