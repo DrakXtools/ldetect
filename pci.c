@@ -44,11 +44,12 @@ extern struct pciusb_entries pci_probe(int probe_type) {
 			FILE *f;
 			snprintf(file, sizeof(file), "/proc/bus/pci/%02x/%02x.%d", e->pci_bus, e->pci_device, e->pci_function);
 			if ((f = fopen(file, "r"))) {
-				if (fseek(f, 10, SEEK_SET) == 0) 
-					fread(&e->class_, 2, 1, f);
-				if (fseek(f, 0x2c, SEEK_SET) == 0) 
-					fread(&e->subvendor, 2, 1, f), fread(&e->subdevice, 2, 1, f);
-
+				unsigned short *bufi = (unsigned short *) &buf;
+				fread(&buf, 0x30, 1, f); /* these files're 256 bytes but we only need first 48 bytes*/
+				e->class_ = bufi[5];
+				e->subvendor = bufi[0x16];
+				e->subdevice = bufi[0x17];
+				
 				if ((e->subvendor == 0 && e->subdevice == 0) ||
 				    (e->subvendor == e->vendor && e->subdevice == e->device)) {
 					e->subvendor = 0xffff;
