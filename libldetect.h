@@ -1,3 +1,6 @@
+#ifndef LIBLDETECT
+#define LIBLDETECT
+
 /******************************************************************************/
 /* pciusb *********************************************************************/
 /******************************************************************************/
@@ -30,6 +33,7 @@ extern void pciusb_free(struct pciusb_entries *entries);
 /******************************************************************************/
 extern struct pciusb_entries pci_probe(void);
 extern const char *pci_class2text(unsigned long class_);
+extern char *proc_pci_path;
 
 /******************************************************************************/
 /* usb ************************************************************************/
@@ -43,6 +47,8 @@ struct usb_class_text {
 };
 
 extern struct usb_class_text usb_class2text(unsigned long class_);
+
+extern char *proc_usb_path;
 
 /******************************************************************************/
 /* dmi ************************************************************************/
@@ -58,3 +64,6 @@ struct dmi_entries {
 
 extern struct dmi_entries dmi_probe(void);
 extern void dmi_entries_free(struct dmi_entries entries);
+extern char *dmidecode_file;
+
+#endif

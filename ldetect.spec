@@ -1,35 +1,46 @@
+%define lib_major 0.6
+%define lib_minor 0
+%define lib_name %mklibname %{name} %{lib_major}
+
 Name:    ldetect
-Version:  0.5.6
+Version: %{lib_major}.%{lib_minor}
 Release: 1mdk
-Summary: Light hardware detection library
+Summary: Light hardware detection tool
 Source: %name.tar.bz2
 Group: System/Libraries
 URL:	  http://www.mandrakelinux.com
 BuildRoot: %_tmppath/%{name}-buildroot
 BuildRequires: usbutils => 0.11-2mdk,  pciutils-devel
 Conflicts: drakxtools < 9.2-0.32mdk
-Requires: ldetect-lst common-licenses
 License: GPL
 
-%package devel
+%package -n %{lib_name}
+Summary: Light hardware detection library
+Requires: ldetect-lst common-licenses
+Group: System/Libraries
+
+%package -n %{lib_name}-devel
 Summary: Development package for ldetect
+Requires: %{lib_name} = %{version}
+Provides: ldetect-devel libldetect-devel
+Obsoletes: ldetect-devel
 Group: Development/C
 
 %description
 The hardware device lists provided by this package are used as lookup 
 table to get hardware autodetection
 
-%description devel
+%description -n %{lib_name}-devel
+see %name
+
+%description -n %{lib_name}
 see %name
 
 %prep
 %setup -q -n %name
 
 %build
-# Add PIC code in static library because it could be linked into a DSO
-PICFLAGS="-DPIC -fPIC"
-
-%make CFLAGS="-Wall -Wstrict-prototypes $PICFLAGS"
+%make
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -38,20 +49,30 @@ rm -rf $RPM_BUILD_ROOT
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post -n %{lib_name} -p /sbin/ldconfig
+
+%postun -n %{lib_name} -p /sbin/ldconfig
+
 %files
 %defattr(-,root,root)
 %doc AUTHORS
 %_bindir/*
 
-%files devel
+%files -n %{lib_name}
+%defattr(-,root,root)
+%_libdir/*.so.*
+
+%files -n %{lib_name}-devel
 %defattr(-,root,root)
 %doc ChangeLog
 %_includedir/*
-%_libdir/*
+%_libdir/*.so
 
 %changelog
-* Mon Mar 14 2005 Pixel <pixel@mandrakesoft.com> 0.5.6-1mdk
+* Mon Mar 14 2005 Pixel <pixel@mandrakesoft.com> 0.6.0-1mdk
 - add dmitable parsing and use
+- libldetect.so instead of libldetect.a
+- libification
 
 * Thu Feb 17 2005 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.5.5-1mdk
 - handle a few more special cases (gdth, snd-vx222, 8139too, and agp bridges)

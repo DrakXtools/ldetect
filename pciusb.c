@@ -7,9 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "libldetect.h"
-#include "libldetect-private.h"
 #include "common.h"
 
 extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable) {

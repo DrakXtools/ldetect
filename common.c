@@ -18,7 +18,7 @@ static char *table_name_to_file(const char *name) {
 	return fname;
 }
 
-extern fh fh_open(const char *name) {
+fh fh_open(const char *name) {
 	fh ret;
 	char *fname = table_name_to_file(name);
 	int length = strlen(fname);
@@ -67,7 +67,7 @@ extern fh fh_open(const char *name) {
 	return ret;
 }
 
-extern void fh_close(fh *f) {
+void fh_close(fh *f) {
 	fclose(f->f);
 	if (f->pid > 0)
 		waitpid(f->pid, NULL, 0);

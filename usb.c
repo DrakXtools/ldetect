@@ -4,10 +4,9 @@
 #include <string.h>
 #include <unistd.h>
 #include "libldetect.h"
-#include "libldetect-private.h"
 #include "common.h"
 
-char *proc_usb_path_default = "/proc/bus/usb/devices";
+static char *proc_usb_path_default = "/proc/bus/usb/devices";
 char *proc_usb_path = NULL;
 
 

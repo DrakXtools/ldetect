@@ -7,11 +7,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "libldetect.h"
-#include "libldetect-private.h"
 #include "common.h"
 
-char *proc_pci_path_default = "/proc/bus/pci/devices";
+static char *proc_pci_path_default = "/proc/bus/pci/devices";
 char *proc_pci_path = NULL;
 
 extern struct pciusb_entries pci_probe(void) {

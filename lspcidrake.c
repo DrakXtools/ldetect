@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "libldetect.h"
-#include "libldetect-private.h"
 
 static int verboze = 0;
 

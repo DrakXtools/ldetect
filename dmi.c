@@ -7,8 +7,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "libldetect.h"
-#include "libldetect-private.h"
 #include "common.h"
 
 char *dmidecode_file = NULL;
@@ -81,7 +79,7 @@ static char *get_after_colon(char *s) {
 	} else return NULL;
 }
 
-struct category *lookup_category(const char *cat_name) {
+static struct category *lookup_category(const char *cat_name) {
 	int i;
 	for (i = 0; i < nb_categories; i++)
 		if (streq(categories[i].cat_name, cat_name))
@@ -89,7 +87,7 @@ struct category *lookup_category(const char *cat_name) {
 	return NULL;
 }
 
-int lookup_field(struct category *category, const char *field_name) {
+static int lookup_field(struct category *category, const char *field_name) {
 	unsigned int i;
 	for (i = 0; i < category->nb_fields; i++)
 		if (streq(category->fields[i], field_name))
@@ -97,7 +95,7 @@ int lookup_field(struct category *category, const char *field_name) {
 	return 0;
 }
 
-char *lookup_criteria(struct criteria criteria, const char *field) {
+static char *lookup_criteria(struct criteria criteria, const char *field) {
 	unsigned int i;
 	for (i = 0; i < criteria.nb; i++)
 		if (streq(criteria.criteria[i].name, field))
