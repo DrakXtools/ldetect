@@ -2,10 +2,10 @@
 
 print q(/* This is auto-generated from </usr/share/usb.ids>, don't modify! */
 
-struct {
+static struct {
   unsigned long id;
   const char *name;
-} usbclasses[] = {
+} classes[] = {
 );
 
 while (<>) {
@@ -32,12 +32,12 @@ print sort @everything;
 print '
 };
 
-int nb_usbclasses = sizeof(usbclasses) / sizeof(*usbclasses);
+static int nb_classes = sizeof(classes) / sizeof(*classes);
 
 extern const char *usb_class2text(unsigned long class_) {
   int i;
-  for (i = 0; i < nb_usbclasses; i++)
-    if (usbclasses[i].id == class_) return usbclasses[i].name;
+  for (i = 0; i < nb_classes; i++)
+    if (classes[i].id == class_) return classes[i].name;
 
   return "";
 }
