@@ -1,10 +1,29 @@
+2002-08-16 18:03  tvignaud
+
+	* Makefile, pci.c, usb.c: - usb.c: allocate mem as pci.c does
+	- usb.c: kill dead code
+	- usb.c: give url to get info on /proc/bus/usb/devices format
+	- usb.c: the /proc/bus/usb/devices really is a state machine;
+	  use switch to make it clearer
+	- {usb,pci}.c: r.nb is zeroed in all path, let's do it only time
+
+2002-08-15 23:23  tvignaud
+
+	* usb.c, pciusb.c: usb audio devices can use new alsa modules
+	snd-usb-audio
+
+2002-08-08 17:25  tvignaud
+
+	* ChangeLog, ldetect.spec: 0.4.5-1mdk: don't depend of the table
+	order
+
 2002-08-08 17:20  tvignaud
 
 	* libldetect.h, pciusb.c:
 	- struct pciusb_entrie : add already_found flag
 	- pciusb::pciusb_initialize() : zero the above flag
 	- pciusb::pciusb_find_modules() : use the above flag:
-	  o if device subids matches the table ones, swtich the
+	  o if device subids matches the table ones, switch the
 	    already_found flag
 	  o skip already handled device (if already_found==1)
 
