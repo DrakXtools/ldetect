@@ -42,14 +42,15 @@ static fh fh_open(char *fname) {
 			ret.f = fdopen(fdno[0], "r");
 			close(fdno[1]);
 		} else {
-			char* cmd[4];
+			char* cmd[5];
 			int ip = 0;
 			char *ld_loader = getenv("LD_LOADER");
 
 			if (ld_loader && *ld_loader)
 				cmd[ip++] = ld_loader;
 
-			cmd[ip++] = "zcat";
+			cmd[ip++] = "gzip";
+			cmd[ip++] = "-cd";
 			cmd[ip++] = fname_gz;
 			cmd[ip++] = NULL;
 
