@@ -89,5 +89,5 @@ extern void pciusb_free(struct pciusb_entries *entries) {
 		ifree(e->module);
 		ifree(e->text);
 	}
-	ifree(entries->entries);
+	if (entries->nb) ifree(entries->entries);
 }
