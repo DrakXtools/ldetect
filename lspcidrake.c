@@ -45,12 +45,10 @@ int main(int argc, char **argv) {
 		}
 		if (!strcmp(*ptr, "-v"))
 			verboze = 1;
-		if (!strcmp(*ptr, "-u")) {
-			proc_usb_path = *++ptr;
-			continue;
-		}
-		if (!strcmp(*ptr, "-p"))
-			proc_pci_path = *++ptr;
+		else if (!strcmp(*ptr, "-u"))
+		  proc_usb_path = *++ptr;
+		else if (!strcmp(*ptr, "-p"))
+		  proc_pci_path = *++ptr;
 		ptr++;
 	}
 
