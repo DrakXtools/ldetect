@@ -12,16 +12,21 @@ build: $(binaries) $(libraries)
 
 lspcidrake: lspcidrake.c libldetect.a
 
-libldetect.a: pci.o pciclass.o
+libldetect.a: pciusb.o pci.o usb.o pciclass.o usbclass.o
 	ar rsc $@ $^
 
-pciclass.c: /usr/include/linux/pci.h generate_pciclass.pl
+pciclass.c: /usr/include/linux/pci.h /usr/include/linux/pci_ids.h
 	rm -f $@
-	perl generate_pciclass.pl < $< > $@
+	perl generate_pciclass.pl $^ > $@
+	chmod a-w $@
+
+usbclass.c: /usr/share/usb.ids
+	rm -f $@
+	perl generate_usbclass.pl $^ > $@
 	chmod a-w $@
 
 clean:
-	rm -f *~ *.o pciclass.c $(binaries) $(libraries)
+	rm -f *~ *.o pciclass.c usbclass.c $(binaries) $(libraries)
 
 install: build
 	install -d $(bindir) $(libdir) $(includedir)

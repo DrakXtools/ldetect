@@ -1,6 +1,6 @@
 %define name ldetect
-%define version 0.2.0
-%define release 2mdk
+%define version 0.2.3
+%define release 1mdk
 
 Name: %{name}
 Version: %{version}
@@ -47,6 +47,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Sat Dec 16 2000 Pixel <pixel@mandrakesoft.com> 0.2.3-1mdk
+- now detect usb
+
+* Fri Dec 15 2000 Pixel <pixel@mandrakesoft.com> 0.2.2-1mdk
+- fix pciprobe for subids
+
+* Fri Dec 15 2000 Pixel <pixel@mandrakesoft.com> 0.2.1-1mdk
+- try with linux/pci_ids.h to generate pciclass.c (kernel 2.4)
+
 * Fri Dec 15 2000 Pixel <pixel@mandrakesoft.com> 0.2.0-2mdk
 - add requires ldetect-lst
 

@@ -1,7 +1,7 @@
 /******************************************************************************/
-/* pci ************************************************************************/
+/* pciusb *********************************************************************/
 /******************************************************************************/
-struct pci_entry {
+struct pciusb_entry {
   unsigned short vendor; /* PCI vendor id */
   unsigned short device;
 
@@ -12,13 +12,22 @@ struct pci_entry {
   char *module;
   char *text;
 };
-struct pci_entries {
-  struct pci_entry *entries;
+struct pciusb_entries {
+  struct pciusb_entry *entries;
   int nb;
 };
 
+extern void pciusb_free(struct pciusb_entries entries);
 
-extern struct pci_entries pci_probe(int probe_type); /* probe_type is boolean */
-extern void pci_free(struct pci_entries entries);
 
+/******************************************************************************/
+/* pci ************************************************************************/
+/******************************************************************************/
+extern struct pciusb_entries pci_probe(int probe_type); /* probe_type is boolean */
 extern const char *pci_class2text(unsigned short class);
+
+/******************************************************************************/
+/* usb ************************************************************************/
+/******************************************************************************/
+extern struct pciusb_entries usb_probe(void);
+extern const char *usb_class2text(unsigned short class);

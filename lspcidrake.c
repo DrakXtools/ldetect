@@ -3,10 +3,10 @@
 #include <string.h>
 #include "libldetect.h"
 
-void pci_printit(struct pci_entries entries) {
+void pci_printit(struct pciusb_entries entries) {
   int i;
   for (i = 0; i < entries.nb; i++) {
-    struct pci_entry e = entries.entries[i];
+    struct pciusb_entry e = entries.entries[i];
     printf("%s:\t%s", e.module ? e.module : "unknown", e.text);
     if (e.class) {
       const char *class = pci_class2text(e.class);
@@ -16,9 +16,26 @@ void pci_printit(struct pci_entries entries) {
   }
 }
 
+void usb_printit(struct pciusb_entries entries) {
+  int i;
+  for (i = 0; i < entries.nb; i++) {
+    struct pciusb_entry e = entries.entries[i];
+    printf("%s:\t%s", e.module ? e.module : "unknown", e.text);
+    if (e.class) printf(" [%s]", usb_class2text(e.class));
+    printf("\n");
+  }
+}
+
 int main(int argc, char **argv) {
-  struct pci_entries entries = pci_probe(1);
-  pci_printit(entries);
-  pci_free(entries);
+  {
+    struct pciusb_entries entries = pci_probe(1);
+    pci_printit(entries);
+    pciusb_free(entries);
+  }
+  {
+    struct pciusb_entries entries = usb_probe();
+    usb_printit(entries);
+    pciusb_free(entries);
+  }
   exit(0);
 }
