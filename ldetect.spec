@@ -1,6 +1,6 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
-%define version 0.4.3
+%define version 0.4.4
 %define release 1mdk
 
 Name: %{name}
@@ -45,14 +45,18 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%{_bindir}/*
+%_bindir/*
 
 %files devel
 %defattr(-,root,root)
-%{_includedir}/*
-%{_libdir}/*
+%_includedir/*
+%_libdir/*
 
 %changelog
+* Thu Jul 25 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.4-1mdk
+- fix "(null) description" bug: don't skip entries where module has
+  already be set by pci.c workaround
+
 * Wed Jul 24 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.3-1mdk
 - lspcidrake.c: enhanced help
 - don't die when missing /proc/bus/pci/devices
