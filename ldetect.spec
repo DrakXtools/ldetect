@@ -1,6 +1,7 @@
+# !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
 %define version 0.4.0
-%define release 1mdk
+%define release 2mdk
 
 Name: %{name}
 Version: %{version}
@@ -26,14 +27,14 @@ table to get hardware autodetection
 see %{name}
 
 %prep
-%setup -n %{name}
+%setup -q -n %{name}
 
 %build
-%ifnarch ia64
-%make
-%else
-%make CFLAGS="$CFLAGS -fPIC"
+# Add PIC code in static library because it could be linked into a DSO
+%ifarch ia64 x86_64
+PICFLAGS="-DPIC -fPIC"
 %endif
+%make CFLAGS="-Wall -Wstrict-prototypes $PICFLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -52,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Wed Jun 26 2002 Gwenole Beauchesne <gbeauchesne@mandrakesoft.com> 0.4.0-2mdk
+- sanitize specfile
+
 * Mon Jun 10 2002 Pixel <pixel@mandrakesoft.com> 0.4.0-1mdk
 - ensure the header file are C++ compliant (do not use "class" for struct field name)
 
