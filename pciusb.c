@@ -103,6 +103,10 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 		}
 		for (i = 0; i < entries->nb; i++) {
 			struct pciusb_entry *e = &entries->entries[i];
+			if (e->already_found) {
+				if (e->device == 0x0525 &&e->device == device)
+					continue;	// skip since already found with sub ids
+			}
 			if (vendor != e->vendor ||  device != e->device)
 				continue; // main ids differ
 			if (nb == 4 && e->subvendor == 0xffff && e->subdevice == 0xffff && !no_subid) {
@@ -113,6 +117,7 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 
 			if (nb == 4 && !(subvendor == e->subvendor && subdevice == e->subdevice))
 				continue; // subids differ
+
 			if (!p) { // only calc text & module if not already done
 				p = buf + offset + 1;
 				q = strchr(p, '\t');
@@ -120,6 +125,9 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 			e->module = strcmp(p, "unknown") ? strndup(p,q-p-1) : NULL;
 			ifree(e->text); /* usb.c set it so that we display something when usbtable doesn't refer that hw*/
 			e->text = strndup(q+2, strlen(q)-4);
+			if (e->subvendor != 0xffff && e->subdevice != 0xffff &&
+				subdevice == e->subdevice && subvendor == e->subvendor)
+				e->already_found = 1;
 		}
 	}
 	fh_close(&f);
@@ -137,6 +145,7 @@ extern void pciusb_initialize(struct pciusb_entry *e) {
 	e->pci_function = 0xffff;
 	e->module = NULL;
 	e->text   = NULL;
+	e->already_found = 0;
 }
 
 extern void pciusb_free(struct pciusb_entries *entries) {

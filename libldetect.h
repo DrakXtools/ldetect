@@ -15,6 +15,7 @@ struct pciusb_entry {
 
   char *module;
   char *text;
+  int already_found:1;
 };
 struct pciusb_entries {
   struct pciusb_entry *entries;
