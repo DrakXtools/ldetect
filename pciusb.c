@@ -26,37 +26,37 @@ static fh fh_open(char *fname) {
 		ret.f = fopen(fname, "r");
 		ret.pid = 0;
 	} else {
+		int fdno[2];
 		char *fname_gz = alloca(length + sizeof(".gz"));
 		sprintf(fname_gz, "%s.gz", fname);
-		if (access(fname_gz, R_OK) == 0) {
-			int fdno[2];
-			if (pipe(fdno)) {
-				perror("pciusb"); exit(1);
-			}
-			if ((ret.pid = fork()) != 0) {
-				ret.f = fdopen(fdno[0], "r");
-				close(fdno[1]);
-			} else {
-				char* cmd[4];
-				int ip = 0;
-				char *ld_loader = getenv("LD_LOADER");
-
-				if (ld_loader && *ld_loader)
-					cmd[ip++] = ld_loader;
-
-				cmd[ip++] = "zcat";
-				cmd[ip++] = fname_gz;
-				cmd[ip++] = NULL;
-
-				dup2(fdno[1], STDOUT_FILENO);
-				close(fdno[0]);
-				close(fdno[1]);
-				execvp(cmd[0], cmd);
-				perror("pciusb"); exit(2);
-			}
-		} else {
+		if (access(fname_gz, R_OK) != 0) {
 			fprintf(stderr, "Missing pciusbtable (should be %s)\n", fname);
 			exit(1);
+		}
+		if (pipe(fdno))
+			perror("pciusb"); exit(1);
+
+		if ((ret.pid = fork()) != 0) {
+			ret.f = fdopen(fdno[0], "r");
+			close(fdno[1]);
+		} else {
+			char* cmd[4];
+			int ip = 0;
+			char *ld_loader = getenv("LD_LOADER");
+
+			if (ld_loader && *ld_loader)
+				cmd[ip++] = ld_loader;
+
+			cmd[ip++] = "zcat";
+			cmd[ip++] = fname_gz;
+			cmd[ip++] = NULL;
+
+			dup2(fdno[1], STDOUT_FILENO);
+			close(fdno[0]);
+			close(fdno[1]);
+			execvp(cmd[0], cmd);
+			perror("pciusb"); 
+			exit(2);
 		}
 	}
 	return ret;
@@ -84,8 +84,13 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 
 	for (line = 1; fgets(buf, sizeof(buf) - 1, f.f); line++) {
 		unsigned short vendor, device, subvendor, subdevice;
+		char *p = NULL, *q = NULL;
 		int offset; unsigned int i;
-		int nb = sscanf(buf, "0x%hx\t0x%hx\t0x%hx\t0x%hx\t%n", &vendor, &device, &subvendor, &subdevice, &offset);
+		int nb;
+		if (buf[0]=='#')
+			continue; // skip comments
+
+		nb = sscanf(buf, "0x%hx\t0x%hx\t0x%hx\t0x%hx\t%n", &vendor, &device, &subvendor, &subdevice, &offset);
 		if (nb != 4) {
 			nb = sscanf(buf, "0x%hx\t0x%hx\t%n", &vendor, &device, &offset);
 			if (nb != 2) {
@@ -104,15 +109,13 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 				}
 
 				if ((nb != 4 || (subvendor == e->subvendor && subdevice == e->subdevice)) && !e->module) {
-					char *p = strdupa(buf + offset + 1);
-					char *q = strchr(p, '\t');
-					if (q) {
-						q[-1] = 0;
-						q[strlen(q)-2] = 0;
-						ifree(e->module); ifree(e->text);
-						e->module = strcmp(p, "unknown") ? strdup(p) : NULL;
-						e->text = strdup(q+2);
+					if (!p) {
+						/* only do that search if not already done */ 
+						p = buf + offset + 1;
+						q = strchr(p, '\t');
 					}
+					e->module = strcmp(p, "unknown") ? strndup(p,q-p-1) : NULL;
+					e->text = strndup(q+2, strlen(q)-4);
 				}
 			}      
 		}
