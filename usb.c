@@ -67,6 +67,9 @@ extern struct pciusb_entries usb_probe(void) {
 			int class_, sub, prot = 0;
 			if (sscanf(buf, "I:  If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x", &class_, &sub, &prot) == 3) {
 				e->class_ = (class_ * 0x100 + sub) * 0x100 + prot;
+				if (e->class_ == (0x1*0x100+ 0x01)) /* USB_AUDIO_CLASS*0x100 + USB_SUBCLASS_AUDIO_CONTROL*/
+					e->module = "snd-usb-audio";
+
 			} else {
 				fprintf(stderr, "%s %d: unknown ``I'' line\n", proc_usb_path, line);
 			}

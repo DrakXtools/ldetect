@@ -122,7 +122,9 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 				p = buf + offset + 1;
 				q = strchr(p, '\t');
 			}
-			e->module = strcmp(p, "unknown") ? strndup(p,q-p-1) : NULL;
+			if (!e->module || (e->module && strcmp(e->module, "snd-usb-audio")))
+			    e->module = strcmp(p, "unknown") ? strndup(p,q-p-1) : NULL;
+
 			ifree(e->text); /* usb.c set it so that we display something when usbtable doesn't refer that hw*/
 			e->text = strndup(q+2, strlen(q)-4);
 			if (e->subvendor != 0xffff && e->subdevice != 0xffff &&
