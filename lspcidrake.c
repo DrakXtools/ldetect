@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
 	
 	struct dmi_entries dmi_entries = dmi_probe();
 	print_dmi_entries(dmi_entries);
-	free_dmi_entries(dmi_entries);
+	dmi_entries_free(dmi_entries);
 
 	return 0;
 }
