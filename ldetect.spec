@@ -1,6 +1,6 @@
 Name:    ldetect
 Version:  0.4.6
-Release: 2mdk
+Release: 3mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
 Group: System/Libraries
@@ -49,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Thu Aug 22 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.6-3mdk
+- prevent freeze on buggy motherboards
+
 * Sat Aug 17 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.6-2mdk
 - rpmlint fixes
 
