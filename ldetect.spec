@@ -54,25 +54,28 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Jul 16 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.2-1mdk
-- usb.c: add the ability to read usb devices list from a file instead
-  of /proc/usb/devices
-
-- make a few tests clearer
-
 - pci.c:
 	o move exception stuff from the fast path into the probe all patch
 	o reduce memory usage, especially stack usage
 	o add the ability to read pci devices list from a file instead of
 	  /proc/bus/pci/devices
 
+- usb.c:
+	o add the ability to read usb devices list from a file instead of
+	  /proc/usb/devices
+
+- usb.c, pci.c, lspcidrake.c:
+	o print error message if unable to open devices list
+ 	o make a few tests clearer
+
 - lspcidrake.c: 
 	o compacificazion
 	o fix compilation with gcc-2.95.3 (reported by Ian White)
-	o describe all options
 	o add -p option so that lspcidrake can read pci devices from a
 	  file in order to understand what happened to remote testers
 	o add -u option so that lspcidrake can read usb devices from a
 	  file in order to understand what happened to remote testers
+	o describe all options
 
 * Thu Jul  4 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.1-1mdk
 - let prevent useless copy

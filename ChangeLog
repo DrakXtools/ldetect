@@ -1,3 +1,25 @@
+2002-07-16 17:33  tvignaud
+
+	* lspcidrake.c: explain what does -f
+
+2002-07-16 17:30  tvignaud
+
+	* pci.c: no need for unistd.h
+
+2002-07-16 17:29  tvignaud
+
+	* ChangeLog, pci.c, usb.c: - print error message if unable to open
+	the arguement passed to -u,-p
+	
+	- print error message if usb service isn't started (commented for
+	now   to follow previous behaviour)
+
+2002-07-16 17:28  tvignaud
+
+	* lspcidrake.c: - fix usb "url"
+	
+	- prevent potential segfault if no argument to -u in next test
+
 2002-07-16 17:07  tvignaud
 
 	* ChangeLog, ldetect.spec, libldetect-private.h, lspcidrake.c,
