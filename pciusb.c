@@ -1,14 +1,18 @@
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+
 #include "libldetect.h"
 #include "libldetect-private.h"
 #include "common.h"
 
 typedef struct {
   FILE *f;
-  enum { fh_normal, fh_pipe } type;
+  pid_t pid;
 } fh;
 
 static fh fh_open(char *fname) {
@@ -19,12 +23,30 @@ static fh fh_open(char *fname) {
 
   if (access(fname, R_OK) == 0) {
     ret.f = fopen(fname, "r");
-    ret.type = fh_normal;
-  } else if (access(fname_gz, R_OK) == 0) {    
-    char *cmd = alloca(sizeof("gzip -dc %s") + strlen(fname_gz));
-    sprintf(cmd, "gzip -dc %s", fname_gz);
-    ret.f = popen(cmd, "r");
-    ret.type = fh_pipe;
+    ret.pid = 0;
+  } else if (access(fname_gz, R_OK) == 0) {
+    int fdno[2];
+    if (pipe(fdno)) { perror("pciusb"); exit(1); }
+    if ((ret.pid = fork()) != 0) {
+      ret.f = fdopen(fdno[0], "r");
+      close(fdno[1]);
+    } else {
+      char *cmd[8];
+      int ip = 0;
+      char *ld_loader = getenv("LD_LOADER");
+
+      if (ld_loader && *ld_loader) {
+	cmd[ip++] = ld_loader;
+      }
+      cmd[ip++] = "gzip";
+      cmd[ip++] = "-dc";
+      cmd[ip++] = fname_gz;
+      cmd[ip++] = NULL;
+
+      dup2(fdno[1], STDOUT_FILENO);
+      execvp(cmd[0], cmd);
+      perror("pciusb"); exit(2);
+    }
   } else {
     fprintf(stderr, "Missing pciusbtable (should be %s)\n", fname);
     exit(1);
@@ -33,11 +55,8 @@ static fh fh_open(char *fname) {
 }
 
 static void fh_close(fh f) {
-  switch (f.type) 
-    {
-    case fh_normal: fclose(f.f); break;
-    case fh_pipe: pclose(f.f); break;
-    }
+  fclose(f.f);
+  if (f.pid > 0) waitpid(f.pid, NULL, 0);
 }
 
 extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpciusbtable, int no_subid) {

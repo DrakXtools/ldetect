@@ -1,7 +1,7 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
 %define version 0.2.3
-%define release 11mdk
+%define release 12mdk
 
 Name: %{name}
 Version: %{version}
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Wed Apr 11 2001 François Pons <fpons@mandrakesoft.com> 0.2.3-12mdk
+- fixed to use LD_LOADER if defined.
+
 * Thu Mar 29 2001 Pixel <pixel@mandrakesoft.com> 0.2.3-11mdk
 - fix some memory leak and a few segfaults
 
