@@ -1,19 +1,14 @@
-# !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
-%define name ldetect
-%define version 0.4.6
-%define release 1mdk
-
-Name: %{name}
-Version: %{version}
-Release: %{release}
+Name:    ldetect
+Version:  0.4.6
+Release: 2mdk
 Summary: Light hardware detection library
-Source: %{name}.tar.bz2
+Source: %name.tar.bz2
 Group: System/Libraries
-BuildRoot: %{_tmppath}/%{name}-buildroot
+URL:	  http://www.mandrakelinux.com
+BuildRoot: %_tmppath/%{name}-buildroot
 BuildRequires: usbutils pciutils-devel
-Requires: ldetect-lst
+Requires: ldetect-lst common-licenses
 License: GPL
-Prefix: %{_prefix}
 
 %package devel
 Summary: Development package for ldetect
@@ -24,10 +19,10 @@ The hardware device lists provided by this package are used as lookup
 table to get hardware autodetection
 
 %description devel
-see %{name}
+see %name
 
 %prep
-%setup -q -n %{name}
+%setup -q -n %name
 
 %build
 # Add PIC code in static library because it could be linked into a DSO
@@ -44,14 +39,19 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
+%doc AUTHORS
 %_bindir/*
 
 %files devel
 %defattr(-,root,root)
+%doc ChangeLog
 %_includedir/*
 %_libdir/*
 
 %changelog
+* Sat Aug 17 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.6-2mdk
+- rpmlint fixes
+
 * Sat Aug 17 2002 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.4.6-1mdk
 - homogenize pci and usb memory managment
 - add hints for documentation
