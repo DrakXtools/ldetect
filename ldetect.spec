@@ -1,6 +1,6 @@
 Name:    ldetect
-Version:  0.5.1
-Release: 2mdk
+Version:  0.5.2
+Release: 1mdk
 Summary: Light hardware detection library
 Source: %name.tar.bz2
 Group: System/Libraries
@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*
 
 %changelog
+* Thu Jun 17 2004 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.5.2-1mdk
+- display driver reported by the kernel rather than "unknown"
+
 * Thu Nov 20 2003 Pixel <pixel@mandrakesoft.com> 0.5.1-2mdk
 - don't display "Vendor Specific Class" usb class
 
