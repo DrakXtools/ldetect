@@ -32,6 +32,8 @@ install: build
 	install libldetect.h $(includedir)
 
 rpm: clean $(RPM)
+	perl -pi -e "s/^(%define version).*/\1 $(version)/" $(project).spec
+
 	(echo "# !! DON'T MODIFY HERE, MODIFY IN THE CVS !!" ; \
 	 echo "%define version $(version)" ; \
          cat $(project).spec \
