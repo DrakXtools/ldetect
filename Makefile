@@ -52,4 +52,4 @@ srpm: clean $(RPM)
 	rpm -bs $(RPM)/SPECS/$(project).spec
 
 log:
-	cvs2cl -U ../common/username -I ChangeLog -W 400
+	cvs2cl -U ../common/username -I ChangeLog -W 400 --accum
