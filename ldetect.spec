@@ -12,7 +12,7 @@ Group: System/Libraries
 BuildRoot: %{_tmppath}/%{name}-buildroot
 BuildRequires: usbutils
 Requires: ldetect-lst
-Copyright: GPL
+License: GPL
 Prefix: %{_prefix}
 
 %package devel
