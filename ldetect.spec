@@ -1,7 +1,7 @@
 # !! DON'T MODIFY HERE, MODIFY IN THE CVS !!
 %define name ldetect
 %define version 0.2.3
-%define release 10mdk
+%define release 11mdk
 
 Name: %{name}
 Version: %{version}
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*
 
 %changelog
+* Thu Mar 29 2001 Pixel <pixel@mandrakesoft.com> 0.2.3-11mdk
+- fix some memory leak and a few segfaults
+
 * Sat Mar 24 2001 Pixel <pixel@mandrakesoft.com> 0.2.3-10mdk
 - nasty C, fclose on popen'ed gets a segfault, in /some/ cases :-(
 
