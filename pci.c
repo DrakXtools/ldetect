@@ -5,15 +5,8 @@
 #include "libldetect-private.h"
 #include "common.h"
 
-static void pci_find_modules(struct pciusb_entries entries) {
-  char *share_path = getenv("SHARE_PATH");
-  char *pcitable;
-
-  if (!share_path || !*share_path) share_path = "/usr/share";
-  pcitable = alloca(strlen(share_path) + 32); /* enough for /ldetect-lst/pcitable and EOS */
-  sprintf(pcitable, "%s/ldetect-lst/pcitable", share_path);
-
-  pciusb_find_modules(entries, pcitable);
+static int pci_find_modules(struct pciusb_entries entries, int no_subid) {
+  return pciusb_find_modules(entries, "pcitable", no_subid);
 }
 
 extern struct pciusb_entries pci_probe(int probe_type) {
@@ -40,7 +33,7 @@ extern struct pciusb_entries pci_probe(int probe_type) {
       char file[25];
       FILE *f;
       snprintf(file, sizeof(file), "/proc/bus/pci/%02x/%02x.%d", e.pci_bus, e.pci_device, e.pci_function);
-      if (probe_type && (f = fopen(file, "r"))) {
+      if (probe_type == 1 && (f = fopen(file, "r"))) {
         if (fseek(f, 10, SEEK_SET) == 0) 
 	  fread(&e.class, 2, 1, f);
         if (fseek(f, 0x2c, SEEK_SET) == 0) 
@@ -59,7 +52,12 @@ extern struct pciusb_entries pci_probe(int probe_type) {
   fclose(f);
   r.entries = memdup(t, sizeof(struct pciusb_entry) * r.nb);
 
-  pci_find_modules(r);
-  return r;
+  if (pci_find_modules(r, probe_type)) return r;
+
+  /* ok, let's try again with subids */
+  if (probe_type == 0) return pci_probe(1);
+
+  /* should not happen */
+  exit(1);
 }
 

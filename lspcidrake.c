@@ -28,7 +28,7 @@ void usb_printit(struct pciusb_entries entries) {
 
 int main(int argc, char **argv) {
   {
-    struct pciusb_entries entries = pci_probe(1);
+    struct pciusb_entries entries = pci_probe(0);
     pci_printit(entries);
     pciusb_free(entries);
   }

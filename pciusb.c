@@ -5,13 +5,20 @@
 #include "libldetect-private.h"
 #include "common.h"
 
-extern void pciusb_find_modules(struct pciusb_entries entries, const char *fpciusbtable) {
+extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpciusbtable, int no_subid) {
   FILE *f;
   char buf[2048];
   int line;
 
-  if (!(f = fopen(fpciusbtable, "r"))) {
-    fprintf(stderr, "Missing pciusbtable (should be %s)\n", fpciusbtable);
+  char *share_path = getenv("SHARE_PATH");
+  char *fname;
+  if (!share_path || !*share_path) share_path = "/usr/share";
+
+  fname = alloca(strlen(share_path) + sizeof("/ldetect-lst/") + strlen(fpciusbtable));
+  sprintf(fname, "%s/ldetect-lst/%s", share_path, fpciusbtable);
+
+  if (!(f = fopen(fname, "r"))) {
+    fprintf(stderr, "Missing pciusbtable (should be %s)\n", fname);
     exit(1);
   }  
   for (line = 1; fgets(buf, sizeof(buf) - 1, f); line++) {
@@ -27,8 +34,14 @@ extern void pciusb_find_modules(struct pciusb_entries entries, const char *fpciu
     }
     for (i = 0; i < entries.nb; i++) {
       struct pciusb_entry *e = &entries.entries[i];
-      if (vendor == e->vendor && device == e->device && 
-	  (nb != 4 || (subvendor == e->subvendor && subdevice == e->subdevice)) && !e->module) {
+      if (vendor == e->vendor && device == e->device) {
+	if (nb == 4 && e->subvendor == 0xffff && e->subdevice == 0xffff && !no_subid) {
+	  pciusb_free(entries);
+	  fclose(f);
+	  return 0; /* leave, let the caller call again with subids */
+	}
+
+	if ((nb != 4 || (subvendor == e->subvendor && subdevice == e->subdevice)) && !e->module) {
 	  char *p = buf + offset + 1;
 	  char *q = strchr(p, '\t');
 	  if (q) {
@@ -37,10 +50,12 @@ extern void pciusb_find_modules(struct pciusb_entries entries, const char *fpciu
 	    e->module = strcmp(p, "unknown") ? strdup(p) : NULL;
 	    e->text = strdup(q+2);
 	  }
-      }
-    }      
+	}
+      }      
+    }
   }
   fclose(f);
+  return 1;
 }
 
 extern void pciusb_initialize(struct pciusb_entry *e) {

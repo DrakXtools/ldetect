@@ -5,15 +5,8 @@
 #include "libldetect-private.h"
 #include "common.h"
 
-static void usb_find_modules(struct pciusb_entries entries) {
-  char *share_path = getenv("SHARE_PATH");
-  char *usbtable;
-
-  if (!share_path || !*share_path) share_path = "/usr/share";
-  usbtable = alloca(strlen(share_path) + 32); /* enough for /ldetect-lst/pcitable and EOS */
-  sprintf(usbtable, "%s/ldetect-lst/usbtable", share_path);
-
-  pciusb_find_modules(entries, usbtable);
+static int usb_find_modules(struct pciusb_entries entries) {
+  return pciusb_find_modules(entries, "usbtable", 1 /* no_subid */);
 }
 
 extern struct pciusb_entries usb_probe(void) {
