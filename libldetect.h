@@ -21,7 +21,7 @@ struct pciusb_entries {
   int nb;
 };
 
-extern void pciusb_free(struct pciusb_entries entries);
+extern void pciusb_free(struct pciusb_entries *entries);
 
 
 /******************************************************************************/

@@ -11,30 +11,30 @@ void usage(void) {
   exit(0);
 }
 
-void print_name(struct pciusb_entry e) {
-  printf("%-16s: ", e.module ? e.module : "unknown");
-  if (e.text)
-    printf(e.text);
+void print_name(struct pciusb_entry *e) {
+  printf("%-16s: ", e->module ? e->module : "unknown");
+  if (e->text)
+    printf(e->text);
   else
-    printf("unknown (%04x/%04x/%04x/%04x)", e.vendor, e.device, e.subvendor, e.subdevice);
+    printf("unknown (%04x/%04x/%04x/%04x)", e->vendor, e->device, e->subvendor, e->subdevice);
 }
 
-void print_id(struct pciusb_entry e) {
-  if (verboze && e.text) {
-    printf(" (vendor:%04x device:%04x", e.vendor, e.device);
-    if (e.subvendor != 0xffff || e.subdevice != 0xffff)
-      printf(" subv:%04x subd:%04x", e.subvendor, e.subdevice);
+void print_id(struct pciusb_entry *e) {
+  if (verboze && e->text) {
+    printf(" (vendor:%04x device:%04x", e->vendor, e->device);
+    if (e->subvendor != 0xffff || e->subdevice != 0xffff)
+      printf(" subv:%04x subd:%04x", e->subvendor, e->subdevice);
     printf(")");
   }
 }
 
-void pci_printit(struct pciusb_entries entries) {
+void pci_printit(struct pciusb_entries *entries) {
   int i;
-  for (i = 0; i < entries.nb; i++) {
-    struct pciusb_entry e = entries.entries[i];
+  for (i = 0; i < entries->nb; i++) {
+    struct pciusb_entry *e = &entries->entries[i];
     print_name(e);
-    if (e.class_) {
-      const char *class_ = pci_class2text(e.class_);
+    if (e->class_) {
+      const char *class_ = pci_class2text(e->class_);
       if (strcmp(class_, "NOT_DEFINED") != 0) printf(" [%s]", class_);
     }
     print_id(e);
@@ -42,12 +42,12 @@ void pci_printit(struct pciusb_entries entries) {
   }
 }
 
-void usb_printit(struct pciusb_entries entries) {
+void usb_printit(struct pciusb_entries *entries) {
   int i;
-  for (i = 0; i < entries.nb; i++) {
-    struct pciusb_entry e = entries.entries[i];
+  for (i = 0; i < entries->nb; i++) {
+    struct pciusb_entry *e = &entries->entries[i];
     print_name(e);
-    if (e.class_) printf(" [%s]", usb_class2text(e.class_));
+    if (e->class_) printf(" [%s]", usb_class2text(e->class_));
     print_id(e);
     printf("\n");
   }
@@ -68,11 +68,11 @@ int main(int argc, char **argv) {
   }
 
   struct pciusb_entries entries = pci_probe(full_probe);
-  pci_printit(entries);
-  pciusb_free(entries);
+  pci_printit(&entries);
+  pciusb_free(&entries);
 
   entries = usb_probe();
-  usb_printit(entries);
-  pciusb_free(entries);
+  usb_printit(&entries);
+  pciusb_free(&entries);
   exit(0);
 }

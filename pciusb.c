@@ -93,7 +93,7 @@ extern int pciusb_find_modules(struct pciusb_entries entries, const char *fpcius
       struct pciusb_entry *e = &entries.entries[i];
       if (vendor == e->vendor && device == e->device) {
 	if (nb == 4 && e->subvendor == 0xffff && e->subdevice == 0xffff && !no_subid) {
-	  pciusb_free(entries);
+	  pciusb_free(&entries);
 	  fh_close(f);
 	  return 0; /* leave, let the caller call again with subids */
 	}
@@ -129,13 +129,13 @@ extern void pciusb_initialize(struct pciusb_entry *e) {
   e->text   = NULL;
 }
 
-extern void pciusb_free(struct pciusb_entries entries) {
+extern void pciusb_free(struct pciusb_entries *entries) {
   int i;
-  for (i = 0; i < entries.nb; i++) {
-    struct pciusb_entry e = entries.entries[i];
-    ifree(e.module);
-    ifree(e.text);
+  for (i = 0; i < entries->nb; i++) {
+    struct pciusb_entry *e = &entries->entries[i];
+    ifree(e->module);
+    ifree(e->text);
   }
-  ifree(entries.entries);
+  ifree(entries->entries);
 }
 
