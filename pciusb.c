@@ -127,7 +127,7 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 			e->text = strndup(q+2, strlen(q)-4);
 			/* if subids read on pcitable line, we know that subids matches :
 			   (see "subids differ" test above) */
-			if (nb==4)
+			if (nb == 4)
 				e->already_found = 1;
 		}
 	}
