@@ -3,38 +3,29 @@
 #include <string.h>
 #include "libldetect.h"
 
-int verboze = 0;
-int full_probe = 0;
+static int verboze = 0;
 
 
-void print_name(struct pciusb_entry *e) {
-	printf("%-16s: ", e->module ? e->module : "unknown");
-	if (e->text)
-		printf(e->text);
-	else	printf("unknown (%04x/%04x/%04x/%04x)", e->vendor, e->device, e->subvendor, e->subdevice);
-}
+typedef const char *(f_t)(unsigned long );
 
-void print_id(struct pciusb_entry *e) {
-	if (verboze && e->text) {
-		printf(" (vendor:%04x device:%04x", e->vendor, e->device);
-		if (e->subvendor != 0xffff || e->subdevice != 0xffff)
-			printf(" subv:%04x subd:%04x", e->subvendor, e->subdevice);
-		printf(")");
-	}
-}
-
-typedef  const char *(f_t)(unsigned long );
-
-void printit(struct pciusb_entries *entries, f_t find_class) {
+static void printit(struct pciusb_entries *entries, f_t find_class) {
 	unsigned int i;
 	for (i = 0; i < entries->nb; i++) {
 		struct pciusb_entry *e = &entries->entries[i];
-		print_name(e);
+		printf("%-16s: ", e->module ? e->module : "unknown");
+		if (e->text)
+			printf(e->text);
+		else	printf("unknown (%04x/%04x/%04x/%04x)", e->vendor, e->device, e->subvendor, e->subdevice);
 		if (e->class_) {
 			const char *class_ = find_class(e->class_);
 			if (strcmp(class_, "NOT_DEFINED") != 0) printf(" [%s]", class_);
 		}
-		print_id(e);
+		if (verboze && e->text) {
+			printf(" (vendor:%04x device:%04x", e->vendor, e->device);
+			if (e->subvendor != 0xffff || e->subdevice != 0xffff)
+				printf(" subv:%04x subd:%04x", e->subvendor, e->subdevice);
+			printf(")");
+		}
 		printf("\n");
 	}
 }
@@ -42,6 +33,8 @@ void printit(struct pciusb_entries *entries, f_t find_class) {
 
 int main(int argc, char **argv) {
 	char ** ptr = argv;
+	int full_probe = 0;
+
 	while (ptr && *ptr) {
 		if (!strcmp(*ptr, "-h") || !strcmp(*ptr, "--help")) {
 			printf("usage: lspcidrake [-v] [-f]\n");	
