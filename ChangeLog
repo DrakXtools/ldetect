@@ -1,7 +1,59 @@
+2004-10-28 10:07  Thierry Vignaud <tvignaud@mandrakesoft.com>
+
+	* ldetect.spec: 0.5.3-1mdk
+
+2004-10-27 15:35  Thierry Vignaud <tvignaud@mandrakesoft.com>
+
+	* Makefile: make ldetect-devel usable on amd64
+
+2004-10-27 15:21  Thierry Vignaud <tvignaud@mandrakesoft.com>
+
+	* pciusb.c: keep existing description string if already reported by
+	  the device
+
+2004-06-17 10:35  Thierry Vignaud <tvignaud@mandrakesoft.com>
+
+	* ldetect.spec: 0.5.2-1mdk
+
+2004-06-17 10:33  Thierry Vignaud <tvignaud@mandrakesoft.com>
+
+	* usb.c: (usb_probe) ask the kernel for module to use with usb
+	  devices
+
+2003-11-20 16:20  Pixel <pixel@mandrakesoft.com>
+
+	* generate_usbclass.pl, ldetect.spec: don't display "Vendor
+	  Specific Class" usb class
+
+2003-11-20 16:03  Pixel <pixel@mandrakesoft.com>
+
+	* generate_usbclass.pl, ldetect.spec, libldetect.h, lspcidrake.c:
+	  new usb_class code (breaks compatibility!)
+
+2003-08-20 11:11  Thierry Vignaud <tvignaud@mandrakesoft.com>
+
+	* lspcidrake.c: remove dummy reference to silently ignored -f
+	  option
+
+2003-08-20 02:23  Pixel <pixel@mandrakesoft.com>
+
+	* lspcidrake.c: fix argument testing
+
+2003-08-20 02:21  Pixel <pixel@mandrakesoft.com>
+
+	* generate_pciclass.pl, generate_usbclass.pl, usb.c: a little
+	  cleanup
+
+2003-08-19 23:28  Thierry Vignaud <tvignaud@mandrakesoft.com>
+
+	* ldetect.spec, libldetect-private.h, libldetect.h, lspcidrake.c,
+	  pci.c, pciusb.c, usb.c: do full-probe by default; remove support
+	  for no full-probe
+
 2003-07-31 15:36  Pixel <pixel@mandrakesoft.com>
 
 	* ldetect.spec, pci.c: - detect ohci1394 & ehci-hcd based on the
-	pci class   (as done in RedHat's kudzu)
+	  pci class   (as done in RedHat's kudzu)
 
 2003-04-22 11:45  Pixel <pixel@mandrakesoft.com>
 
