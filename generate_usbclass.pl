@@ -13,7 +13,7 @@ while (<>) {
     if (/^C\s+(\d+)\s+(.*)/) {
 	($cat, $descr) = ($1, $2);
     } elsif (/^\t\t(\d+)\s+(.*)/ && defined $cat) {
-	print qq(  { 0x$cat$1, "$descr|$2" },\n);
+	print qq(/* $. */  { 0x$cat$1, "$descr|$2" },\n);
     } elsif (/^\S/) {
       undef $cat;
     }
