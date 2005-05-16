@@ -1,5 +1,5 @@
 %define lib_major 0.6
-%define lib_minor 1
+%define lib_minor 2
 %define lib_name %mklibname %{name} %{lib_major}
 
 Name:    ldetect
@@ -69,6 +69,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*.so
 
 %changelog
+* Mon May 16 2005 Thierry Vignaud <tvignaud@mandriva.com> 0.6.2-1mdk
+- do not try to run dmidecode when not root
+
 * Wed Mar 30 2005 Thierry Vignaud <tvignaud@mandrakesoft.com> 0.6.1-1mdk
 - fix SATA detection of latest NVidia controllers
 
