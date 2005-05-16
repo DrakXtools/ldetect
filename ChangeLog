@@ -1,3 +1,15 @@
+2005-05-16 06:11  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ldetect.spec: 0.6.2-1mdk
+
+2005-05-16 05:19  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* lspcidrake.c: do not try to run dmidecode when not root
+
+2005-03-30 17:06  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ldetect.spec: 0.6.1-1mdk
+
 2005-03-30 17:03  Thierry Vignaud <tvignaud at mandrakesoft.com>
 
 	* pci.c: oops: sata_via doesn't support for CLASS probing whereas
