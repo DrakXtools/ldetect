@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include "libldetect.h"
 
 static int verboze = 0;
@@ -76,9 +77,11 @@ int main(int argc, char **argv) {
 	printit(pci_probe(), print_pci_class);
 	printit(usb_probe(), print_usb_class);
 	
-	struct dmi_entries dmi_entries = dmi_probe();
-	print_dmi_entries(dmi_entries);
-	dmi_entries_free(dmi_entries);
+	if (geteuid() == 0) {
+	    struct dmi_entries dmi_entries = dmi_probe();
+	    print_dmi_entries(dmi_entries);
+	    dmi_entries_free(dmi_entries);
+	}
 
 	return 0;
 }
