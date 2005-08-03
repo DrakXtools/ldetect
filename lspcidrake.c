@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 	printit(pci_probe(), print_pci_class);
 	printit(usb_probe(), print_usb_class);
 	
-	if (geteuid() == 0) {
+	if (geteuid() == 0 || dmidecode_file) {
 	    struct dmi_entries dmi_entries = dmi_probe();
 	    print_dmi_entries(dmi_entries);
 	    dmi_entries_free(dmi_entries);
