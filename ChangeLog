@@ -1,3 +1,17 @@
+2005-08-05 15:21  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ldetect.spec: 0.6.3-1mdk
+
+2005-08-05 15:20  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* usb.c: (usb_probe) prevent spurious warnings for strange USB
+	  interfaces
+
+2005-08-03 11:03  Pixel <pixel at mandriva.com>
+
+	* lspcidrake.c: when given a dmidecode_file, we don't need to be
+	  root
+
 2005-05-16 06:11  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ldetect.spec: 0.6.2-1mdk
