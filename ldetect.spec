@@ -7,7 +7,7 @@ Version: %{lib_major}.%{lib_minor}
 Release: 1mdk
 Summary: Light hardware detection tool
 Source: %name.tar.bz2
-Group: System/Libraries
+Group: System/Kernel and hardware
 URL:	  http://www.mandrakelinux.com
 BuildRoot: %_tmppath/%{name}-buildroot
 BuildRequires: usbutils => 0.11-2mdk,  pciutils-devel
