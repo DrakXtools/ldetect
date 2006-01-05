@@ -8,7 +8,7 @@ Release: 1mdk
 Summary: Light hardware detection tool
 Source: %name.tar.bz2
 Group: System/Kernel and hardware
-URL:	  http://www.mandrakelinux.com
+URL:	  http://www.mandrivalinux.com
 BuildRoot: %_tmppath/%{name}-buildroot
 BuildRequires: usbutils => 0.11-2mdk,  pciutils-devel
 Conflicts: drakxtools < 9.2-0.32mdk
