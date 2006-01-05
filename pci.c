@@ -7,10 +7,43 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <dirent.h>
 #include "common.h"
 
 static char *proc_pci_path_default = "/proc/bus/pci/devices";
 char *proc_pci_path = NULL;
+
+#define MAX_PCI_DOMAINS 256
+static int pci_domains[MAX_PCI_DOMAINS] = { 0, };
+
+static int probe_domains(void)
+{
+    static int n_pci_domains = -1;
+    if (n_pci_domains == -1) {
+	int i;
+	DIR *dir;
+	for (i = 0; i < MAX_PCI_DOMAINS; i++)
+	    pci_domains[i] = 0;
+	if ((dir = opendir("/proc/bus/pci")) != NULL) {
+	    struct dirent *dent;
+	    while ((dent = readdir(dir)) != NULL) {
+		int domain, bus, ret;
+		ret = sscanf(dent->d_name, "%x:%x", &domain, &bus);
+		if (ret == 2) {
+		    if (domain < MAX_PCI_DOMAINS)
+			pci_domains[domain] = 1;
+		}
+	    }
+	    closedir(dir);
+	    n_pci_domains = 0;
+	    for (i = 0; i < MAX_PCI_DOMAINS; i++) {
+		if (pci_domains[i])
+		    pci_domains[n_pci_domains++] = i;
+	    }
+	}
+    }
+    return n_pci_domains;
+}
 
 extern struct pciusb_entries pci_probe(void) {
 	FILE *f; int devf;
@@ -19,7 +52,10 @@ extern struct pciusb_entries pci_probe(void) {
 	unsigned short devbusfn;
 	unsigned int id;
 	struct pciusb_entries r;
-	char file[25];
+	char file[32];
+	int n_pci_domains;
+
+	n_pci_domains = probe_domains();
 
 	r.nb = 0;
 	if (!(f = fopen(proc_pci_path ? proc_pci_path : proc_pci_path_default, "r"))) {
@@ -49,8 +85,20 @@ extern struct pciusb_entries pci_probe(void) {
 		e->pci_device = (devbusfn & 0xff) >> 3;
 		e->pci_function = (devbusfn & 0xff) & 0x07;
 		snprintf(file, sizeof(file), "/proc/bus/pci/%02x/%02x.%d", e->pci_bus, e->pci_device, e->pci_function);
-		if ((devf = open(file, O_RDONLY)) == -1)
+		if ((devf = open(file, O_RDONLY)) == -1) {
+		    /* try with pci domains */
+		    int found = 0;
+		    if (n_pci_domains) {
+			int i;
+			for (i = 0; !found && i < n_pci_domains; i++) {
+			    snprintf(file, sizeof(file), "/proc/bus/pci/%04x:%02x/%02x.%d", pci_domains[i], e->pci_bus, e->pci_device, e->pci_function);
+			    if ((devf = open(file, O_RDONLY)) >= 0)
+				found = 1;
+			}
+		    }
+		    if (!found)
 			continue;
+		}
 		read(devf, &buf, 0x30); /* these files're 256 bytes but we only need first 48 bytes*/
 		e->class_ = bufi[0x5];
 		e->subvendor = bufi[0x16];
