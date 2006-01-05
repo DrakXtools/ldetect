@@ -22,6 +22,7 @@ static int probe_domains(void)
     if (n_pci_domains == -1) {
 	int i;
 	DIR *dir;
+	n_pci_domains = 0;
 	for (i = 0; i < MAX_PCI_DOMAINS; i++)
 	    pci_domains[i] = 0;
 	if ((dir = opendir("/proc/bus/pci")) != NULL) {
@@ -35,7 +36,6 @@ static int probe_domains(void)
 		}
 	    }
 	    closedir(dir);
-	    n_pci_domains = 0;
 	    for (i = 0; i < MAX_PCI_DOMAINS; i++) {
 		if (pci_domains[i])
 		    pci_domains[n_pci_domains++] = i;
