@@ -1,5 +1,5 @@
 %define lib_major 0.6
-%define lib_minor 3
+%define lib_minor 4
 %define lib_name %mklibname %{name} %{lib_major}
 
 Name:    ldetect
@@ -69,6 +69,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*.so
 
 %changelog
+* Thu Jan  5 2006 Gwenole Beauchesne <gbeauchesne@mandriva.com> 0.6.4-1mdk
+- add support for pci domains
+
 * Fri Aug  5 2005 Thierry Vignaud <tvignaud@mandriva.com> 0.6.3-1mdk
 - prevent spurious warnings for strange USB interfaces
 
