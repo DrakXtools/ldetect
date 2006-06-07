@@ -1,3 +1,5 @@
+# EDIT IN CVS NOT IN SOURCE PACKAGE (NO PATCH ALLOWED).
+
 %define lib_major 0.6
 %define lib_minor 4
 %define lib_name %mklibname %{name} %{lib_major}
