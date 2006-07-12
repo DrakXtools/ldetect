@@ -73,6 +73,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Jul 12 2006 Olivier Blin <oblin@mandriva.com> 0.6.5-1mdv2007.0
 - dmidecode >= 2.7 support
+- fix freeing a reference to a constant string (fredl)
 
 * Thu Jan  5 2006 Gwenole Beauchesne <gbeauchesne@mandriva.com> 0.6.4-1mdk
 - add support for pci domains
