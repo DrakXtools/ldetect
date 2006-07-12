@@ -120,11 +120,20 @@ static struct criteria criteria_from_dmidecode(void) {
 	r.criteria = malloc(sizeof(*r.criteria) * MAX_DEVICES);
 
 	struct category *category = NULL;
+
+	/* dmidecode output is less indented as of 2.7 */
+	int tab_level = 1;
+        if (fgets(buf, sizeof(buf) - 1, f)) {
+		int major, minor;
+		if (sscanf(buf, "# dmidecode %d.%d", &major, &minor) == 2 && major >= 2 && minor >= 7)
+			tab_level = 0;
+	}
+
 	while (fgets(buf, sizeof(buf) - 1, f)) {
-		if (!buf[0] || !buf[1] || buf[0] != '\t')
+		if (!buf[0] || !buf[1] || (tab_level && buf[0] != '\t'))
 			; /* don't care */
-		else if (buf[1] != '\t') {
-			char *s = buf + 1;
+		else if (buf[tab_level] != '\t') {
+			char *s = buf + tab_level;
 			if (!str_begins_with(s, "DMI type ")) {
 				remove_ending_spaces(s);
 				remove_suffix_in_place(s, " Information");
@@ -132,7 +141,7 @@ static struct criteria criteria_from_dmidecode(void) {
 			}
 		} else if (category) {
 			/* don't even look if we don't have an interesting category */
-			char *s = buf + 2;
+			char *s = buf + tab_level + 1;
 			char *val = get_after_colon(s);
 			if (val && lookup_field(category, s)) {
 				struct criterion *criterion = &r.criteria[r.nb++];
