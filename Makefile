@@ -1,7 +1,8 @@
+NAME = ldetect
 LIB_MAJOR = 0.6
 LIB_MINOR = 0
+VERSION=$(LIB_MAJOR).$(LIB_MINOR)
 
-project = ldetect
 prefix = /usr
 bindir = $(prefix)/bin
 libdir = $(prefix)/lib
@@ -49,12 +50,19 @@ install: build
 	cp -a $(libraries) $(libdir)
 	install libldetect.h $(includedir)
 
-rpm: srpm
-	rpm -bb --clean --rmsource --rmspec $(project).spec
+dis ../$(NAME)-$(VERSION).tar.bz2: clean
+	rm -rf $(NAME)-$(VERSION)
+	mkdir -p $(NAME)-$(VERSION)
+	find -not -name $(NAME)-$(VERSION) | cpio -pd $(NAME)-$(VERSION)/
+	find $(NAME)-$(VERSION) -type d -name .svn | xargs rm -rf
+	tar cfj ../$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)
+	rm -rf $(NAME)-$(VERSION)
 
-srpm: clean $(RPM)
-	(cd .. ; tar cfj $(RPM)/SOURCES/$(project).tar.bz2 $(project))
-	rpm -bs $(RPM)/SPECS/$(project).spec
+rpm: dis $(RPM)
+	rpm -ta ../$(NAME)-$(VERSION).tar.bz2
+
+srpm: dis $(RPM)
+	rpm -ts ../$(NAME)-$(VERSION).tar.bz2
 
 log:
 	cvs2cl -U ../common/username -I ChangeLog -W 400 --accum
