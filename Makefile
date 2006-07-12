@@ -53,10 +53,6 @@ rpm: srpm
 	rpm -bb --clean --rmsource --rmspec $(RPM)/SPECS/$(project).spec
 
 srpm: clean $(RPM)
-	(echo "# !! DON'T MODIFY HERE, MODIFY IN THE CVS !!" ; \
-         cat $(project).spec \
-        ) > $(RPM)/SPECS/$(project).spec
-
 	(cd .. ; tar cfj $(RPM)/SOURCES/$(project).tar.bz2 $(project))
 	rpm -bs $(RPM)/SPECS/$(project).spec
 
