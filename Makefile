@@ -50,7 +50,7 @@ install: build
 	install libldetect.h $(includedir)
 
 rpm: srpm
-	rpm -bb --clean --rmsource --rmspec $(RPM)/SPECS/$(project).spec
+	rpm -bb --clean --rmsource --rmspec $(project).spec
 
 srpm: clean $(RPM)
 	(cd .. ; tar cfj $(RPM)/SOURCES/$(project).tar.bz2 $(project))
