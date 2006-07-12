@@ -1,14 +1,14 @@
-# EDIT IN CVS NOT IN SOURCE PACKAGE (NO PATCH ALLOWED).
+# EDIT IN SVN NOT IN SOURCE PACKAGE (NO PATCH ALLOWED).
 
 %define lib_major 0.6
-%define lib_minor 4
+%define lib_minor 5
 %define lib_name %mklibname %{name} %{lib_major}
 
 Name:    ldetect
 Version: %{lib_major}.%{lib_minor}
-Release: 1mdk
+Release: %mkrel 1
 Summary: Light hardware detection tool
-Source: %name.tar.bz2
+Source: %{name}-%{version}.tar.bz2
 Group: System/Kernel and hardware
 URL:	  http://www.mandrivalinux.com
 BuildRoot: %_tmppath/%{name}-buildroot
@@ -39,7 +39,7 @@ see %name
 see %name
 
 %prep
-%setup -q -n %name
+%setup -q
 
 %build
 %make
@@ -71,6 +71,9 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*.so
 
 %changelog
+* Wed Jul 12 2006 Olivier Blin <oblin@mandriva.com> 0.6.5-1mdv2007.0
+- dmidecode >= 2.7 support
+
 * Thu Jan  5 2006 Gwenole Beauchesne <gbeauchesne@mandriva.com> 0.6.4-1mdk
 - add support for pci domains
 
