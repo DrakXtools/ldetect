@@ -65,4 +65,4 @@ srpm: dis $(RPM)
 	rpm -ts ../$(NAME)-$(VERSION).tar.bz2
 
 log:
-	cvs2cl -U ../common/username -I ChangeLog -W 400 --accum
+	svn2cl --authors ../common/username.xml --accum
