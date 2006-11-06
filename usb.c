@@ -42,7 +42,7 @@ extern struct pciusb_entries usb_probe(void) {
 			e = &r.entries[r.nb++];
 			pciusb_initialize(e);
 
-			if (sscanf(buf, "T:  Bus=%02hd Lev=%*02d Prnt=%*02d Port=%*02d Cnt=%*02d Dev#=%3hd Spd=%*3s MxCh=%*2d", &pci_bus, &pci_device) == 2) {
+			if (sscanf(buf, "T:  Bus=%02hd Lev=%*02d Prnt=%*04d Port=%*02d Cnt=%*02d Dev#=%3hd Spd=%*3s MxCh=%*2d", &pci_bus, &pci_device) == 2) {
 				e->pci_bus = pci_bus;
 				e->pci_device = pci_device;
 			} else fprintf(stderr, "%s %d: unknown ``T'' line\n", proc_usb_path, line);
