@@ -1,7 +1,7 @@
 # EDIT IN SVN NOT IN SOURCE PACKAGE (NO PATCH ALLOWED).
 
 %define lib_major 0.6
-%define lib_minor 5
+%define lib_minor 6
 %define lib_name %mklibname %{name} %{lib_major}
 
 Name:    ldetect
@@ -71,6 +71,10 @@ rm -rf $RPM_BUILD_ROOT
 %_libdir/*.so
 
 %changelog
+* Mon Nov  6 2006 Thierry Vignaud <tvignaud@mandriva.com> 0.6.6-1mdv2007.1
+- fix parsing /proc/bus/usb/devices with large "parent device" field
+  (veryy rare case)
+
 * Wed Jul 12 2006 Olivier Blin <oblin@mandriva.com> 0.6.5-1mdv2007.0
 - dmidecode >= 2.7 support
 - fix freeing a reference to a constant string (fredl)
