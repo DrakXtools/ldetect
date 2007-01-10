@@ -59,7 +59,7 @@ extern struct pciusb_entries usb_probe(void) {
 		case 'I': if (e->class_ == 0) {
 			char driver[50];
 			int class_, sub, prot = 0;
-			if (sscanf(buf, "I:  If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=%s", &class_, &sub, &prot, driver) == 4) {
+			if (sscanf(buf, "I:%*1c  If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=%s", &class_, &sub, &prot, driver) == 4) {
 				e->class_ = (class_ * 0x100 + sub) * 0x100 + prot;
 				if (strncmp(driver, "(none)", 6))
 					e->module = strdup(driver);
@@ -67,7 +67,7 @@ extern struct pciusb_entries usb_probe(void) {
 				if (e->class_ == (0x1*0x100+ 0x01)) /* USB_AUDIO_CLASS*0x100 + USB_SUBCLASS_AUDIO_CONTROL*/
 					e->module = strdup("snd-usb-audio");
 
-			} else if (sscanf(buf, "I:  If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=", &class_, &sub, &prot) == 3) {
+			} else if (sscanf(buf, "I:%*1c If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=", &class_, &sub, &prot) == 3) {
                     /* prevent spurious warnings for strange USB interfaces */
 			} else fprintf(stderr, "%s %d: unknown ``I'' line\n", proc_usb_path, line);
 			break;
