@@ -12,7 +12,7 @@ if (@ARGV) {
 sub read_pciids {
     my ($f) = @_;
     my %drivers;
-    my ($id1, $id2, $class, $line);
+    my ($id1, $id2, $vendor, $line);
     foreach (cat_($f)) {
 	chomp; $line++;
 	next if /^#/ || /^;/ || /^\s*$/;
@@ -21,15 +21,15 @@ sub read_pciids {
 	} elsif (my ($subid1, $subid2, $text) = /^\t\t(\S+)\s+(\S+)\s+(.+)/) {
 	    $text =~ s/\t/ /g;
 	    $id1 && $id2 or die "$f:$line: unexpected device\n";
-	    $drivers{sprintf qq(%04x%04x%04x%04x), hex($id1), hex($id2), hex($subid1), hex($subid2)} = "$class|$text";
+	    $drivers{sprintf qq(%04x%04x%04x%04x), hex($id1), hex($id2), hex($subid1), hex($subid2)} = "$vendor|$text";
 	} elsif (/^\t(\S+)\s+(.+)/) {
 	    ($id2, $text) = ($1, $2);
 	    $text =~ s/\t/ /g;
 	    $id1 && $id2 or die "$f:$line: unexpected device\n";
-	    $drivers{sprintf qq(%04x%04xffffffff), hex($id1), hex($id2)} = "$class|$text";
+	    $drivers{sprintf qq(%04x%04xffffffff), hex($id1), hex($id2)} = "$vendor|$text";
 	} elsif (/^(\S+)\s+(.+)/) {
 	    $id1 = $1;
-	    $class = $2;
+	    $vendor = $2;
 	} else {
 	    warn "$f:$line: bad line: $_\n";
 	}
