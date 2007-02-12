@@ -27,7 +27,7 @@ use MDV::Lspciusb;
 
 if (@ARGV) {
     print "$_: " . join(",", modalias::get_modules($_)) . "\n" foreach @ARGV;
-    exit;
+    exit();
 }
 
 foreach my $device (MDV::Lspciusb::list()) {

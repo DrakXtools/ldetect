@@ -56,17 +56,17 @@ my $pciids = read_pciids("/usr/share/pci.ids");
 
 my %bus_get_description = (
     pci => sub {
-        my ($dev_path, $values) = @_;
+        my ($_dev_path, $values) = @_;
         if (my @ids = $values =~ /^v([[:xdigit:]]{8})d([[:xdigit:]]{8})sv([[:xdigit:]]{8})sd([[:xdigit:]]{8})/) {
-            my ($v, $d, $sv, $sd) = map { hex ($_) } @ids;
+            my ($v, $d, $sv, $sd) = map { hex($_) } @ids;
             return $pciids->{sprintf(qq(%04x%04x%04x%04x), $v, $d, $sv, $sd)} ||
               $pciids->{sprintf(qq(%04x%04xffffffff), $v, $d)};
         }
     },
     usb => sub {
-        my ($dev_path, $values) = @_;
-        $full_path = dirname($dev_path) . "/" . readlink($dev_path);
-        $parent_path = dirname($full_path);
+        my ($dev_path, $_values) = @_;
+        my $full_path = dirname($dev_path) . "/" . readlink($dev_path);
+        my $parent_path = dirname($full_path);
         chomp_(cat_("$parent_path/product"));
     },
 );
@@ -85,7 +85,7 @@ sub list() {
             $desc = $get_desc->($dev_path, $values);
         }
         $desc ||= "unknown";
-        { module => $module, descr => $desc, modules => $modules }
+        { module => $module, descr => $desc, modules => $modules };
     } map { glob("/sys/bus/$_/devices/*/modalias") } qw(pci usb);
 }
 
