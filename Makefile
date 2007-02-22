@@ -55,11 +55,5 @@ dis ../$(NAME)-$(VERSION).tar.bz2: clean
 	tar cfj ../$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)
 	rm -rf $(NAME)-$(VERSION)
 
-rpm: dis $(RPM)
-	rpm -ta ../$(NAME)-$(VERSION).tar.bz2
-
-srpm: dis $(RPM)
-	rpm -ts ../$(NAME)-$(VERSION).tar.bz2
-
 log:
 	svn2cl --authors ../common/username.xml --accum
