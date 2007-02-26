@@ -82,15 +82,16 @@ extern struct pciusb_entries pci_probe(void) {
 		}
 		read(devf, &buf, 0x30); /* these files're 256 bytes but we only need first 48 bytes*/
 		e->class_ = dev->device_class;
-		e->subvendor = bufi[0x16];
-		e->subdevice = bufi[0x17];
+		/* we divide by 2 because we address the array as a word array since we read a word */
+		e->subvendor = bufi[PCI_SUBSYSTEM_VENDOR_ID/2]; // == (u16)!(buf[PCI_SUBSYSTEM_VENDOR_ID] | (buf[PCI_SUBSYSTEM_VENDOR_ID+1] << 8))
+		e->subdevice = bufi[PCI_SUBSYSTEM_ID/2];
 				
 		if ((e->subvendor == 0 && e->subdevice == 0) ||
 		    (e->subvendor == e->vendor && e->subdevice == e->device)) {
 			e->subvendor = 0xffff;
 			e->subdevice = 0xffff;
 		}
-		class_prog = buf[0x9];
+		class_prog = buf[PCI_CLASS_PROG];
 
 		/* special rules below must be in sync with gi/mdk-stage1/probing.c */
 
