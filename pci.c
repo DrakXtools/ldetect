@@ -60,6 +60,11 @@ extern struct pciusb_entries pci_probe(void) {
 
 		pciusb_initialize(e);
 
+          asprintf(&e->text, " %s|%s",
+                   pci_lookup_name(pacc, vendorbuf, sizeof(vendorbuf), PCI_LOOKUP_VENDOR, dev->vendor_id, dev->device_id),
+                   pci_lookup_name(pacc, devbuf,    sizeof(devbuf),    PCI_LOOKUP_DEVICE, dev->vendor_id, dev->device_id)
+               );
+
 		e->vendor =     dev->vendor_id;
 		e->device =     dev->device_id;
 		e->pci_bus =    dev->bus;
