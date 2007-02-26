@@ -20,7 +20,7 @@ build: $(binaries) $(libraries)
 lspcidrake: lspcidrake.c libldetect.so
 
 $(lib_major).$(LIB_MINOR): common.o pciusb.o pci.o usb.o pciclass.o usbclass.o dmi.o
-	$(CC) -shared -Wl,-soname,$(lib_major) -o $@ $^
+	$(CC) -shared -Wl,-soname,$(lib_major) -o $@ $^ -lpci
 $(lib_major): $(lib_major).$(LIB_MINOR)
 	ln -sf $< $@
 libldetect.so: $(lib_major)
