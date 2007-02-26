@@ -5,7 +5,12 @@
 
 #define NON_EXPORTED __attribute__((visibility("hidden")))
 
-extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable) NON_EXPORTED;
+typedef enum {
+     LOAD,
+     DO_NOT_LOAD,
+} descr_lookup;
+
+extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup) NON_EXPORTED;
 extern void pciusb_initialize(struct pciusb_entry *e) NON_EXPORTED;
 
 #define MAX_DEVICES 100
