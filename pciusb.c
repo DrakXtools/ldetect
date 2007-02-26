@@ -76,6 +76,7 @@ extern void pciusb_initialize(struct pciusb_entry *e) {
 	e->pci_function = 0xffff;
 	e->module = NULL;
 	e->text   = NULL;
+	e->class  = NULL;
 	e->already_found = 0;
 }
 
