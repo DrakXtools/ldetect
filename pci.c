@@ -69,7 +69,7 @@ extern struct pciusb_entries pci_probe(void) {
 
 		e->vendor =     dev->vendor_id;
 		e->device =     dev->device_id;
-		e->pci_bus =    dev->domain;
+		e->pci_domain = dev->domain;
 		e->pci_bus =    dev->bus;
 		e->pci_device = dev->dev;
 		e->pci_function = dev->func;
