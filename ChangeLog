@@ -1,728 +1,973 @@
-2005-08-05 15:21  Thierry Vignaud <tvignaud at mandriva.com>
+2007-02-26 16:56  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* MDV/Lspciusb.pm: use libldetect for parsing pci.ids & getting PCI
+	  description (thus shrinking execution time by 13%)
+
+2007-02-26 15:01  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pci.c: (pci_probe) typo fix :-(
+
+2007-02-26 13:55  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: bump major after ABI changes
+
+2007-02-26 13:55  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* libldetect.h, pci.c: export PCI domain
+
+2007-02-26 13:55  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pci.c: (pci_probe) get PCI class as reported by pciutils (might
+	  be used by harddrake
+	  in order to display something nicer than ->{media_type})
+
+2007-02-26 13:54  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* libldetect.h, pciusb.c: (struct pciusb_entry) add a class field
+
+2007-02-26 13:53  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* generate_pciclass.pl, generate_usbclass.pl, libldetect.h,
+	  lspcidrake.c, pci.c, pciusb.c, usb.c: (struct pciusb_entry)
+	  rename class_ as class_id
+
+2007-02-26 13:53  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pci.c: (pci_probe) remove an extra space wronly added in r125837
+
+2007-02-26 13:51  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pci.c: (pci_probe) replace a couple magic valyes by constants
+	  from pciutils
+
+2007-02-26 13:51  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pci.c, usb.c: stop performing descriptions lookup from pcitable
+	  for PCI
+
+2007-02-26 13:49  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* common.h, pciusb.c: (pciusb_find_modules) add "descr_lookup"
+	  parameter to enable/disable description lookup
+
+2007-02-26 13:48  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pci.c: (pci_probe) use pciutils in order to get device
+	  description from /usr/share/pci.ids
+
+2007-02-26 13:48  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile, pci.c: switch to pciutils as PCI listing backend
+
+2007-02-22 20:58  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: get rid of rpm packaging rules
+
+2007-02-22 20:54  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: use svn export instead of tar for preparing the tarball
+
+2007-02-12 17:31  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* MDV/Lspciusb.pm: (list) enable to scan only pci or usb bus
+
+2007-02-12 14:41  Pixel <pixel at mandriva.com>
+
+	* MDV/.perl_checker: unneeded
+
+2007-02-12 14:23  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* MDV/Lspciusb.pm, lspcidrake.pl: perl_checker cleanups
+
+2007-02-12 14:22  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* .perl_checker, MDV/.perl_checker: blacklist enough modules in
+	  order to let perl_checker run
+
+2007-02-12 14:20  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* MDV, MDV/Lspciusb.pm, lspcidrake.pl: move detection code from
+	  lspcidrake.pl into MDV::Lspciusb
+
+2007-02-12 14:13  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* lspcidrake.pl: add copyright header
+
+2007-02-12 14:11  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* lspcidrake.pl: (read_pciids) rename "class" as "vendor" since it
+	  really is
+
+2007-01-10 15:40  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* .cvsignore, .svnignore: rename b/c of CVS -> SVN switch
+
+2007-01-10 15:39  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: bump release
+
+2007-01-10 15:14  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* usb.c: (usb_probe) fix parsing /proc/bus/usb/devices with
+	  kernel-2.6.20
+	  (eg: "I:* If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50
+	  Driver=usb-storage")
+
+2006-11-06 14:38  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: bump minor
+
+2006-11-06 14:36  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ldetect.spec: 0.6.6-1mdv2007.1
+
+2006-11-06 14:36  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: (log) switch from CVS to SVN
+
+2006-11-06 14:27  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* usb.c: (usb_probe) fix parsing /proc/bus/usb/devices with large
+	  "parent
+	  device" field (eg when some special usb keys are plugged on a non
+	  root
+	  USB hub)
+
+2006-07-12 18:27  Olivier Blin <oblin at mandriva.com>
+
+	* ldetect.spec: add missing changelog entry
+
+2006-07-12 18:26  Olivier Blin <oblin at mandriva.com>
+
+	* ldetect.spec: ldetect-0.6.5-1mdv2007.0
+
+2006-07-12 18:21  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: update minor
+
+2006-07-12 18:21  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: use dis target
+
+2006-07-12 17:40  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: use spec file from current directory
+
+2006-07-12 17:39  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: drop duplicated warning (already in the spec)
+
+2006-07-12 16:13  Olivier Blin <oblin at mandriva.com>
+
+	* dmi.c: dmidecode >= 2.7 support
+
+2006-06-27 20:35  Olivier Blin <oblin at mandriva.com>
+
+	* lspcidrake.pl: initial lspcidrake immplementation using modalias
+
+2006-06-07 16:17  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ldetect.spec: add standard cvs warning
+
+2006-02-22 13:11  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* usb.c: fix freeing a reference to a constant string (fredl)
+
+2006-01-05 15:58  Gwenole Beauchesne <gbeauchesne at mandriva.com>
+
+	* ldetect.spec: fix url (mandriva)
+
+2006-01-05 15:42  Gwenole Beauchesne <gbeauchesne at mandriva.com>
+
+	* pci.c: always initialize n_pci_domains, stick to 0 on opendir()
+	  error and no match
+
+2006-01-05 15:38  Gwenole Beauchesne <gbeauchesne at mandriva.com>
+
+	* ldetect.spec: 0.6.4-1mdk
+
+2006-01-05 15:38  Gwenole Beauchesne <gbeauchesne at mandriva.com>
+
+	* pci.c: add support for pci domains
+
+2005-10-17 08:32  Pixel <pixel at mandriva.com>
+
+	* ldetect.spec: fix rpm Group
+
+2005-08-05 13:22  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ChangeLog: *** empty log message ***
+
+2005-08-05 13:21  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ldetect.spec: 0.6.3-1mdk
 
-2005-08-05 15:20  Thierry Vignaud <tvignaud at mandriva.com>
+2005-08-05 13:20  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* usb.c: (usb_probe) prevent spurious warnings for strange USB
 	  interfaces
 
-2005-08-03 11:03  Pixel <pixel at mandriva.com>
+2005-08-03 09:03  Pixel <pixel at mandriva.com>
 
 	* lspcidrake.c: when given a dmidecode_file, we don't need to be
 	  root
 
-2005-05-16 06:11  Thierry Vignaud <tvignaud at mandriva.com>
+2005-05-16 04:11  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ChangeLog: *** empty log message ***
+
+2005-05-16 04:11  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ldetect.spec: 0.6.2-1mdk
 
-2005-05-16 05:19  Thierry Vignaud <tvignaud at mandriva.com>
+2005-05-16 03:19  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* lspcidrake.c: do not try to run dmidecode when not root
 
-2005-03-30 17:06  Thierry Vignaud <tvignaud at mandriva.com>
+2005-03-30 15:08  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ChangeLog: *** empty log message ***
+
+2005-03-30 15:06  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ldetect.spec: 0.6.1-1mdk
 
-2005-03-30 17:03  Thierry Vignaud <tvignaud at mandrakesoft.com>
+2005-03-30 15:03  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pci.c: oops: sata_via doesn't support for CLASS probing whereas
 	  sata_nv does
 
-2005-03-14 18:20  Pixel <pixel at mandrakesoft.com>
+2005-03-14 17:20  Pixel <pixel at mandriva.com>
 
 	* Makefile, common.c, common.h, dmi.c, ldetect.spec,
 	  libldetect-private.h, libldetect.h, lspcidrake.c, pci.c,
 	  pciusb.c, usb.c: libify and simplify
 
-2005-03-14 14:10  Pixel <pixel at mandrakesoft.com>
+2005-03-14 13:10  Pixel <pixel at mandriva.com>
 
 	* pciusb.c: fix running on a empty pci/usb devices source
 
-2005-03-14 13:34  Pixel <pixel at mandrakesoft.com>
+2005-03-14 12:34  Pixel <pixel at mandriva.com>
 
 	* lspcidrake.c: fix typo
 
-2005-03-14 13:33  Pixel <pixel at mandrakesoft.com>
+2005-03-14 12:33  Pixel <pixel at mandriva.com>
 
 	* pciusb.c: fix a memory leak
 
-2005-03-14 13:32  Pixel <pixel at mandrakesoft.com>
+2005-03-14 12:32  Pixel <pixel at mandriva.com>
 
 	* Makefile, common.c, common.h, dmi.c, ldetect.spec,
 	  libldetect-private.h, libldetect.h, lspcidrake.c, pciusb.c: add
 	  dmitable use
 
-2005-03-11 10:43  Pixel <pixel at mandrakesoft.com>
+2005-03-11 09:43  Pixel <pixel at mandriva.com>
 
 	* pci.c: setting .nb to 0 seems a better idea than setting .entries
 
-2005-02-17 15:16  Thierry Vignaud <tvignaud at mandrakesoft.com>
+2005-02-23 17:48  Pablo Saratxaga <pablo at mandriva.com>
+
+	* ChangeLog: converted to UTF-8
+
+2005-02-17 14:16  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ChangeLog: *** empty log message ***
+
+2005-02-17 14:16  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ldetect.spec: fill in 0.5.5-1mdk's changelog
 
-2005-02-17 15:15  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2005-02-17 14:15  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ldetect.spec: 0.5.5-1mdk
 
-2005-02-17 15:15  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2005-02-17 14:15  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pci.c: handle a few more special cases (gdth, snd-vx222, 8139too,
 	  and agp bridges)
 
-2005-02-17 15:15  Thierry Vignaud <tvignaud@mandrakesoft.com>
-
-	* pci.c: handle a few more special cases (gdth, snd-vx222, 8139too,
-	  and agp bridges)
-
-2005-02-17 13:26  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2005-02-17 12:26  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pci.c: detect VIA SATA controllers since new sata_via.c driver
-	  probes them this way... (we should really add a class/...
-	  matching table like kernel's pcimap is)
+	  probes them
+	  this way... (we should really add a class/... matching table like
+	  kernel's pcimap is)
 
-2004-12-07 17:06  Pixel <pixel@mandrakesoft.com>
+2004-12-07 16:06  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec, pci.c: all PCI_CLASS_BRIDGE_CARDBUS cards are
 	  yenta_socket (says kudzu)
 
-2004-10-28 10:07  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2004-10-28 08:08  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ChangeLog: *** empty log message ***
+
+2004-10-28 08:07  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ldetect.spec: 0.5.3-1mdk
 
-2004-10-27 15:35  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2004-10-27 13:35  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* Makefile: make ldetect-devel usable on amd64
 
-2004-10-27 15:21  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2004-10-27 13:21  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pciusb.c: keep existing description string if already reported by
 	  the device
 
-2004-06-17 10:35  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2004-06-17 08:35  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ldetect.spec: 0.5.2-1mdk
 
-2004-06-17 10:33  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2004-06-17 08:33  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* usb.c: (usb_probe) ask the kernel for module to use with usb
 	  devices
 
-2003-11-20 16:20  Pixel <pixel@mandrakesoft.com>
+2003-11-20 15:20  Pixel <pixel at mandriva.com>
 
 	* generate_usbclass.pl, ldetect.spec: don't display "Vendor
 	  Specific Class" usb class
 
-2003-11-20 16:03  Pixel <pixel@mandrakesoft.com>
+2003-11-20 15:03  Pixel <pixel at mandriva.com>
 
 	* generate_usbclass.pl, ldetect.spec, libldetect.h, lspcidrake.c:
 	  new usb_class code (breaks compatibility!)
 
-2003-08-20 11:11  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2003-08-20 09:11  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* lspcidrake.c: remove dummy reference to silently ignored -f
 	  option
 
-2003-08-20 02:23  Pixel <pixel@mandrakesoft.com>
+2003-08-20 00:23  Pixel <pixel at mandriva.com>
 
 	* lspcidrake.c: fix argument testing
 
-2003-08-20 02:21  Pixel <pixel@mandrakesoft.com>
+2003-08-20 00:21  Pixel <pixel at mandriva.com>
 
 	* generate_pciclass.pl, generate_usbclass.pl, usb.c: a little
 	  cleanup
 
-2003-08-19 23:28  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2003-08-19 21:28  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* ldetect.spec, libldetect-private.h, libldetect.h, lspcidrake.c,
-	  pci.c, pciusb.c, usb.c: do full-probe by default; remove support
-	  for no full-probe
+	* ChangeLog, ldetect.spec, libldetect-private.h, libldetect.h,
+	  lspcidrake.c, pci.c, pciusb.c, usb.c: do full-probe by default;
+	  remove support for no full-probe
 
-2003-07-31 15:36  Pixel <pixel@mandrakesoft.com>
+2003-07-31 13:36  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec, pci.c: - detect ohci1394 & ehci-hcd based on the
-	  pci class   (as done in RedHat's kudzu)
+	  pci class
+	  (as done in RedHat's kudzu)
 
-2003-04-22 11:45  Pixel <pixel@mandrakesoft.com>
+2003-04-22 09:45  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec: - Use read() instead of fread() to read from
-	"/proc/bus/pci/%02x/%02x.%d".	 Thanks a lot to Tom Cox for
-	finding this bug:
-	
-		  The proc.c module in the kernel source clearly states
-	that
-		  reading more than 64 bytes can cause problems. The pci.c
-		  module in the ldetect library uses the buffered fread()
-		  function. This function always reads in blocks, so when
-		  run as root, the read always tried to read more than the
-		  user requested amount.
-	
+	  "/proc/bus/pci/%02x/%02x.%d".
+	  Thanks a lot to Tom Cox for finding this bug:
+	  
+	  The proc.c module in the kernel source clearly states that
+	  reading more than 64 bytes can cause problems. The pci.c
+	  module in the ldetect library uses the buffered fread()
+	  function. This function always reads in blocks, so when
+	  run as root, the read always tried to read more than the
+	  user requested amount.
+	  
 	  This should fix freezes when doing a full probe
 
-2003-04-22 11:04  Pixel <pixel@mandrakesoft.com>
+2003-04-22 09:04  Pixel <pixel at mandriva.com>
 
 	* pci.c: Use read() instead of fread() to read from
-	"/proc/bus/pci/%02x/%02x.%d".  Thanks a lot to Tom Cox for finding
-	this bug:
-	
-		  The proc.c module in the kernel source clearly states
-	that
-		  reading more than 64 bytes can cause problems. The pci.c
-		  module in the ldetect library uses the buffered fread()
-		  function. This function always reads in blocks, so when
-		  run as root, the read always tried to read more than the
-		  user requested amount.
+	  "/proc/bus/pci/%02x/%02x.%d".
+	  Thanks a lot to Tom Cox for finding this bug:
+	  
+	  The proc.c module in the kernel source clearly states that
+	  reading more than 64 bytes can cause problems. The pci.c
+	  module in the ldetect library uses the buffered fread()
+	  function. This function always reads in blocks, so when
+	  run as root, the read always tried to read more than the
+	  user requested amount.
 
-2003-01-28 16:44  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2003-01-28 15:44  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* Makefile: only check for latest logs
 
-2003-01-28 15:39  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2003-01-28 14:39  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* Makefile: - sanitize ChangeLog - add log rule
+	* ChangeLog, Makefile: - sanitize ChangeLog
+	  - add log rule
 
-2003-01-06 15:34  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2003-01-06 14:34  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ChangeLog: *** empty log message ***
+
+2003-01-06 14:34  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ldetect.spec: add pixel changes
 
-2003-01-06 15:32  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2003-01-06 14:32  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ldetect.spec: 0.4.8-1mdk
 
-2003-01-06 15:24  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2003-01-06 14:24  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pciusb.c: special case for buggy 0x0 usb entry so that we
-	eventually got a class, thus normalizing lspcidrake & harddrake
-	output
+	  eventually got a
+	  class, thus normalizing lspcidrake & harddrake output
 
-2002-11-05 16:12  Pixel <pixel@mandrakesoft.com>
+2002-11-05 15:12  Pixel <pixel at mandriva.com>
 
 	* pci.c, usb.c: no error message when -p is not used and there is
-	neither pci nor usb bus
+	  neither pci nor usb bus
 
-2002-11-05 15:27  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-11-05 14:27  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* usb.c: fix access check
 
-2002-10-15 16:40  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-10-15 14:40  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ldetect.spec: 0.4.7-1mdk
 
-2002-10-07 11:32  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-10-07 09:32  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pciusb.c: enforce gc coding rules
 
-2002-10-07 11:21  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-10-07 09:21  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* pciusb.c: - remove gc hack that tried to fix my bug  (which i
-	fixed in last commit)
-	
-	- simplify subids match; explay why we can only test for nb==4
+	* pciusb.c: - remove gc hack that tried to fix my bug
+	  (which i fixed in last commit)
+	  
+	  - simplify subids match; explay why we can only test for nb==4
 
-2002-10-07 09:47  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-10-07 07:47  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pciusb.c: fix "skipping already handled device" (aka kill stupid
-	remaining test)
+	  remaining test)
 
-2002-10-04 17:30  Guillaume Cottenceau <gc@mandrakesoft.com>
+2002-10-04 15:30  Guillaume Cottenceau
 
 	* pciusb.c: try to detect correctly the module when subv/subd
-	differ with non-subv/subd
+	  differ with non-subv/subd
 
-2002-09-12 12:20  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-09-12 10:20  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* AUTHORS: fix gc
 
-2002-09-05 13:25  Pixel <pixel@mandrakesoft.com>
+2002-09-05 11:25  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec, pciusb.c: fix ugly case for snd-usb-audio which
-	should have made titi think that something was broken. Really
-	fixing the right way (this fixes automatic detection of unknown usb
-	controllers)
+	  should have made titi think that
+	  something was broken. Really fixing the right way (this fixes
+	  automatic
+	  detection of unknown usb controllers)
 
-2002-08-29 14:18  Pixel <pixel@mandrakesoft.com>
+2002-08-29 12:18  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec: fix getting the Product name in usb (occurs when
-	there is no entry in usbtable)
+	  there is no entry in usbtable)
 
-2002-08-29 14:17  Pixel <pixel@mandrakesoft.com>
+2002-08-29 12:17  Pixel <pixel at mandriva.com>
 
 	* usb.c: fix getting the Product name
 
-2002-08-29 14:17  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-08-29 12:17  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pci.c: fix PCI_CLASS_PROG offset
 
-2002-08-26 04:50  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-08-26 02:50  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* ldetect.spec: 0.4.6-4mdk
+	* ChangeLog, ldetect.spec: 0.4.6-4mdk
 
-2002-08-26 00:47  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-08-25 22:47  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* pci.c: - kill last fseek - change if(cdt) cascade into if(!cdt)
-	continue - move loop invariant out of loop
+	* pci.c: - kill last fseek
+	  - change if(cdt) cascade into if(!cdt) continue
+	  - move loop invariant out of loop
 
-2002-08-22 12:31  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-08-22 10:31  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* ldetect.spec: 0.4.6-3mdk
+	* ChangeLog, ldetect.spec: 0.4.6-3mdk
 
-2002-08-22 12:27  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-08-22 10:27  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pci.c: try to not freeze on buggy motherboard by preventing:
-	- seeking in /proc/bus/pci/<bus>/<device>.<function>
-	- not reading the whole /proc/bus/pci/<bus>/<device>.<function>
-	
-	we now read 48 linear bytes the same way lspci read 64 linear
-	bytes.
+	  - seeking in /proc/bus/pci/<bus>/<device>.<function>
+	  - not reading the whole /proc/bus/pci/<bus>/<device>.<function>
+	  
+	  we now read 48 linear bytes the same way lspci read 64 linear
+	  bytes.
 
-2002-08-17 16:18  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-08-17 14:18  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* ldetect.spec: - rpmlint fixes (url, doc) - simplification
+	* ldetect.spec: - rpmlint fixes (url, doc)
+	  - simplification
 
-2002-08-17 16:12  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-08-17 14:12  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* Makefile: split rpm target in srpm and rpm
 
-2002-08-17 16:08  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-08-17 14:08  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* ldetect.spec: 4.6mdk
+	* ChangeLog, ldetect.spec: 4.6mdk
 
-2002-08-17 16:06  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-08-17 14:06  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* Makefile: default RPM to ~/rpm
 
-2002-08-16 18:03  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-08-16 16:07  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ChangeLog: *** empty log message ***
+
+2002-08-16 16:03  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* Makefile, pci.c, usb.c: - usb.c: allocate mem as pci.c does
-	- usb.c: kill dead code
-	- usb.c: give url to get info on /proc/bus/usb/devices format
-	- usb.c: the /proc/bus/usb/devices really is a state machine;
+	  - usb.c: kill dead code
+	  - usb.c: give url to get info on /proc/bus/usb/devices format
+	  - usb.c: the /proc/bus/usb/devices really is a state machine;
 	  use switch to make it clearer
-	- {usb,pci}.c: r.nb is zeroed in all path, let's do it only time
+	  - {usb,pci}.c: r.nb is zeroed in all path, let's do it only time
 
-2002-08-15 23:23  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-08-15 21:23  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* usb.c, pciusb.c: usb audio devices can use new alsa modules
-	snd-usb-audio
+	* pciusb.c, usb.c: usb audio devices can use new alsa modules
+	  snd-usb-audio
 
-2002-08-08 17:25  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-08-08 15:25  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* ldetect.spec: 0.4.5-1mdk: don't depend of the table order
+	* ChangeLog, ldetect.spec: 0.4.5-1mdk: don't depend of the table
+	  order
 
-2002-08-08 17:20  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-08-08 15:20  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* libldetect.h, pciusb.c:
-	- struct pciusb_entrie : add already_found flag
-	- pciusb::pciusb_initialize() : zero the above flag
-	- pciusb::pciusb_find_modules() : use the above flag:
-	  o if device subids matches the table ones, switch the
-	    already_found flag
+	* libldetect.h, pciusb.c: - struct pciusb_entrie : add
+	  already_found flag
+	  - pciusb::pciusb_initialize() : zero the above flag:
+	  - pciusb::pciusb_find_modules() : use the above flag:
+	  o if device subids matches the table ones,
+	  swtich the already_found flag
 	  o skip already handled device (if already_found==1)
 
-2002-07-31 13:42  Pixel <pixel@mandrakesoft.com>
+2002-07-31 11:42  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec: use -fPIC on every arch
 
-2002-07-30 21:03  Pixel <pixel@mandrakesoft.com>
+2002-07-30 19:03  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec, usb.c: fill in pci_bus and pci_device for USB
 
-2002-07-25 14:07  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-25 12:07  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ldetect.spec: 0.4.4-1mdk
 
-2002-07-25 14:04  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-25 12:05  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ChangeLog: *** empty log message ***
+
+2002-07-25 12:04  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pciusb.c: fix "(null) description" bug: don't skip entries where
-	module has already be set by pci.c workaround
+	  module has
+	  already be set by pci.c workaround
 
-2002-07-24 17:22  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-24 15:22  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ldetect.spec: 0.4.3-1mdk
 
-2002-07-23 10:10  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-23 08:10  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* lspcidrake.c: enhanced help
 
-2002-07-22 23:37  Pixel <pixel@mandrakesoft.com>
+2002-07-22 21:37  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec, pci.c, usb.c: - don't die when missing
-	/proc/bus/pci/devices (resp. /proc/bus/usb/devices),   since on
-	some boxes, this is *normal*! - free error messages obtained via
-	asprintf - remove debugging message "TOTO"
+	  /proc/bus/pci/devices (resp. /proc/bus/usb/devices),
+	  since on some boxes, this is *normal*!
+	  - free error messages obtained via asprintf
+	  - remove debugging message "TOTO"
 
-2002-07-16 22:36  Pixel <pixel@mandrakesoft.com>
+2002-07-16 20:36  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec, pciusb.c: teach titi that !(a && !b) is not (!a &&
-	!b) but (!a || b) (the other solution is to teach him to *test*)
-	(oh, remind me to teach him not to re-indent the whole code until
-	he  doesn't make stupid bugs)
+	  !b) but (!a || b)
+	  (the other solution is to teach him to *test*)
+	  (oh, remind me to teach him not to re-indent the whole code until
+	  he
+	  doesn't make stupid bugs)
 
-2002-07-16 17:34  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-16 15:34  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* ldetect.spec: next release is ok
+	* ChangeLog, ldetect.spec: next release is ok
 
-2002-07-16 17:33  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-16 15:33  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* lspcidrake.c: explain what does -f
 
-2002-07-16 17:30  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-16 15:30  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pci.c: no need for unistd.h
 
-2002-07-16 17:29  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-16 15:29  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* pci.c, usb.c: - print error message if unable to open the
-	arguement passed to -u,-p
-	
-	- print error message if usb service isn't started (commented for
-	now   to follow previous behaviour)
+	* ChangeLog, pci.c, usb.c: - print error message if unable to open
+	  the arguement passed to -u,-p
+	  
+	  - print error message if usb service isn't started (commented for
+	  now
+	  to follow previous behaviour)
 
-2002-07-16 17:28  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-16 15:28  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* lspcidrake.c: - fix usb "url"
-	
-	- prevent potential segfault if no argument to -u in next test
+	  
+	  - prevent potential segfault if no argument to -u in next test
 
-2002-07-16 17:07  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-16 15:07  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* ldetect.spec, libldetect-private.h, lspcidrake.c, pci.c: - pci.c:
-	add the ability to read pci devices list from a file instead   of
-	/proc/bus/pci/devices
-	
-	- spec: prepare for next release
-	
-	- add ChangeLog
+	* ChangeLog, ldetect.spec, libldetect-private.h, lspcidrake.c,
+	  pci.c: - pci.c: add the ability to read pci devices list from a
+	  file instead
+	  of /proc/bus/pci/devices
+	  
+	  - spec: prepare for next release
+	  
+	  - add ChangeLog
 
-2002-07-16 16:54  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-16 14:54  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* libldetect-private.h, lspcidrake.c, usb.c: - move usb devices
-	proc entry path into   libldetect-private.h::proc_usb_path
-	
-	- add -u option so that lspcidrake can read usb devices from a file
-	in   order to understand what happened to remote testers
-	
-	- make if (test) action clearer by rejecting action singleton in
-	next   line
-	
-	- lspcidrake: describe all options
+	  proc entry path into
+	  libldetect-private.h::proc_usb_path
+	  
+	  - add -u option so that lspcidrake can read usb devices from a
+	  file in
+	  order to understand what happened to remote testers
+	  
+	  - make if (test) action clearer by rejecting action singleton in
+	  next
+	  line
+	  
+	  - lspcidrake: describe all options
 
-2002-07-16 16:51  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-16 14:51  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pci.c: - change memory pattern : MAX*sizeof(entry) on stack +
-	REAL_NB*sizeof() in heap	to MAX*sizeof(entry) on heap then
-	downsized to real size
-	
-	- make if (test) action clearer by rejecting action singleton in
-	next line
+	  REAL_NB*sizeof() in heap
+	  to MAX*sizeof(entry) on heap then downsized to real size
+	  
+	  - make if (test) action clearer by rejecting action singleton in
+	  next line
 
-2002-07-16 16:39  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-16 14:39  Thierry Vignaud <tvignaud at mandriva.com>
 
-	* pci.c: don't do useless stuff when full probe isn't requires: -
-	allocatestuff on stack - call snprintf
+	* pci.c: don't do useless stuff when full probe isn't requires:
+	  - allocatestuff on stack
+	  - call snprintf
 
-2002-07-15 18:26  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-15 16:26  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* lspcidrake.c: compacificazion
 
-2002-07-09 23:28  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-09 21:28  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* lspcidrake.c: fix for "gcc-2.95.3 don't compile" (reported by Ian
-	White)
+	  White)
 
-2002-07-05 11:02  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-05 09:02  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* Makefile: add explicit depandancies so that make rebuild files if
-	needed when header're altered
+	  needed when header're altered
 
-2002-07-05 10:56  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-05 08:56  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* Makefile: compile with -Os (which results in saving 12% of text
-	size)
+	  size)
 
-2002-07-04 17:15  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-04 15:15  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pci.c: factorize common constants in private header
 
-2002-07-04 17:14  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-04 15:14  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* usb.c: typo fix
 
-2002-07-04 17:14  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-04 15:14  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* usb.c: - factorize common constants in private header
-	
-	- factorize strlen() call
+	  
+	  - factorize strlen() call
 
-2002-07-04 17:04  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-04 15:04  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* libldetect-private.h, pci.c, usb.c: factorize common constants in
-	private header
+	  private header
 
-2002-07-04 16:59  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-04 14:59  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* lspcidrake.c: we don't really need stdlib.h
 
-2002-07-04 16:58  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-04 14:58  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* lspcidrake.c: move full_probe definition nearer its usage, aka in
-	main()
-	
-	- kill print_name() and print_id() [used only once]
+	  main()
+	  
+	  - kill print_name() and print_id() [used only once]
 
-2002-07-04 16:53  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-04 14:53  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* lspcidrake.c: - merge {pci,usb}_printit into printit
-	
-	- kill usage()
+	  
+	  - kill usage()
 
-2002-07-04 13:44  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-04 11:44  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ldetect.spec: 0.4.1-1mdk
 
-2002-07-04 13:29  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-04 11:29  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* usb.c: make an if clearer
 
-2002-07-03 14:03  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-03 12:03  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pciusb.c: s/zcat/gzip -cd/ back for lord pixou
 
-2002-07-03 12:20  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-03 10:20  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pciusb.c: ifree(e->text) to prevent mem leak with usb
 
-2002-07-03 12:09  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-03 10:09  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pciusb.c: - fix pipe() error path
-	
-	- make pciusb_find_modules() normal path clearer: rewrite tests  
-	cascade into a single path were exceptions're just "go away"
+	  
+	  - make pciusb_find_modules() normal path clearer: rewrite tests
+	  cascade into a single path were exceptions're just "go away"
 
-2002-07-03 12:01  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-03 10:01  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pciusb.c: - make gzip path in fh_open() be clearer
-	
-	- pciusb_find_modules() optimization / cleanups :
-	
-		- only calc module and description once so that if there're
-		  multiples identical cards, we just gives the same result
-	
-		- do less copies :
-			- only copy when setting e->{text,module}
-	
-			- it's useless to do copies on the stack, just play
-	with
-			  strndup() instead of strdup()
-	
-		- skip comments in {usb,pci}table
-	
-		- remove if (q) test which is uneeded since we've already
-	parsed
-		  the buffer with sscanf() and we've skipped comments
-	
-		- remove uneeded ifree (it's impossible to get valid
-	pointer a
-		  this point)
+	  
+	  - pciusb_find_modules() optimization / cleanups :
+	  
+	  - only calc module and description once so that if there're
+	  multiples identical cards, we just gives the same result
+	  
+	  - do less copies :
+	  - only copy when setting e->{text,module}
+	  
+	  - it's useless to do copies on the stack, just play with
+	  strndup() instead of strdup()
+	  
+	  - skip comments in {usb,pci}table
+	  
+	  - remove if (q) test which is uneeded since we've already parsed
+	  the buffer with sscanf() and we've skipped comments
+	  
+	  - remove uneeded ifree (it's impossible to get valid pointer a
+	  this point)
 
-2002-07-03 11:14  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-03 09:14  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pciusb.c: - no need to allocate fname_gz in fast path
-	
-	- reduce cmd size
-	
-	- use zcat rather than gzip
+	  
+	  - reduce cmd size
+	  
+	  - use zcat rather than gzip
 
-2002-07-03 11:06  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-03 09:06  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* libldetect-private.h, pci.c, pciusb.c, usb.c: get rid of more
-	uneeded copies
+	  uneeded copies
 
-2002-07-03 11:05  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-03 09:05  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* AUTHORS: list all contributors
 
-2002-07-03 10:54  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-03 08:54  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pci.c, usb.c: get rid of {pci,usb}_find_modules()
 
-2002-07-03 10:53  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-03 08:53  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* libldetect.h, lspcidrake.c: prevent signed vs unsigned comp
-	warnings
+	  warnings
 
-2002-07-03 10:49  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-03 08:49  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* lspcidrake.c, pci.c, pciusb.c, usb.c: indent-region
 
-2002-07-03 10:42  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-03 08:42  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* libldetect.h, lspcidrake.c, pciusb.c: don't do uneeded copies
-	(saves 2% of text size)
+	  (saves 2% of text size)
 
-2002-07-03 10:41  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-03 08:41  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* Makefile: be more strict
 
-2002-07-03 10:27  Thierry Vignaud <tvignaud@mandrakesoft.com>
+2002-07-03 08:27  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* lspcidrake.c: simplify (source is clearer, binary isn't really
-	altered)
+	  altered)
 
-2002-06-26 16:10  Gwenole Beauchesne <gbeauchesne@mandrakesoft.com>
+2002-06-26 14:10  Gwenole Beauchesne <gbeauchesne at mandriva.com>
 
 	* ldetect.spec: sanitize specfile
 
-2002-06-10 20:39  Pixel <pixel@mandrakesoft.com>
+2002-06-10 18:39  Pixel <pixel at mandriva.com>
 
 	* generate_pciclass.pl, generate_usbclass.pl, ldetect.spec,
-	libldetect.h, lspcidrake.c, pci.c, pciusb.c, usb.c: ensure the
-	header file are C++ compliant (do not use "class" for struct field
-	name)
+	  libldetect.h, lspcidrake.c, pci.c, pciusb.c, usb.c: ensure the
+	  header file are C++ compliant (do not use "class" for struct
+	  field name)
 
-2002-05-06 20:48  Pixel <pixel@mandrakesoft.com>
+2002-05-06 18:48  Pixel <pixel at mandriva.com>
 
-	* AUTHORS: [no log message]
+	* AUTHORS: *** empty log message ***
 
-2001-12-28 13:04  Pixel <pixel@mandrakesoft.com>
+2001-12-28 12:04  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec, pci.c: in probe_type=1, recognize usb controllers
-	(is either usb-uhci or usb-ohci)
+	  (is either usb-uhci or usb-ohci)
 
-2001-11-23 00:16  Guillaume Cottenceau <gc@mandrakesoft.com>
+2001-11-22 23:16  Guillaume Cottenceau
 
 	* generate_usbclass.pl: - don't limitate to CLASS ID's with a
-	Protocol number - fix bug that made ID's with a-f not appear (\d
-	not very   good to parse  hexadecimal)
+	  Protocol number
+	  - fix bug that made ID's with a-f not appear (\d not very
+	  good to parse hexadecimal)
 
-2001-10-11 17:44  Pixel <pixel@mandrakesoft.com>
+2001-10-11 15:44  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec: s/Copyright/License/
 
-2001-09-13 15:40  Pixel <pixel@mandrakesoft.com>
+2001-09-13 13:41  Pixel <pixel at mandriva.com>
 
-	* generate_pciclass.pl, generate_usbclass.pl, libldetect.h, usb.c,
-	ldetect.spec: use the sub-category for usb probing
+	* generate_pciclass.pl, generate_usbclass.pl, ldetect.spec,
+	  libldetect.h, usb.c: use the sub-category for usb probing
 
-2001-09-11 00:11  Guillaume Cottenceau <gc@mandrakesoft.com>
+2001-09-10 22:11  Guillaume Cottenceau
 
 	* ldetect.spec, lspcidrake.c: add "-v" and "-f" options to
-	lspcidrake for (v)erbose mode and (f)ull probe
+	  lspcidrake for (v)erbose mode and (f)ull probe
 
-2001-08-29 18:33  Pixel <pixel@mandrakesoft.com>
+2001-08-29 16:33  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec: fix when 2 similar devices are there
 
-2001-07-03 22:28  Pixel <pixel@mandrakesoft.com>
+2001-07-03 20:28  Pixel <pixel at mandriva.com>
 
 	* pciusb.c: fix pb when 2 similar cards are there
 
-2001-04-12 17:15  Pixel <pixel@mandrakesoft.com>
+2001-04-12 15:15  Pixel <pixel at mandriva.com>
+
+	* ldetect.spec, pciusb.c: close fdno's of the pipe which are unused
+	  or dup2'ed
+
+2001-04-12 15:15  Pixel <pixel at mandriva.com>
 
 	* generate_usbclass.pl: add the line in comment
 
-2001-04-12 17:13  Pixel <pixel@mandrakesoft.com>
+2001-04-11 16:53  Fançois Pons
 
-	* pciusb.c, ldetect.spec: close fdno's of the pipe which are unused
-	or dup2'ed
+	* ldetect.spec, pciusb.c: *** empty log message ***
 
-2001-04-11 18:53  Fançois Pons <fpons@mandrakesoft.com>
-
-	* ldetect.spec, pciusb.c: [no log message]
-
-2001-04-05 02:12  Chmouel Boudjnah <chmouel@mandrakesoft.com>
+2001-04-05 00:12  Chmouel Boudjnah
 
 	* usb.c: Don't print ugly can't open.
 
-2001-03-29 12:38  Pixel <pixel@mandrakesoft.com>
+2001-03-29 10:38  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec: fix some memory leak and a few segfaults
 
-2001-03-29 12:36  Pixel <pixel@mandrakesoft.com>
+2001-03-29 10:36  Pixel <pixel at mandriva.com>
 
 	* pciusb.c: fix some memory leak a few segfaults
 
-2001-03-24 11:48  Pixel <pixel@mandrakesoft.com>
+2001-03-24 10:48  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec, pciusb.c: nasty C, fclose on popen'ed gets a
-	segfault, in /some/ cases :-(
+	  segfault, in /some/ cases :-(
 
-2001-03-23 16:17  Pixel <pixel@mandrakesoft.com>
+2001-03-23 15:17  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec, pciusb.c: handle gzip'ed pcitable/usbtable
 
-2001-03-21 19:05  Pixel <pixel@mandrakesoft.com>
+2001-03-21 18:05  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec: use subids if they are needed
 
-2001-03-21 19:03  Pixel <pixel@mandrakesoft.com>
+2001-03-21 18:03  Pixel <pixel at mandriva.com>
 
 	* libldetect-private.h, lspcidrake.c, pci.c, pciusb.c, usb.c: if
-	subid can be useful, use them. use probe_type==-1 to ensure no
-	subid is used
+	  subid can be useful, use them. use probe_type==-1 to ensure no
+	  subid is used
 
-2001-03-15 15:11  Fançois Pons <fpons@mandrakesoft.com>
+2001-03-15 14:11  Fançois Pons
 
-	* ldetect.spec: [no log message]
+	* ldetect.spec: *** empty log message ***
 
-2001-03-15 15:00  Fançois Pons <fpons@mandrakesoft.com>
+2001-03-15 14:00  Fançois Pons
 
 	* ldetect.spec, libldetect.h, pci.c, pciusb.c: added
-	pci(bus,device,function) for DrakX.
+	  pci(bus,device,function) for DrakX.
 
-2001-03-06 17:17  Fançois Pons <fpons@mandrakesoft.com>
+2001-03-06 16:17  Fançois Pons
 
-	* ldetect.spec, pci.c, usb.c: [no log message]
+	* ldetect.spec, pci.c, usb.c: *** empty log message ***
 
-2001-03-06 17:05  Pixel <pixel@mandrakesoft.com>
+2001-03-06 16:05  Pixel <pixel at mandriva.com>
 
-	* ldetect.spec: [no log message]
+	* ldetect.spec: *** empty log message ***
 
-2001-02-13 13:25  uid553
+2001-02-13 12:25  uid553
 
 	* common.h: ifree must be a macro, so let it be
 
-2001-02-10 12:53  Pixel <pixel@mandrakesoft.com>
+2001-02-10 11:53  Pixel <pixel at mandriva.com>
 
 	* pci.c: fix the fclose
 
-2001-02-06 17:56  Pixel <pixel@mandrakesoft.com>
+2001-02-06 16:56  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec: add missing fclose's
 
-2001-02-06 17:55  Pixel <pixel@mandrakesoft.com>
+2001-02-06 16:55  Pixel <pixel at mandriva.com>
 
 	* pci.c, pciusb.c: add some fclose where it should
 
-2000-12-22 15:53  Guillaume Cottenceau <gc@mandrakesoft.com>
+2000-12-22 14:53  Guillaume Cottenceau
 
 	* ldetect.spec, lspcidrake.c: see changelog
 
-2000-12-16 19:22  Pixel <pixel@mandrakesoft.com>
+2000-12-16 18:22  Pixel <pixel at mandriva.com>
 
-	* .cvsignore, Makefile, common.h, generate_usbclass.pl,
-	ldetect.spec, libldetect-private.h, libldetect.h, lspcidrake.c,
-	pci.c, pciusb.c, usb.c: now detect usb
+	* ., .cvsignore, Makefile, common.h, generate_usbclass.pl,
+	  ldetect.spec, libldetect-private.h, libldetect.h, lspcidrake.c,
+	  pci.c, pciusb.c, usb.c: now detect usb
 
-2000-12-15 19:19  Pixel <pixel@mandrakesoft.com>
+2000-12-15 18:19  Pixel <pixel at mandriva.com>
 
-	* Makefile: [no log message]
+	* Makefile: *** empty log message ***
 
-2000-12-15 16:32  Pixel <pixel@mandrakesoft.com>
+2000-12-15 15:32  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec: - add requires ldetect-lst
 
-2000-12-15 16:30  Pixel <pixel@mandrakesoft.com>
+2000-12-15 15:30  Pixel <pixel at mandriva.com>
 
 	* ldetect.spec: fix description tag
 
-2000-12-15 16:25  Pixel <pixel@mandrakesoft.com>
+2000-12-15 15:25  Pixel <pixel at mandriva.com>
 
 	* Makefile, ldetect.spec: put the version in .spec too, otherwise
-	can't use rpm C-c e :)
+	  can't use rpm C-c e :)
 
-2000-12-15 16:19  Pixel <pixel@mandrakesoft.com>
+2000-12-15 15:19  Pixel <pixel at mandriva.com>
 
 	* Makefile, generate_pciclass.pl, ldetect.spec, libldetect.h,
-	lspcidrake.c, pci.c: creation
+	  lspcidrake.c, pci.c: creation
+
+2000-12-15 15:19  
+
+	* soft/ldetect/branches, soft/ldetect/tags, .: New repository
+	  initialized by cvs2svn.
 
