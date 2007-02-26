@@ -51,7 +51,7 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 				e->module = strndup(p,q-p-1);
 			}
 			/* special case for buggy 0x0 usb entry */
-			if (descr_lookup == LOAD && 2 < strlen(q+2) && vendor != 0 && device != 0 && e->class_ != 0x90000d) { /* Hub class */
+			if (descr_lookup == LOAD && 2 < strlen(q+2) && vendor != 0 && device != 0 && e->class_id != 0x90000d) { /* Hub class */
 				ifree(e->text); /* usb.c set it so that we display something when usbtable doesn't refer that hw*/
 				e->text = strndup(q+2, strlen(q)-4);
 			}
@@ -70,7 +70,7 @@ extern void pciusb_initialize(struct pciusb_entry *e) {
 	e->device = 0xffff;
 	e->subvendor = 0xffff;
 	e->subdevice = 0xffff;
-	e->class_ = 0;
+	e->class_id = 0;
 	e->pci_bus = 0xffff;
 	e->pci_device = 0xffff;
 	e->pci_function = 0xffff;

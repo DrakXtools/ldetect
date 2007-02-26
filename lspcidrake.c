@@ -13,8 +13,8 @@ static void printit(struct pciusb_entries entries, void print_class(unsigned lon
 		if (e->text)
 			printf(e->text);
 		else	printf("unknown (%04x/%04x/%04x/%04x)", e->vendor, e->device, e->subvendor, e->subdevice);
-		if (e->class_) {
-			print_class(e->class_);
+		if (e->class_id) {
+			print_class(e->class_id);
 		}
 		if (verboze && e->text) {
 			printf(" (vendor:%04x device:%04x", e->vendor, e->device);
@@ -27,14 +27,14 @@ static void printit(struct pciusb_entries entries, void print_class(unsigned lon
 	pciusb_free(&entries);
 }
 
-static void print_pci_class(unsigned long class_) {
-  const char *s = pci_class2text(class_);
+static void print_pci_class(unsigned long class_id) {
+  const char *s = pci_class2text(class_id);
   if (strcmp(s, "NOT_DEFINED") != 0) 
      printf(" [%s]", s);
 }
 
-static void print_usb_class(unsigned long class_) {
-  struct usb_class_text s = usb_class2text(class_);
+static void print_usb_class(unsigned long class_id) {
+  struct usb_class_text s = usb_class2text(class_id);
   if (s.usb_class_text) {
     printf(" [");
     printf("%s", s.usb_class_text);

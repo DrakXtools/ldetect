@@ -56,18 +56,18 @@ extern struct pciusb_entries usb_probe(void) {
 			} else fprintf(stderr, "%s %d: unknown ``P'' line\n", proc_usb_path, line);
 			break;
 		}
-		case 'I': if (e->class_ == 0) {
+		case 'I': if (e->class_id == 0) {
 			char driver[50];
-			int class_, sub, prot = 0;
-			if (sscanf(buf, "I:%*1c  If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=%s", &class_, &sub, &prot, driver) == 4) {
-				e->class_ = (class_ * 0x100 + sub) * 0x100 + prot;
+			int class_id, sub, prot = 0;
+			if (sscanf(buf, "I:%*1c  If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=%s", &class_id, &sub, &prot, driver) == 4) {
+				e->class_id = (class_id * 0x100 + sub) * 0x100 + prot;
 				if (strncmp(driver, "(none)", 6))
 					e->module = strdup(driver);
 				/* see linux/sound/usb/usbaudio.c::usb_audio_ids */
-				if (e->class_ == (0x1*0x100+ 0x01)) /* USB_AUDIO_CLASS*0x100 + USB_SUBCLASS_AUDIO_CONTROL*/
+				if (e->class_id == (0x1*0x100+ 0x01)) /* USB_AUDIO_CLASS*0x100 + USB_SUBCLASS_AUDIO_CONTROL*/
 					e->module = strdup("snd-usb-audio");
 
-			} else if (sscanf(buf, "I:%*1c If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=", &class_, &sub, &prot) == 3) {
+			} else if (sscanf(buf, "I:%*1c If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=", &class_id, &sub, &prot) == 3) {
                     /* prevent spurious warnings for strange USB interfaces */
 			} else fprintf(stderr, "%s %d: unknown ``I'' line\n", proc_usb_path, line);
 			break;
