@@ -35,7 +35,7 @@ extern struct pciusb_entries pci_probe(void) {
 
 	static struct pci_access *pacc;
 	struct pci_dev *dev;
-	char vendorbuf[128], devbuf[128];
+	char classbuf[128], vendorbuf[128], devbuf[128];
 
 	pacc = pci_alloc();
 
@@ -64,6 +64,8 @@ extern struct pciusb_entries pci_probe(void) {
                    pci_lookup_name(pacc, vendorbuf, sizeof(vendorbuf), PCI_LOOKUP_VENDOR, dev->vendor_id, dev->device_id),
                    pci_lookup_name(pacc, devbuf,    sizeof(devbuf),    PCI_LOOKUP_DEVICE, dev->vendor_id, dev->device_id)
                );
+          pci_lookup_name(pacc, classbuf, sizeof(classbuf), PCI_LOOKUP_CLASS, dev->device_class),
+          e->class=strdup(classbuf);    
 
 		e->vendor =     dev->vendor_id;
 		e->device =     dev->device_id;
