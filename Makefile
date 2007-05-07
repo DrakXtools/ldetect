@@ -1,6 +1,6 @@
 NAME = ldetect
 LIB_MAJOR = 0.7
-LIB_MINOR = 0
+LIB_MINOR = 1
 VERSION=$(LIB_MAJOR).$(LIB_MINOR)
 
 prefix = /usr
@@ -20,7 +20,7 @@ build: $(binaries) $(libraries)
 lspcidrake: lspcidrake.c libldetect.so
 
 $(lib_major).$(LIB_MINOR): common.o pciusb.o pci.o usb.o pciclass.o usbclass.o dmi.o
-	$(CC) -shared -Wl,-soname,$(lib_major) -o $@ $^ -lpci
+	$(CC) -shared -Wl,-soname,$(lib_major) -o $@ $^ -lpci -lz
 $(lib_major): $(lib_major).$(LIB_MINOR)
 	ln -sf $< $@
 libldetect.so: $(lib_major)
