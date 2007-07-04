@@ -56,4 +56,4 @@ dis ../$(NAME)-$(VERSION).tar.bz2: clean
 	rm -rf $(NAME)-$(VERSION)
 
 log:
-	svn2cl - --authors ../common/username.xml --accum
+	svn2cl --authors ../common/username.xml --accum
