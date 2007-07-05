@@ -1,3 +1,16 @@
+2007-07-04 16:04  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: (changelog) typo fix
+
+2007-07-03 17:48  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: (changelog) --strip-prefix is now uneeded with
+	  svn2cl-0.9
+
+2007-05-07 07:59  Pixel <pixel at mandriva.com>
+
+	* : new release, 0.7.1 (build with zlib which is needed by libpci)
+
 2007-02-26 16:56  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* MDV/Lspciusb.pm: use libldetect for parsing pci.ids & getting PCI
