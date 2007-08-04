@@ -141,7 +141,7 @@ extern struct pciusb_entries pci_probe(void) {
 	realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
 	pci_cleanup(pacc);
 
-	if (pciusb_find_modules(&r, "pcitable", DO_NOT_LOAD))
+	if (pciusb_find_modules(&r, "pcitable", DO_NOT_LOAD, 1))
 		return r;
 
 	/* should not happen */

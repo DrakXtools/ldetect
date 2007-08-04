@@ -7,9 +7,101 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <modprobe.h>
 #include "common.h"
 
-extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup descr_lookup) {
+struct utsname rel_buf;
+struct module_command *commands = NULL;
+struct module_options *modoptions = NULL;
+struct module_alias *aliases = NULL;
+struct module_blacklist *blacklist = NULL;
+const char *config = NULL;
+
+char *optstring;
+char *aliasfilename, *symfilename;
+int init;
+
+static void find_modules_through_aliases(struct pciusb_entries *entries) {
+     unsigned int i;
+     char *dirname;
+
+     uname(&rel_buf);
+     asprintf(&dirname, "%s/%s", MODULE_DIR, rel_buf.release);
+     asprintf(&aliasfilename, "%s/modules.alias", dirname);
+     asprintf(&symfilename, "%s/modules.symbols", dirname);
+     if (!init) {
+          init = 1;
+		read_toplevel_config(config, "", 0, 0,
+			     &modoptions, &commands, &aliases, &blacklist);
+
+          // We would need parse the alias db only once for speedup
+/*             
+		read_toplevel_config(config, "", 1, 0,
+			     &modoptions, &commands, &aliases, &blacklist);
+		read_config(aliasfilename, "", 1, 0,&modoptions, &commands,
+			    &aliases, &blacklist);
+		read_config(symfilename, "", 1, 0, &modoptions, &commands,
+			    &aliases, &blacklist);
+*/
+     }
+
+     for (i = 0; i < entries->nb; i++) {
+          struct pciusb_entry *e = &entries->entries[i];
+
+          // No special case found in pcitable ? Then lookup modalias for PCI devices
+          if (e->module && 0 == strcmp(e->module, "unknown"))
+               continue;
+
+          char *modalias = NULL;
+          char *modalias_path;
+          FILE *file;
+          LIST_HEAD(list);
+          asprintf(&modalias_path, "/sys/bus/pci/devices/%04x:%02x:%02x.%x/modalias", e->pci_domain, e->pci_bus, e->pci_device, e->pci_function);
+          file = fopen(modalias_path, "r");
+          free(modalias_path);
+          if (file) {
+               size_t n, size;
+               if (-1 == getline(&modalias, &n, file)) {
+                    printf("Unable to read modalias from %s\n", modalias_path);
+                    exit(1);
+               }
+               size = strlen(modalias);
+               if (size)
+                    modalias[size-1] = 0;
+          } else {
+               printf("Unable to read modalias from %s\n", modalias_path);
+               exit(1);
+          }
+
+          /* Returns the resolved alias, options */
+          read_toplevel_config(config, modalias, 0,
+                               0, &modoptions, &commands, &aliases, &blacklist);
+
+          if (!aliases) {
+               /* We only use canned aliases as last resort. */
+               read_depends(dirname, modalias, &list);
+
+               if (list_empty(&list)
+                   && !find_command(modalias, commands))
+               {
+                    read_config(aliasfilename, modalias, 0,
+                                0, &modoptions, &commands,
+                                &aliases, &blacklist);
+                    aliases = apply_blacklist(aliases, blacklist);
+               }
+          }
+          if (aliases) {
+               // take the last one because we find eg: generic/ata_generic/sata_sil
+               while (aliases->next)
+                    aliases = aliases->next;
+               ifree(e->module);
+               e->module = strdup(aliases->module);
+               aliases = NULL;
+          }
+     }
+}
+
+extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup descr_lookup, int is_pci) {
 	fh f;
 	char buf[2048];
 	int line;
@@ -62,6 +154,13 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 		}
 	}
 	fh_close(&f);
+
+     /* If no special case in pcitable, then lookup modalias for PCI devices
+        (USB are already done by kernel)
+     */
+     if (is_pci)
+          find_modules_through_aliases(entries);
+
 	return 1;
 }
 

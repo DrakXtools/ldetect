@@ -92,7 +92,7 @@ extern struct pciusb_entries usb_probe(void) {
 	fclose(f);
 	realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
 
-	pciusb_find_modules(&r, "usbtable", LOAD);
+	pciusb_find_modules(&r, "usbtable", LOAD, 0);
 	return r;
 }
 
