@@ -98,40 +98,11 @@ extern struct pciusb_entries pci_probe(void) {
 
 		/* special rules below must be in sync with gi/mdk-stage1/probing.c */
 
-		if (e->class_id == PCI_CLASS_SERIAL_USB) {
-		  /* taken from kudzu's pci.c */
-		  char *module = 
-		    class_prog == 0 ? "usb-uhci" : 
-		    class_prog == 0x10 ? "usb-ohci" :
-		    class_prog == 0x20 ? "ehci-hcd" : NULL;
-		  if (module) e->module = strdup(module);
-
-		} else if (e->class_id == PCI_CLASS_SERIAL_FIREWIRE) {    
-		  /* taken from kudzu's pci.c */
-		  if (class_prog == 0x10) e->module = strdup("ohci1394");
-
-		} else if (e->class_id == PCI_CLASS_BRIDGE_CARDBUS) {
-			e->module = strdup("yenta_socket");
-		} else if (e->class_id == (PCI_CLASS_BRIDGE_HOST << 8)) { /* AGP */
-               if (e->vendor == 0x10b9)
-                    e->module = strdup("ali-agp");
-               else if (e->vendor == 0x1002)
-                    e->module = strdup("ati-agp");
-               else if (e->vendor == 0x1039)
-                    e->module = strdup("sis-agp");
-               else if (e->vendor == 0x1166)
-                    e->module = strdup("sworks-agp");
-               else if (e->vendor == 0x1279)
-                    e->module = strdup("efficeon-agp");
-		} else if (e->device == 0x8139) {
+          if (e->device == 0x8139) {
                if (e->subvendor == 0x8139 && e->subdevice == 0x10ec
                    || e->subvendor == 0x1186 && e->subdevice == 0x1300
                    || e->subvendor == 0x13d1 && e->subdevice == 0xab06)
                     e->module = strdup("8139too");
-		} else if (e->vendor == 0x10de && e->class_id == PCI_CLASS_STORAGE_IDE) {
-			e->module = strdup("sata_nv");
-		} else if (e->vendor == 0x10b5 && (e->device == 0x9030 || e->device == 0x9050) && e->subvendor == 0x1369) {
-			e->module = strdup("snd-vx222");
 		} else if (e->vendor == 0x1119) {   /* Vortex only makes RAID controllers. */
 			e->module = strdup("gdth");
 		}
