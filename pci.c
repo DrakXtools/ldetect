@@ -103,9 +103,8 @@ extern struct pciusb_entries pci_probe(void) {
                    || e->subvendor == 0x1186 && e->subdevice == 0x1300
                    || e->subvendor == 0x13d1 && e->subdevice == 0xab06)
                     e->module = strdup("8139too");
-		} else if (e->vendor == 0x1119) {   /* Vortex only makes RAID controllers. */
+		} else if (e->vendor == 0x1119) /* Vortex only makes RAID controllers. */
 			e->module = strdup("gdth");
-		}
 
 		close(devf);
 	}
