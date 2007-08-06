@@ -1,3 +1,12 @@
+2007-08-04 08:10  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: bump minor (3)
+
+2007-08-04 08:10  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile, common.h, pci.c, pciusb.c, usb.c: reuse modprobe code
+	  in order to resolve modalias (need to be optimized)
+
 2007-07-04 16:04  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* Makefile: (changelog) typo fix
