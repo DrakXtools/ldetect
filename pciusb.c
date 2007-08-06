@@ -137,6 +137,8 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 			if (!p) { // only calc text & module if not already done
 				p = buf + offset + 1;
 				q = strchr(p, '\t');
+                    if (!q) // no description field?
+                         q = strchr(p, '\0') - 1;
 			}
 			if (strncmp(p, "unknown", q-p-1)) {
 				ifree(e->module);
