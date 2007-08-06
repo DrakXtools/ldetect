@@ -1,3 +1,19 @@
+2007-08-06 11:21  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ChangeLog: update
+
+2007-08-04 09:11  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pci.c: (pci_probe) simplify
+
+2007-08-04 09:11  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pci.c: (pci_probe) kill some quirks that are either obsolete now
+	  that we
+	  resolve modalias (which bring wildcard support) or were removed
+	  from
+	  the kernel (eg: sata_nv do not more probe on class)
+
 2007-08-04 08:10  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* Makefile: bump minor (3)
