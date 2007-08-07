@@ -58,20 +58,20 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
           LIST_HEAD(list);
           asprintf(&modalias_path, "/sys/bus/pci/devices/%04x:%02x:%02x.%x/modalias", e->pci_domain, e->pci_bus, e->pci_device, e->pci_function);
           file = fopen(modalias_path, "r");
-          free(modalias_path);
           if (file) {
                size_t n, size;
                if (-1 == getline(&modalias, &n, file)) {
-                    printf("Unable to read modalias from %s\n", modalias_path);
+                    fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
                     exit(1);
                }
                size = strlen(modalias);
                if (size)
                     modalias[size-1] = 0;
           } else {
-               printf("Unable to read modalias from %s\n", modalias_path);
+	       fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
                exit(1);
           }
+          free(modalias_path);
 
           /* Returns the resolved alias, options */
           read_toplevel_config(config, modalias, 0,
