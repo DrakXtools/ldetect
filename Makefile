@@ -9,6 +9,7 @@ libdir = $(prefix)/lib
 includedir = $(prefix)/include
 
 binaries = lspcidrake
+lib_objs = common.o pciusb.o pci.o usb.o pciclass.o usbclass.o dmi.o
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR)
 CFLAGS = -Wall -W -Wstrict-prototypes -Os -fPIC
@@ -19,7 +20,7 @@ build: $(binaries) $(libraries)
 
 lspcidrake: lspcidrake.c libldetect.so
 
-$(lib_major).$(LIB_MINOR): common.o pciusb.o pci.o usb.o pciclass.o usbclass.o dmi.o
+$(lib_major).$(LIB_MINOR): $(lib_objs)
 	$(CC) -shared -Wl,-soname,$(lib_major) -o $@ $^ -lpci -lmodprobe -lz
 $(lib_major): $(lib_major).$(LIB_MINOR)
 	ln -sf $< $@
