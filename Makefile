@@ -56,7 +56,7 @@ install: build
 	install libldetect.h $(includedir)
 
 dis ../$(NAME)-$(VERSION).tar.bz2: clean
-	svn export -q . $(NAME)-$(VERSION)
+	svn export -q -rBASE . $(NAME)-$(VERSION)
 	tar cfj ../$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)
 	rm -rf $(NAME)-$(VERSION)
 
