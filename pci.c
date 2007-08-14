@@ -96,16 +96,6 @@ extern struct pciusb_entries pci_probe(void) {
 		}
 		class_prog = buf[PCI_CLASS_PROG];
 
-		/* special rules below must be in sync with gi/mdk-stage1/probing.c */
-
-          if (e->device == 0x8139) {
-               if (e->subvendor == 0x8139 && e->subdevice == 0x10ec
-                   || e->subvendor == 0x1186 && e->subdevice == 0x1300
-                   || e->subvendor == 0x13d1 && e->subdevice == 0xab06)
-                    e->module = strdup("8139too");
-		} else if (e->vendor == 0x1119) /* Vortex only makes RAID controllers. */
-			e->module = strdup("gdth");
-
 		close(devf);
 	}
 	realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
