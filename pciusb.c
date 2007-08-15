@@ -115,7 +115,7 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 
 	f = fh_open(fpciusbtable);
 
-	for (line = 1; fgets(buf, sizeof(buf) - 1, f.f); line++) {
+	for (line = 1; fh_gets(buf, sizeof(buf) - 1, f); line++) {
 		unsigned short vendor, device, subvendor, subdevice;
 		char *p = NULL, *q = NULL;
 		int offset; unsigned int i;
@@ -162,7 +162,7 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 				e->already_found = 1;
 		}
 	}
-	fh_close(&f);
+	fh_close(f);
 
      /* If no special case in pcitable, then lookup modalias for PCI devices
         (USB are already done by kernel)

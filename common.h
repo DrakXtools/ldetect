@@ -2,6 +2,7 @@
 #define LIBLDETECT_COMMON
 
 #include "libldetect.h"
+#include <zlib.h>
 
 #define NON_EXPORTED __attribute__((visibility("hidden")))
 
@@ -20,11 +21,9 @@ extern void pciusb_initialize(struct pciusb_entry *e) NON_EXPORTED;
 #define psizeof(a) (sizeof(a) / sizeof(*(a)))
 #define ifree(p) do { if (p) { free(p); p = NULL; } } while (0)
 
-typedef struct {
-	FILE *f;
-	pid_t pid;
-} fh;
+typedef gzFile fh;
 extern fh fh_open(const char *name) NON_EXPORTED;
-extern void fh_close(fh *f) NON_EXPORTED;
+#define fh_gets(line, size, f) gzgets(f, line, size)
+#define fh_close(f) gzclose(f);
 
 #endif

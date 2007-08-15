@@ -195,7 +195,7 @@ static struct dmi_entries entries_matching_criteria(struct criteria criteria) {
 
 	int previous_refine = 0;
 
-	for (line = 1; fgets(buf, sizeof(buf) - 1, f.f); line++) {
+	for (line = 1; fh_gets(buf, sizeof(buf) - 1, f); line++) {
 		char *s = skip_leading_spaces(buf);
 		if (*s == '#') continue; // skip comments
 
