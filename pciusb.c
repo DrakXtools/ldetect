@@ -111,6 +111,9 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
                aliases = NULL;
           }
      }
+     free(symfilename);
+     free(aliasfilename);
+     free(dirname);
 }
 
 extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup descr_lookup, int is_pci) {
