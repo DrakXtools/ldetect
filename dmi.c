@@ -261,7 +261,7 @@ static struct dmi_entries entries_matching_criteria(struct criteria criteria) {
 		}
 	}
 	foreach_indent(0, ifree(constraints[i]));
-	fh_close(&f);
+	fh_close(f);
 
 	realloc(r.entries, sizeof(*r.entries) * r.nb);
 	return r;
