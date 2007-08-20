@@ -96,18 +96,11 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
                }
           }
           if (aliases) {
-               char *p;
                // take the last one because we find eg: generic/ata_generic/sata_sil
                while (aliases->next)
                     aliases = aliases->next;
                ifree(e->module);
                e->module = strdup(aliases->module);
-               /* replace '_' characters with '-' to be compliant with pcitable and list_modules.pm */
-               p = e->module;
-               while (p && *p) {
-                    if (*p == '_') *p = '-';
-                    p++;
-               }
                aliases = NULL;
           }
      }
