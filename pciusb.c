@@ -30,7 +30,7 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
      asprintf(&aliasfilename, "%s/modules.alias", dirname);
      if (access(aliasfilename, F_OK) !=0) {
           free(aliasfilename);
-          asprintf(&aliasfilename, "/usr/share/ldetect-lst/fallback-modules.alias", dirname);
+          asprintf(&aliasfilename, "/usr/share/ldetect-lst/fallback-modules.alias");
           
      }
      asprintf(&symfilename, "%s/modules.symbols", dirname);
