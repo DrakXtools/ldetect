@@ -1,3 +1,79 @@
+2007-08-27 13:28  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: bump minor (13)
+
+2007-08-27 13:28  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* common.h: fix build on x86_64
+
+2007-08-27 13:16  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pciusb.c: (find_modules_through_aliases) fix test, thus fixing
+	  overwriting Card: in chroot
+
+2007-08-27 12:43  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ChangeLog: kill doble entrie
+
+2007-08-27 09:47  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile, dmi.c, pci.c, pciusb.c: try harder to reduce number of
+	  relocations (most remaining ones are due to
+	  arrays of pointers)
+
+2007-08-27 09:47  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile, common.h, generate_pciclass.pl, generate_usbclass.pl,
+	  libldetect.h: use visibility in order to enforce exported ABI and
+	  to reduce code size
+
+2007-08-27 09:46  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ChangeLog: update
+
+2007-08-22 17:27  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: 0.7.12
+
+2007-08-22 10:35  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: prefer ldetect-lst's modules.alias if more recent (to
+	  detect modular IDE controllers when run from old kernels)
+
+2007-08-22 10:24  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: remove spurious argument
+
+2007-08-20 11:46  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: bump minor to 11
+
+2007-08-20 11:46  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: revert '_' characters substitution
+
+2007-08-16 15:47  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: bump minor
+
+2007-08-16 15:40  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pciusb.c: (find_modules_through_aliases) plug some memory leak
+
+2007-08-16 15:34  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pciusb.c: (find_modules_through_aliases) fallback to
+	  ldetect-lst's modules.alias
+	  if kernel's modules.alias cannot be found (eg: installer)
+
+2007-08-16 14:07  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: bump minor (9)
+
+2007-08-16 14:07  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* dmi.c: (entries_matching_criteria) fix zlib conversion (#32590)
+
 2007-08-16 15:40  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* pciusb.c: (find_modules_through_aliases) plug some memory leak
