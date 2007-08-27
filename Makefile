@@ -21,7 +21,7 @@ build: $(binaries) $(libraries)
 lspcidrake: lspcidrake.c libldetect.so
 
 $(lib_major).$(LIB_MINOR): $(lib_objs)
-	ld -O1 -z relro -shared -soname,$(lib_major) -o $@ $^ -lpci -lmodprobe -lz -lc
+	$(CC) -shared -Wl,-O1 -z relro,-soname,$(lib_major) -o $@ $^ -lpci -lmodprobe -lz
 $(lib_major): $(lib_major).$(LIB_MINOR)
 	ln -sf $< $@
 libldetect.so: $(lib_major)
