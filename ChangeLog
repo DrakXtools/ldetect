@@ -1,3 +1,98 @@
+2007-08-16 15:40  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pciusb.c: (find_modules_through_aliases) plug some memory leak
+
+2007-08-16 15:34  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pciusb.c: (find_modules_through_aliases) fallback to
+	  ldetect-lst's modules.alias
+	  if kernel's modules.alias cannot be found (eg: installer)
+
+2007-08-16 14:07  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: bump minor (9)
+
+2007-08-16 14:07  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* dmi.c: (entries_matching_criteria) fix zlib conversion (#32590)
+
+2007-08-15 00:23  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: 0.7.8
+
+2007-08-15 00:22  Olivier Blin <oblin at mandriva.com>
+
+	* common.c, common.h, dmi.c, pciusb.c: use zlib to read gzipped
+	  files instead of piping gzip command
+
+2007-08-14 13:37  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: 0.7.7
+
+2007-08-14 13:35  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: use -rBASE for svn export in order to please blino by
+	  making sure local changes do not got exported
+
+2007-08-14 12:42  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: replace '_' characters with '-' to be compliant with
+	  pcitable and list_modules.pm
+
+2007-08-14 12:25  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: build static library
+
+2007-08-14 12:24  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: move objects list in lib_objs variable
+
+2007-08-14 11:55  Olivier Blin <oblin at mandriva.com>
+
+	* pci.c: remove old 8139too/gdth hardcoded rules (already in
+	  modules.alias)
+
+2007-08-07 13:29  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: bump minor (6)
+
+2007-08-07 13:28  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pciusb.c: (find_modules_through_aliases) exit() is not nice error
+	  managment in a library
+
+2007-08-07 10:46  Pixel <pixel at mandriva.com>
+
+	* pciusb.c: - don't free before printing
+	  - print fatal error on stderr
+
+2007-08-07 13:28  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pciusb.c: (find_modules_through_aliases) exit() is not nice error
+	  managment in a library
+
+2007-08-07 10:46  Pixel <pixel at mandriva.com>
+
+	* pciusb.c: - don't free before printing
+	  - print fatal error on stderr
+
+2007-08-06 15:34  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: bump minor (5)
+
+2007-08-06 15:33  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* pciusb.c: (pciusb_find_modules) handle pcitable without
+	  description field
+
+2007-08-06 12:45  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: bump minor (4)
+
+2007-08-06 11:22  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ChangeLog: update
+
 2007-08-06 11:21  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ChangeLog: update
