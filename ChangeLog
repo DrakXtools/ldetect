@@ -1,3 +1,11 @@
+2007-08-27 14:24  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* ChangeLog, Makefile: bump minor (14)
+
+2007-08-27 13:53  Thierry Vignaud <tvignaud at mandriva.com>
+
+	* Makefile: ld doesn't like -g, so use gcc back again
+
 2007-08-27 13:28  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* Makefile: bump minor (13)
@@ -55,24 +63,6 @@
 2007-08-16 15:47  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* Makefile: bump minor
-
-2007-08-16 15:40  Thierry Vignaud <tvignaud at mandriva.com>
-
-	* pciusb.c: (find_modules_through_aliases) plug some memory leak
-
-2007-08-16 15:34  Thierry Vignaud <tvignaud at mandriva.com>
-
-	* pciusb.c: (find_modules_through_aliases) fallback to
-	  ldetect-lst's modules.alias
-	  if kernel's modules.alias cannot be found (eg: installer)
-
-2007-08-16 14:07  Thierry Vignaud <tvignaud at mandriva.com>
-
-	* Makefile: bump minor (9)
-
-2007-08-16 14:07  Thierry Vignaud <tvignaud at mandriva.com>
-
-	* dmi.c: (entries_matching_criteria) fix zlib conversion (#32590)
 
 2007-08-16 15:40  Thierry Vignaud <tvignaud at mandriva.com>
 
