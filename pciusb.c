@@ -60,7 +60,7 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
           struct pciusb_entry *e = &entries->entries[i];
 
           // No special case found in pcitable ? Then lookup modalias for PCI devices
-          if (e->module && 0 == strcmp(e->module, "unknown"))
+          if (e->module && strcmp(e->module, "unknown"))
                continue;
 
           char *modalias = NULL;
