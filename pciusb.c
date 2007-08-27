@@ -10,16 +10,16 @@
 #include <modprobe.h>
 #include "common.h"
 
-struct utsname rel_buf;
-struct module_command *commands = NULL;
-struct module_options *modoptions = NULL;
-struct module_alias *aliases = NULL;
-struct module_blacklist *blacklist = NULL;
-const char *config = NULL;
+static struct utsname rel_buf;
+static struct module_command *commands = NULL;
+static struct module_options *modoptions = NULL;
+static struct module_alias *aliases = NULL;
+static struct module_blacklist *blacklist = NULL;
+static const char *config = NULL;
 
-char *optstring;
-char *aliasfilename, *symfilename;
-int init;
+static char *optstring;
+static char *aliasfilename, *symfilename;
+static int init;
 
 static void find_modules_through_aliases(struct pciusb_entries *entries) {
      unsigned int i;

@@ -22,7 +22,7 @@ struct category {
 	const char **fields;
 };
 
-static struct category categories[] = {
+static const struct category categories[] = {
 	{ "BIOS", psizeof(cat_BIOS), cat_BIOS },
 	{ "System", psizeof(cat_System), cat_System },
 	{ "Base Board", psizeof(cat_Base_Board), cat_Base_Board },

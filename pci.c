@@ -13,9 +13,9 @@
 #include "common.h"
 
 static char *proc_pci_path_default = "/proc/bus/pci/devices";
-char *proc_pci_path = NULL;
+char* proc_pci_path = NULL;
 
-void __attribute__((noreturn)) error_and_die(char *msg, ...)
+static void __attribute__((noreturn)) error_and_die(char *msg, ...)
 {
   va_list args;
 
