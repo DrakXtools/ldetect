@@ -1,5 +1,3 @@
-#pragma GCC visibility push(hidden) 
-
 #ifndef LIBLDETECT_COMMON
 #define LIBLDETECT_COMMON
 
@@ -7,6 +5,8 @@
 #include <zlib.h>
 
 #define NON_EXPORTED __attribute__((visibility("hidden")))
+
+#pragma GCC visibility push(hidden) 
 
 typedef enum {
      LOAD,
@@ -25,8 +25,8 @@ extern void pciusb_initialize(struct pciusb_entry *e) NON_EXPORTED;
 
 typedef gzFile fh;
 extern fh fh_open(const char *name) NON_EXPORTED;
+#pragma GCC visibility pop
 #define fh_gets(line, size, f) gzgets(f, line, size)
 #define fh_close(f) gzclose(f);
 
 #endif
-#pragma GCC visibility pop
