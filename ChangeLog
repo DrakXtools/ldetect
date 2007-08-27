@@ -492,19 +492,6 @@
 	* ldetect.spec, pci.c: - detect ohci1394 & ehci-hcd based on the
 	  pci class
 	  (as done in RedHat's kudzu)
-
-2003-04-22 09:45  Pixel <pixel at mandriva.com>
-
-	* ldetect.spec: - Use read() instead of fread() to read from
-	  "/proc/bus/pci/%02x/%02x.%d".
-	  Thanks a lot to Tom Cox for finding this bug:
-	  
-	  The proc.c module in the kernel source clearly states that
-	  reading more than 64 bytes can cause problems. The pci.c
-	  module in the ldetect library uses the buffered fread()
-	  function. This function always reads in blocks, so when
-	  run as root, the read always tried to read more than the
-	  user requested amount.
 	  
 	  This should fix freezes when doing a full probe
 
