@@ -1,3 +1,5 @@
+#pragma GCC visibility push(hidden) 
+
 #ifndef LIBLDETECT_COMMON
 #define LIBLDETECT_COMMON
 
@@ -27,3 +29,4 @@ extern fh fh_open(const char *name) NON_EXPORTED;
 #define fh_close(f) gzclose(f);
 
 #endif
+#pragma GCC visibility pop

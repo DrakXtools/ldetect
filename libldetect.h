@@ -1,3 +1,4 @@
+#pragma GCC visibility push(default) 
 #ifndef LIBLDETECT
 #define LIBLDETECT
 
@@ -69,3 +70,4 @@ extern void dmi_entries_free(struct dmi_entries entries);
 extern char *dmidecode_file;
 
 #endif
+#pragma GCC visibility pop

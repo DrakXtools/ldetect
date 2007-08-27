@@ -68,7 +68,7 @@ struct class_text {
   const char *prot_text;
 };
 
-extern struct class_text usb_class2text(unsigned long class_id) {
+extern struct class_text __attribute__ ((visibility("default"))) usb_class2text(unsigned long class_id) {
   const char *p[3] = { NULL, NULL, NULL };
   int a_class[3] = { (class_id >> 16) & 0xff, (class_id >> 8) & 0xff, class_id & 0xff };
   if (a_class[0] != 0xff) lookup(p, a_class, 0, nb_classes, classes);
