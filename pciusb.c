@@ -17,7 +17,6 @@ static struct module_alias *aliases = NULL;
 static struct module_blacklist *blacklist = NULL;
 static const char *config = NULL;
 
-static char *optstring;
 static char *aliasfilename, *symfilename;
 
 static void find_modules_through_aliases(struct pciusb_entries *entries) {
