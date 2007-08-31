@@ -24,20 +24,18 @@ static char *aliasfilename, *symfilename;
 static void find_modules_through_aliases(struct pciusb_entries *entries) {
      unsigned int i;
      char *dirname;
-     char *aliasfallback;
+     char *aliasdefault;
      struct stat st_alias, st_fallback;
 
      uname(&rel_buf);
      asprintf(&dirname, "%s/%s", MODULE_DIR, rel_buf.release);
      asprintf(&aliasfilename, "%s/modules.alias", dirname);
-     asprintf(&aliasfallback, FALLBACK_ALIASES);
      /* fallback on ldetect-lst's modules.alias and prefer it if more recent */
      if (stat(aliasfilename, &st_alias) ||
-	 (!stat(aliasfallback, &st_fallback) && st_fallback.st_mtime > st_alias.st_mtime)) {
-          free(aliasfilename);
-          aliasfilename = aliasfallback;
+	 (!stat(FALLBACK_ALIASES, &st_fallback) && st_fallback.st_mtime > st_alias.st_mtime)) {
+          aliasdefault = FALLBACK_ALIASES;
      } else {
-	 free(aliasfallback);
+          aliasdefault = aliasfilename;
      }
      asprintf(&symfilename, "%s/modules.symbols", dirname);
 
@@ -80,7 +78,7 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
                if (list_empty(&list)
                    && !find_command(modalias, commands))
                {
-                    read_config(aliasfilename, modalias, 0,
+                    read_config(aliasdefault, modalias, 0,
                                 0, &modoptions, &commands,
                                 &aliases, &blacklist);
                     aliases = apply_blacklist(aliases, blacklist);
