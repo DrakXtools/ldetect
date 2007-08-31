@@ -11,6 +11,7 @@
 #include "common.h"
 
 #define FALLBACK_ALIASES "/usr/share/ldetect-lst/fallback-modules.alias"
+#define DKMS_ALIASES "/usr/share/ldetect-lst/dkms-modules.alias"
 
 static struct utsname rel_buf;
 static struct module_command *commands = NULL;
@@ -71,18 +72,21 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
           read_toplevel_config(config, modalias, 0,
                                0, &modoptions, &commands, &aliases, &blacklist);
 
-          if (!aliases) {
+          char *aliascurrent = aliasdefault;
+          unsigned int j;
+          for (j = 0; j < 2 && !aliases; j++) {
                /* We only use canned aliases as last resort. */
                read_depends(dirname, modalias, &list);
 
                if (list_empty(&list)
                    && !find_command(modalias, commands))
                {
-                    read_config(aliasdefault, modalias, 0,
+                    read_config(aliascurrent, modalias, 0,
                                 0, &modoptions, &commands,
                                 &aliases, &blacklist);
                     aliases = apply_blacklist(aliases, blacklist);
                }
+               aliascurrent = DKMS_ALIASES;
           }
           if (aliases) {
                // take the last one because we find eg: generic/ata_generic/sata_sil
