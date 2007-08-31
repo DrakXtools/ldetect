@@ -10,6 +10,8 @@
 #include <modprobe.h>
 #include "common.h"
 
+#define FALLBACK_ALIASES "/usr/share/ldetect-lst/fallback-modules.alias"
+
 static struct utsname rel_buf;
 static struct module_command *commands = NULL;
 static struct module_options *modoptions = NULL;
@@ -28,7 +30,7 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
      uname(&rel_buf);
      asprintf(&dirname, "%s/%s", MODULE_DIR, rel_buf.release);
      asprintf(&aliasfilename, "%s/modules.alias", dirname);
-     asprintf(&aliasfallback, "/usr/share/ldetect-lst/fallback-modules.alias");
+     asprintf(&aliasfallback, FALLBACK_ALIASES);
      /* fallback on ldetect-lst's modules.alias and prefer it if more recent */
      if (stat(aliasfilename, &st_alias) ||
 	 (!stat(aliasfallback, &st_fallback) && st_fallback.st_mtime > st_alias.st_mtime)) {
