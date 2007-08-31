@@ -19,7 +19,6 @@ static const char *config = NULL;
 
 static char *optstring;
 static char *aliasfilename, *symfilename;
-static int init;
 
 static void find_modules_through_aliases(struct pciusb_entries *entries) {
      unsigned int i;
@@ -40,21 +39,6 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
 	 free(aliasfallback);
      }
      asprintf(&symfilename, "%s/modules.symbols", dirname);
-     if (!init) {
-          init = 1;
-		read_toplevel_config(config, "", 0, 0,
-			     &modoptions, &commands, &aliases, &blacklist);
-
-          // We would need parse the alias db only once for speedup
-/*             
-		read_toplevel_config(config, "", 1, 0,
-			     &modoptions, &commands, &aliases, &blacklist);
-		read_config(aliasfilename, "", 1, 0,&modoptions, &commands,
-			    &aliases, &blacklist);
-		read_config(symfilename, "", 1, 0, &modoptions, &commands,
-			    &aliases, &blacklist);
-*/
-     }
 
      for (i = 0; i < entries->nb; i++) {
           struct pciusb_entry *e = &entries->entries[i];
