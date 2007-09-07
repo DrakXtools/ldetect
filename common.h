@@ -8,6 +8,8 @@
 
 #pragma GCC visibility push(hidden) 
 
+extern char *table_name_to_file(const char *name);
+
 typedef enum {
      LOAD,
      DO_NOT_LOAD,

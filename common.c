@@ -9,7 +9,7 @@
 #include <zlib.h>
 #include "common.h"
 
-static char *table_name_to_file(const char *name) {
+char *table_name_to_file(const char *name) {
 
 	char *share_path = getenv("SHARE_PATH");
 	char *fname;
