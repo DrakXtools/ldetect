@@ -10,10 +10,6 @@
 #include <modprobe.h>
 #include "common.h"
 
-#define FALLBACK_ALIASES "/usr/share/ldetect-lst/fallback-modules.alias"
-#define DKMS_ALIASES "/usr/share/ldetect-lst/dkms-modules.alias"
-#define PREFERRED_ALIASES "/usr/share/ldetect-lst/preferred-modules.alias"
-
 static struct utsname rel_buf;
 static struct module_command *commands = NULL;
 static struct module_options *modoptions = NULL;
@@ -27,6 +23,7 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
      unsigned int i;
      char *dirname;
      char *aliasdefault;
+     char *fallback_aliases = table_name_to_file("fallback-modules.alias");
      struct stat st_alias, st_fallback;
 
      uname(&rel_buf);
@@ -34,8 +31,8 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
      asprintf(&aliasfilename, "%s/modules.alias", dirname);
      /* fallback on ldetect-lst's modules.alias and prefer it if more recent */
      if (stat(aliasfilename, &st_alias) ||
-	 (!stat(FALLBACK_ALIASES, &st_fallback) && st_fallback.st_mtime > st_alias.st_mtime)) {
-          aliasdefault = FALLBACK_ALIASES;
+	 (!stat(fallback_aliases, &st_fallback) && st_fallback.st_mtime > st_alias.st_mtime)) {
+          aliasdefault = fallback_aliases;
      } else {
           aliasdefault = aliasfilename;
      }
@@ -73,7 +70,12 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
           read_toplevel_config(config, modalias, 0,
                                0, &modoptions, &commands, &aliases, &blacklist);
 
-          char *alias_filelist[] = { PREFERRED_ALIASES, aliasdefault, DKMS_ALIASES, NULL };
+          char *alias_filelist[] = {
+              table_name_to_file("preferred-modules.alias"),
+              aliasdefault,
+              table_name_to_file("dkms-modules.alias"),
+              NULL,
+          };
           char **alias_file = alias_filelist;
           while (*alias_file) {
                /* We only use canned aliases as last resort. */
