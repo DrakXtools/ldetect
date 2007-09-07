@@ -12,6 +12,7 @@
 
 #define FALLBACK_ALIASES "/usr/share/ldetect-lst/fallback-modules.alias"
 #define DKMS_ALIASES "/usr/share/ldetect-lst/dkms-modules.alias"
+#define PREFERRED_ALIASES "/usr/share/ldetect-lst/preferred-modules.alias"
 
 static struct utsname rel_buf;
 static struct module_command *commands = NULL;
@@ -72,7 +73,7 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
           read_toplevel_config(config, modalias, 0,
                                0, &modoptions, &commands, &aliases, &blacklist);
 
-          char *alias_filelist[] = { aliasdefault, DKMS_ALIASES, NULL };
+          char *alias_filelist[] = { PREFERRED_ALIASES, aliasdefault, DKMS_ALIASES, NULL };
           char **alias_file = alias_filelist;
           while (*alias_file) {
                /* We only use canned aliases as last resort. */
