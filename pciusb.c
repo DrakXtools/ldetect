@@ -70,26 +70,28 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
           read_toplevel_config(config, modalias, 0,
                                0, &modoptions, &commands, &aliases, &blacklist);
 
-          char *alias_filelist[] = {
-              table_name_to_file("preferred-modules.alias"),
-              aliasdefault,
-              table_name_to_file("dkms-modules.alias"),
-              NULL,
-          };
-          char **alias_file = alias_filelist;
-          while (!aliases && *alias_file) {
+          if (!aliases) {
                /* We only use canned aliases as last resort. */
                read_depends(dirname, modalias, &list);
 
                if (list_empty(&list)
                    && !find_command(modalias, commands))
                {
-                    read_config(*alias_file, modalias, 0,
-                                0, &modoptions, &commands,
-                                &aliases, &blacklist);
-                    aliases = apply_blacklist(aliases, blacklist);
+                   char *alias_filelist[] = {
+                       table_name_to_file("preferred-modules.alias"),
+                       aliasdefault,
+                       table_name_to_file("dkms-modules.alias"),
+                       NULL,
+                   };
+                   char **alias_file = alias_filelist;
+                   while (!aliases && *alias_file) {
+                       read_config(*alias_file, modalias, 0,
+                                   0, &modoptions, &commands,
+                                   &aliases, &blacklist);
+                       aliases = apply_blacklist(aliases, blacklist);
+                       alias_file++;
+                   }
                }
-               alias_file++;
           }
           if (aliases) {
                // take the last one because we find eg: generic/ata_generic/sata_sil
