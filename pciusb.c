@@ -77,7 +77,7 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
               NULL,
           };
           char **alias_file = alias_filelist;
-          while (*alias_file) {
+          while (!aliases && *alias_file) {
                /* We only use canned aliases as last resort. */
                read_depends(dirname, modalias, &list);
 
