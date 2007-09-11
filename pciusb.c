@@ -72,7 +72,7 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
           if (!aliases) {
                /* We only use canned aliases as last resort. */
                char *alias_filelist[] = {
-                   table_name_to_file("preferred-modules.alias"),
+                   "/lib/module-init-tools/ldetect-lst-modules.alias",
                    aliasdefault,
                    table_name_to_file("dkms-modules.alias"),
                    NULL,
