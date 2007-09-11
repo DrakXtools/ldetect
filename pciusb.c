@@ -48,7 +48,6 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
           char *modalias = NULL;
           char *modalias_path;
           FILE *file;
-          LIST_HEAD(list);
           asprintf(&modalias_path, "/sys/bus/pci/devices/%04x:%02x:%02x.%x/modalias", e->pci_domain, e->pci_bus, e->pci_device, e->pci_function);
           file = fopen(modalias_path, "r");
           if (file) {
@@ -72,11 +71,6 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
 
           if (!aliases) {
                /* We only use canned aliases as last resort. */
-               read_depends(dirname, modalias, &list);
-
-               if (list_empty(&list)
-                   && !find_command(modalias, commands))
-               {
                    char *alias_filelist[] = {
                        table_name_to_file("preferred-modules.alias"),
                        aliasdefault,
@@ -91,7 +85,6 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
                        aliases = apply_blacklist(aliases, blacklist);
                        alias_file++;
                    }
-               }
           }
           if (aliases) {
                // take the last one because we find eg: generic/ata_generic/sata_sil
