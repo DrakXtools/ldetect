@@ -1,6 +1,6 @@
 NAME = ldetect
 LIB_MAJOR = 0.7
-LIB_MINOR = 18
+LIB_MINOR = 19
 VERSION=$(LIB_MAJOR).$(LIB_MINOR)
 
 prefix = /usr
