@@ -73,7 +73,7 @@ extern struct pciusb_entries usb_probe(void) {
 				}
 				/* see linux/sound/usb/usbaudio.c::usb_audio_ids */
 				if (e->class_id == (0x1*0x100+ 0x01)) /* USB_AUDIO_CLASS*0x100 + USB_SUBCLASS_AUDIO_CONTROL*/
-					e->module = strdup("snd-usb-audio");
+					e->module = strdup("snd_usb_audio");
 
 			} else if (sscanf(buf, "I:%*1c If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=", &class_id, &sub, &prot) == 3) {
                     /* prevent spurious warnings for strange USB interfaces */
