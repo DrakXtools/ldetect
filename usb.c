@@ -61,8 +61,16 @@ extern struct pciusb_entries usb_probe(void) {
 			int class_id, sub, prot = 0;
 			if (sscanf(buf, "I:%*1c  If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=%s", &class_id, &sub, &prot, driver) == 4) {
 				e->class_id = (class_id * 0x100 + sub) * 0x100 + prot;
-				if (strncmp(driver, "(none)", 6))
+				if (strncmp(driver, "(none)", 6)) {
+					char *p;
 					e->module = strdup(driver);
+					/* replace '-' characters with '_' to be compliant with modnames from modaliases */
+					p = e->module;
+					while (p && *p) {
+						if (*p == '-') *p = '_';
+						p++;
+					}
+				}
 				/* see linux/sound/usb/usbaudio.c::usb_audio_ids */
 				if (e->class_id == (0x1*0x100+ 0x01)) /* USB_AUDIO_CLASS*0x100 + USB_SUBCLASS_AUDIO_CONTROL*/
 					e->module = strdup("snd-usb-audio");
