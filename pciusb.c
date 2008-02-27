@@ -116,6 +116,8 @@ static void find_usb_modules_through_aliases(struct pciusb_entry *e) {
 	asprintf(&sysfs_path, "/sys/bus/usb/devices/%s", device_prefix);
 
 	dir = opendir(sysfs_path);
+	if (!dir)
+		return;
 	while ((dent = readdir(dir)) != NULL) {
 		if ((dent->d_type == DT_DIR) &&
 		    !strncmp(device_prefix, dent->d_name, strlen(device_prefix))) {
