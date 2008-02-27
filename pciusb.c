@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <modprobe.h>
+#include <dirent.h>
 #include "common.h"
 
 static char *aliasdefault = NULL;
@@ -106,9 +107,37 @@ static void find_pci_modules_through_aliases(struct pciusb_entry *e) {
 	free(modalias_path);
 }
 
+static void find_usb_modules_through_aliases(struct pciusb_entry *e) {
+	char *device_prefix, *sysfs_path;
+	DIR *dir;
+	struct dirent *dent;
+
+	asprintf(&device_prefix, "%x-%x", e->pci_bus, e->pci_device);
+	asprintf(&sysfs_path, "/sys/bus/usb/devices/%s", device_prefix);
+
+	dir = opendir(sysfs_path);
+	while ((dent = readdir(dir)) != NULL) {
+		if ((dent->d_type == DT_DIR) &&
+		    !strncmp(device_prefix, dent->d_name, strlen(device_prefix))) {
+			char *modalias_path;
+			asprintf(&modalias_path, "%s/%s/modalias", sysfs_path, dent->d_name);
+			set_modules_from_modalias_file(e, modalias_path);
+			free(modalias_path);
+			/* use first modalias only for now
+			   we would need a other_modules field in pciusb_entry */
+			if (e->module)
+				break;
+		}
+	}
+	closedir(dir);
+	free(sysfs_path);
+}
+
 static void find_modules_through_aliases_one(const char *bus, struct pciusb_entry *e) {
 	if (!strcmp("pci", bus)) {
 		find_pci_modules_through_aliases(e);
+	} else if (!strcmp("usb", bus)) {
+		find_usb_modules_through_aliases(e);
 	}
 }
 
@@ -182,11 +211,9 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 	}
 	fh_close(&f);
 
-	/* If no special case in pcitable, then lookup modalias for PCI devices
-	   (USB are already done by kernel)
-	*/
-	if (is_pci)
-		find_modules_through_aliases("pci", entries);
+	/* If no special case in pcitable, then lookup modalias for devices */
+	int bus = is_pci ? "pci" : "usb";
+	find_modules_through_aliases(bus, entries);
 
 	return 1;
 }
