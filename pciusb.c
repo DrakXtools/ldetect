@@ -67,6 +67,7 @@ static void resolve_and_set_modules_from_modalias(struct pciusb_entry *e, char *
 		// take the last one because we find eg: generic/ata_generic/sata_sil
 		while (aliases->next)
 			aliases = aliases->next;
+
 		ifree(e->module);
 		e->module = strdup(aliases->module);
 	}
