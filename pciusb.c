@@ -10,12 +10,6 @@
 #include <modprobe.h>
 #include "common.h"
 
-static struct module_command *commands = NULL;
-static struct module_options *modoptions = NULL;
-static struct module_alias *aliases = NULL;
-static struct module_blacklist *blacklist = NULL;
-static const char *config = NULL;
-
 static char *aliasdefault = NULL;
 
 static void set_default_alias_file(void) {
@@ -42,6 +36,12 @@ static void set_default_alias_file(void) {
 }
 
 static void set_modules_from_modalias(struct pciusb_entry *e, char *modalias) {
+	struct module_command *commands = NULL;
+	struct module_options *modoptions = NULL;
+	struct module_alias *aliases = NULL;
+	struct module_blacklist *blacklist = NULL;
+	const char *config = NULL;
+
 	/* Returns the resolved alias, options */
 	read_toplevel_config(config, modalias, 0,
 			     0, &modoptions, &commands, &aliases, &blacklist);
@@ -69,7 +69,6 @@ static void set_modules_from_modalias(struct pciusb_entry *e, char *modalias) {
 			aliases = aliases->next;
 		ifree(e->module);
 		e->module = strdup(aliases->module);
-		aliases = NULL;
 	}
 }
 
