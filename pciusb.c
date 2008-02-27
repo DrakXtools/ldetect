@@ -19,7 +19,7 @@ static const char *config = NULL;
 
 static char *aliasfilename, *symfilename;
 
-static char *find_modalias(struct pciusb_entry *e) {
+static char *find_modalias(const char *bus, struct pciusb_entry *e) {
 	char *modalias = NULL;
 	char *modalias_path;
 	FILE *file;
@@ -44,7 +44,7 @@ static char *find_modalias(struct pciusb_entry *e) {
 	return modalias;
 }
 
-static void find_modules_through_aliases(struct pciusb_entries *entries) {
+static void find_modules_through_aliases(const char *bus, struct pciusb_entries *entries) {
      unsigned int i;
      char *dirname;
      char *aliasdefault;
@@ -70,7 +70,7 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
           if (e->module && strcmp(e->module, "unknown"))
                continue;
 
-	  char *modalias = find_modalias(e);
+	  char *modalias = find_modalias(bus, e);
 	  if (!modalias)
 		  continue;
 
@@ -169,7 +169,7 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 	   (USB are already done by kernel)
 	*/
 	if (is_pci)
-		find_modules_through_aliases(entries);
+		find_modules_through_aliases("pci", entries);
 
 	return 1;
 }
