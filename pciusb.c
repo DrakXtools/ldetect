@@ -158,11 +158,11 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 	}
 	fh_close(&f);
 
-     /* If no special case in pcitable, then lookup modalias for PCI devices
-        (USB are already done by kernel)
-     */
-     if (is_pci)
-          find_modules_through_aliases(entries);
+	/* If no special case in pcitable, then lookup modalias for PCI devices
+	   (USB are already done by kernel)
+	*/
+	if (is_pci)
+		find_modules_through_aliases(entries);
 
 	return 1;
 }
