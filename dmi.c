@@ -195,7 +195,7 @@ static struct dmi_entries entries_matching_criteria(struct criteria criteria) {
 
 	int previous_refine = 0;
 
-	for (line = 1; fh_gets(buf, sizeof(buf) - 1, f); line++) {
+	for (line = 1; fh_gets(buf, sizeof(buf) - 1, &f); line++) {
 		char *s = skip_leading_spaces(buf);
 		if (*s == '#') continue; // skip comments
 
@@ -261,7 +261,7 @@ static struct dmi_entries entries_matching_criteria(struct criteria criteria) {
 		}
 	}
 	foreach_indent(0, ifree(constraints[i]));
-	fh_close(f);
+	fh_close(&f);
 
 	realloc(r.entries, sizeof(*r.entries) * r.nb);
 	return r;

@@ -21,14 +21,16 @@ extern void pciusb_initialize(struct pciusb_entry *e) NON_EXPORTED;
 #define MAX_DEVICES 100
 #define BUF_SIZE 512
 
+typedef struct {
+	gzFile zlib_fh;
+} fh;
 
 #define psizeof(a) (sizeof(a) / sizeof(*(a)))
 #define ifree(p) do { if (p) { free(p); p = NULL; } } while (0)
 
-typedef gzFile fh;
 extern fh fh_open(const char *name) NON_EXPORTED;
+extern char* fh_gets(char *line, int size, fh *f) NON_EXPORTED;
+extern int fh_close(fh *f) NON_EXPORTED;
 #pragma GCC visibility pop
-#define fh_gets(line, size, f) gzgets(f, line, size)
-#define fh_close(f) gzclose(f);
 
 #endif

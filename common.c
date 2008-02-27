@@ -20,6 +20,7 @@ char *table_name_to_file(const char *name) {
 }
 
 fh fh_open(const char *name) {
+	fh ret;
 	char *fname = table_name_to_file(name);
 
 	if (access(fname, R_OK) != 0) {
@@ -29,12 +30,24 @@ fh fh_open(const char *name) {
 	    fname = fname_gz;
 	}
 
-	fh f = gzopen(fname, "r");
-	if (!f) {
+	ret.zlib_fh = gzopen(fname, "r");
+	if (!ret.zlib_fh) {
 	    perror("pciusb");
 	    exit(1);
 	}
 
 	free(fname);
-	return f;
+	return ret;
+}
+
+char* fh_gets(char *line, int size, fh *f) {
+        char *ret;
+        ret = gzgets(f->zlib_fh, line, size);
+        return ret;
+}
+
+int fh_close(fh *f) {
+        int ret;
+        ret = gzclose(f->zlib_fh);
+        return ret;
 }
