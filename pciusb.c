@@ -99,21 +99,21 @@ static char *find_modalias(const char *bus, struct pciusb_entry *e) {
 }
 
 static void find_modules_through_aliases(const char *bus, struct pciusb_entries *entries) {
-     set_default_alias_file();
+	set_default_alias_file();
 
-     unsigned int i;
-     for (i = 0; i < entries->nb; i++) {
-          struct pciusb_entry *e = &entries->entries[i];
+	unsigned int i;
+	for (i = 0; i < entries->nb; i++) {
+		struct pciusb_entry *e = &entries->entries[i];
 
-          // No special case found in pcitable ? Then lookup modalias for PCI devices
-          if (e->module && strcmp(e->module, "unknown"))
-               continue;
+		// No special case found in pcitable ? Then lookup modalias for PCI devices
+		if (e->module && strcmp(e->module, "unknown"))
+			continue;
 
-	  char *modalias = find_modalias(bus, e);
-	  if (modalias) {
-		  set_modules_from_modalias(e, modalias);
-	  }
-     }
+		char *modalias = find_modalias(bus, e);
+		if (modalias) {
+			set_modules_from_modalias(e, modalias);
+		}
+	}
 }
 
 extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup descr_lookup, int is_pci) {
