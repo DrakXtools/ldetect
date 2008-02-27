@@ -17,7 +17,7 @@ static struct module_alias *aliases = NULL;
 static struct module_blacklist *blacklist = NULL;
 static const char *config = NULL;
 
-static char *aliasfilename, *symfilename;
+static char *aliasfilename;
 
 static char *find_modalias(const char *bus, struct pciusb_entry *e) {
 	char *modalias = NULL;
@@ -61,7 +61,6 @@ static void find_modules_through_aliases(const char *bus, struct pciusb_entries 
      } else {
           aliasdefault = aliasfilename;
      }
-     asprintf(&symfilename, "%s/modules.symbols", dirname);
 
      for (i = 0; i < entries->nb; i++) {
           struct pciusb_entry *e = &entries->entries[i];
@@ -104,7 +103,6 @@ static void find_modules_through_aliases(const char *bus, struct pciusb_entries 
                aliases = NULL;
           }
      }
-     free(symfilename);
      free(aliasfilename);
      free(dirname);
 }
