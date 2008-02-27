@@ -55,7 +55,7 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
                if (-1 == getline(&modalias, &n, file)) {
                     fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
                     fclose(file);
-                    return;
+                    continue;
                }
                fclose(file);
                size = strlen(modalias);
@@ -63,7 +63,7 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
                     modalias[size-1] = 0;
           } else {
 	       fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
-               return;
+               continue;
           }
           free(modalias_path);
 
