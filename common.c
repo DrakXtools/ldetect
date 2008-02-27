@@ -6,7 +6,6 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <zlib.h>
 #include "common.h"
 
 char *table_name_to_file(const char *name) {
