@@ -96,13 +96,19 @@ static void set_modules_from_modalias_file(struct pciusb_entry *e, char *modalia
 	}
 }
 
-static void find_modules_through_aliases_one(const char *bus, struct pciusb_entry *e) {
+static void find_pci_modules_through_aliases(struct pciusb_entry *e) {
 	char *modalias_path;
 	asprintf(&modalias_path,
 		 "/sys/bus/pci/devices/%04x:%02x:%02x.%x/modalias",
 		 e->pci_domain, e->pci_bus, e->pci_device, e->pci_function);
 	set_modules_from_modalias_file(e, modalias_path);
 	free(modalias_path);
+}
+
+static void find_modules_through_aliases_one(const char *bus, struct pciusb_entry *e) {
+	if (!strcmp("pci", bus)) {
+		find_pci_modules_through_aliases(e);
+	}
 }
 
 static void find_modules_through_aliases(const char *bus, struct pciusb_entries *entries) {
