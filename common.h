@@ -8,6 +8,8 @@
 
 #pragma GCC visibility push(hidden) 
 
+#define GZIP_BIN "/bin/gzip"
+
 extern char *table_name_to_file(const char *name);
 
 typedef enum {
@@ -22,7 +24,14 @@ extern void pciusb_initialize(struct pciusb_entry *e) NON_EXPORTED;
 #define BUF_SIZE 512
 
 typedef struct {
-	gzFile zlib_fh;
+	enum { ZLIB, GZIP } gztype;
+	union {
+		struct {
+			FILE *f;
+			pid_t pid;
+		} gzip_fh;
+		gzFile zlib_fh;
+	} u;
 } fh;
 
 #define psizeof(a) (sizeof(a) / sizeof(*(a)))

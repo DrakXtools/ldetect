@@ -23,17 +23,57 @@ fh fh_open(const char *name) {
 	fh ret;
 	char *fname = table_name_to_file(name);
 
-	if (access(fname, R_OK) != 0) {
-	    char *fname_gz;
-	    asprintf(&fname_gz, "%s.gz", fname);
-	    free(fname);
-	    fname = fname_gz;
-	}
+	if (access(fname, R_OK) == 0) {
+		/* prefer gzip type when not compressed, more direct than zlib access */
+		ret.gztype = GZIP;
+		ret.u.gzip_fh.f = fopen(fname, "r");
+		ret.u.gzip_fh.pid = 0;
+	} else {
+		char *fname_gz;
+                asprintf(&fname_gz, "%s.gz", fname);
+                if (access(GZIP_BIN, R_OK) == 0) {
+                        int fdno[2];
+                        ret.gztype = GZIP;
+                        if (access(fname_gz, R_OK) != 0) {
+                                fprintf(stderr, "Missing %s (should be %s)\n", name, fname);
+                                exit(1);
+                        }
+                        if (pipe(fdno)) {
+                                perror("pciusb");
+                                exit(1);
+                        }
 
-	ret.zlib_fh = gzopen(fname, "r");
-	if (!ret.zlib_fh) {
-	    perror("pciusb");
-	    exit(1);
+                        if ((ret.u.gzip_fh.pid = fork()) != 0) {
+                                ret.u.gzip_fh.f = fdopen(fdno[0], "r");
+                                close(fdno[1]);
+                        } else {
+                                char* cmd[5];
+                                int ip = 0;
+                                char *ld_loader = getenv("LD_LOADER");
+
+                                if (ld_loader && *ld_loader)
+                                        cmd[ip++] = ld_loader;
+
+                                cmd[ip++] = GZIP_BIN;
+                                cmd[ip++] = "-cd";
+                                cmd[ip++] = fname_gz;
+                                cmd[ip++] = NULL;
+
+                                dup2(fdno[1], STDOUT_FILENO);
+                                close(fdno[0]);
+                                close(fdno[1]);
+                                execvp(cmd[0], cmd);
+                                perror("pciusb"); 
+                                exit(2);
+                        }
+		} else {
+                        ret.gztype = ZLIB;
+                        ret.u.zlib_fh = gzopen(fname_gz, "r");
+                        if (!ret.u.zlib_fh) {
+                                perror("pciusb");
+                                exit(3);
+                        }
+                }
 	}
 
 	free(fname);
@@ -42,12 +82,28 @@ fh fh_open(const char *name) {
 
 char* fh_gets(char *line, int size, fh *f) {
         char *ret;
-        ret = gzgets(f->zlib_fh, line, size);
+        switch (f->gztype) {
+        case ZLIB:
+                ret = gzgets(f->u.zlib_fh, line, size);
+                break;
+        case GZIP:
+                ret = fgets(line, size, f->u.gzip_fh.f);
+                break;
+        }
         return ret;
 }
 
 int fh_close(fh *f) {
         int ret;
-        ret = gzclose(f->zlib_fh);
+        switch (f->gztype) {
+        case ZLIB:
+                ret = gzclose(f->u.zlib_fh);
+                break;
+        case GZIP:
+                ret = fclose(f->u.gzip_fh.f);
+                if (f->u.gzip_fh.pid > 0)
+                        waitpid(f->u.gzip_fh.pid, NULL, 0);
+                break;
+        }
         return ret;
 }
