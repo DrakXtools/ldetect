@@ -79,6 +79,7 @@ static void find_modules_through_aliases_one(const char *bus, struct pciusb_entr
 	FILE *file;
 	asprintf(&modalias_path, "/sys/bus/pci/devices/%04x:%02x:%02x.%x/modalias", e->pci_domain, e->pci_bus, e->pci_device, e->pci_function);
 	file = fopen(modalias_path, "r");
+	free(modalias_path);
 	if (file) {
 		size_t n, size;
 		if (-1 == getline(&modalias, &n, file)) {
@@ -96,7 +97,6 @@ static void find_modules_through_aliases_one(const char *bus, struct pciusb_entr
 		fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
 		return;
 	}
-	free(modalias_path);
 }
 
 static void find_modules_through_aliases(const char *bus, struct pciusb_entries *entries) {
