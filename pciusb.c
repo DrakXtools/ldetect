@@ -18,7 +18,7 @@ static const char *config = NULL;
 
 static char *aliasdefault = NULL;
 
-void set_default_alias_file(void) {
+static void set_default_alias_file(void) {
 	struct utsname rel_buf;
 	if (!aliasdefault) {
 		char *dirname;
@@ -41,7 +41,7 @@ void set_default_alias_file(void) {
 	}
 }
 
-void set_modules_from_modalias(struct pciusb_entry *e, char *modalias) {
+static void set_modules_from_modalias(struct pciusb_entry *e, char *modalias) {
 	/* Returns the resolved alias, options */
 	read_toplevel_config(config, modalias, 0,
 			     0, &modoptions, &commands, &aliases, &blacklist);
