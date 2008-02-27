@@ -19,6 +19,31 @@ static const char *config = NULL;
 
 static char *aliasfilename, *symfilename;
 
+static char *find_modalias(struct pciusb_entry *e) {
+	char *modalias = NULL;
+	char *modalias_path;
+	FILE *file;
+	asprintf(&modalias_path, "/sys/bus/pci/devices/%04x:%02x:%02x.%x/modalias", e->pci_domain, e->pci_bus, e->pci_device, e->pci_function);
+	file = fopen(modalias_path, "r");
+	if (file) {
+		size_t n, size;
+		if (-1 == getline(&modalias, &n, file)) {
+			fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
+			fclose(file);
+			return NULL;
+		}
+		fclose(file);
+		size = strlen(modalias);
+		if (size)
+			modalias[size-1] = 0;
+	} else {
+		fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
+		return NULL;
+	}
+	free(modalias_path);
+	return modalias;
+}
+
 static void find_modules_through_aliases(struct pciusb_entries *entries) {
      unsigned int i;
      char *dirname;
@@ -45,27 +70,9 @@ static void find_modules_through_aliases(struct pciusb_entries *entries) {
           if (e->module && strcmp(e->module, "unknown"))
                continue;
 
-          char *modalias = NULL;
-          char *modalias_path;
-          FILE *file;
-          asprintf(&modalias_path, "/sys/bus/pci/devices/%04x:%02x:%02x.%x/modalias", e->pci_domain, e->pci_bus, e->pci_device, e->pci_function);
-          file = fopen(modalias_path, "r");
-          if (file) {
-               size_t n, size;
-               if (-1 == getline(&modalias, &n, file)) {
-                    fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
-                    fclose(file);
-                    continue;
-               }
-               fclose(file);
-               size = strlen(modalias);
-               if (size)
-                    modalias[size-1] = 0;
-          } else {
-	       fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
-               continue;
-          }
-          free(modalias_path);
+	  char *modalias = find_modalias(e);
+	  if (!modalias)
+		  continue;
 
           /* Returns the resolved alias, options */
           read_toplevel_config(config, modalias, 0,
