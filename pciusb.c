@@ -73,7 +73,7 @@ void set_modules_from_modalias(struct pciusb_entry *e, char *modalias) {
 	}
 }
 
-static char *find_modalias(const char *bus, struct pciusb_entry *e) {
+static void find_modules_through_aliases_one(const char *bus, struct pciusb_entry *e) {
 	char *modalias = NULL;
 	char *modalias_path;
 	FILE *file;
@@ -84,18 +84,19 @@ static char *find_modalias(const char *bus, struct pciusb_entry *e) {
 		if (-1 == getline(&modalias, &n, file)) {
 			fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
 			fclose(file);
-			return NULL;
+			return;
 		}
 		fclose(file);
 		size = strlen(modalias);
 		if (size)
 			modalias[size-1] = 0;
+
+		set_modules_from_modalias(e, modalias);
 	} else {
 		fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
-		return NULL;
+		return;
 	}
 	free(modalias_path);
-	return modalias;
 }
 
 static void find_modules_through_aliases(const char *bus, struct pciusb_entries *entries) {
@@ -108,11 +109,7 @@ static void find_modules_through_aliases(const char *bus, struct pciusb_entries 
 		// No special case found in pcitable ? Then lookup modalias for PCI devices
 		if (e->module && strcmp(e->module, "unknown"))
 			continue;
-
-		char *modalias = find_modalias(bus, e);
-		if (modalias) {
-			set_modules_from_modalias(e, modalias);
-		}
+		find_modules_through_aliases_one(bus, e);
 	}
 }
 
