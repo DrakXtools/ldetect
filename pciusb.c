@@ -93,6 +93,7 @@ static void find_modules_through_aliases_one(const char *bus, struct pciusb_entr
 			modalias[size-1] = 0;
 
 		set_modules_from_modalias(e, modalias);
+		free(modalias);
 	} else {
 		fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
 		return;
