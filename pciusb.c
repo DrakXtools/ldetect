@@ -10,15 +10,36 @@
 #include <modprobe.h>
 #include "common.h"
 
-static struct utsname rel_buf;
 static struct module_command *commands = NULL;
 static struct module_options *modoptions = NULL;
 static struct module_alias *aliases = NULL;
 static struct module_blacklist *blacklist = NULL;
 static const char *config = NULL;
 
-static char *aliasfilename;
-static char *aliasdefault;
+static char *aliasdefault = NULL;
+
+void set_default_alias_file(void) {
+	struct utsname rel_buf;
+	if (!aliasdefault) {
+		char *dirname;
+		char *fallback_aliases = table_name_to_file("fallback-modules.alias");
+		char *aliasfilename;
+		struct stat st_alias, st_fallback;
+
+		uname(&rel_buf);
+		asprintf(&dirname, "%s/%s", MODULE_DIR, rel_buf.release);
+		asprintf(&aliasfilename, "%s/modules.alias", dirname);
+		/* fallback on ldetect-lst's modules.alias and prefer it if more recent */
+		if (stat(aliasfilename, &st_alias) ||
+		    (!stat(fallback_aliases, &st_fallback) && st_fallback.st_mtime > st_alias.st_mtime)) {
+			aliasdefault = fallback_aliases;
+		} else {
+			aliasdefault = aliasfilename;
+		}
+		free(aliasfilename);
+		free(dirname);
+	}
+}
 
 void set_modules_from_modalias(struct pciusb_entry *e, char *modalias) {
 	/* Returns the resolved alias, options */
@@ -78,22 +99,9 @@ static char *find_modalias(const char *bus, struct pciusb_entry *e) {
 }
 
 static void find_modules_through_aliases(const char *bus, struct pciusb_entries *entries) {
+     set_default_alias_file();
+
      unsigned int i;
-     char *dirname;
-     char *fallback_aliases = table_name_to_file("fallback-modules.alias");
-     struct stat st_alias, st_fallback;
-
-     uname(&rel_buf);
-     asprintf(&dirname, "%s/%s", MODULE_DIR, rel_buf.release);
-     asprintf(&aliasfilename, "%s/modules.alias", dirname);
-     /* fallback on ldetect-lst's modules.alias and prefer it if more recent */
-     if (stat(aliasfilename, &st_alias) ||
-	 (!stat(fallback_aliases, &st_fallback) && st_fallback.st_mtime > st_alias.st_mtime)) {
-          aliasdefault = fallback_aliases;
-     } else {
-          aliasdefault = aliasfilename;
-     }
-
      for (i = 0; i < entries->nb; i++) {
           struct pciusb_entry *e = &entries->entries[i];
 
@@ -106,8 +114,6 @@ static void find_modules_through_aliases(const char *bus, struct pciusb_entries 
 		  set_modules_from_modalias(e, modalias);
 	  }
      }
-     free(aliasfilename);
-     free(dirname);
 }
 
 extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup descr_lookup, int is_pci) {
