@@ -35,7 +35,7 @@ static void set_default_alias_file(void) {
 	}
 }
 
-static void set_modules_from_modalias(struct pciusb_entry *e, char *modalias) {
+static void resolve_and_set_modules_from_modalias(struct pciusb_entry *e, char *modalias) {
 	struct module_command *commands = NULL;
 	struct module_options *modoptions = NULL;
 	struct module_alias *aliases = NULL;
@@ -72,14 +72,11 @@ static void set_modules_from_modalias(struct pciusb_entry *e, char *modalias) {
 	}
 }
 
-static void find_modules_through_aliases_one(const char *bus, struct pciusb_entry *e) {
-	char *modalias = NULL;
-	char *modalias_path;
+static void set_modules_from_modalias_file(struct pciusb_entry *e, char *modalias_path) {
 	FILE *file;
-	asprintf(&modalias_path, "/sys/bus/pci/devices/%04x:%02x:%02x.%x/modalias", e->pci_domain, e->pci_bus, e->pci_device, e->pci_function);
 	file = fopen(modalias_path, "r");
-	free(modalias_path);
 	if (file) {
+		char *modalias = NULL;
 		size_t n, size;
 		if (-1 == getline(&modalias, &n, file)) {
 			fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
@@ -91,12 +88,21 @@ static void find_modules_through_aliases_one(const char *bus, struct pciusb_entr
 		if (size)
 			modalias[size-1] = 0;
 
-		set_modules_from_modalias(e, modalias);
+		resolve_and_set_modules_from_modalias(e, modalias);
 		free(modalias);
 	} else {
 		fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
 		return;
 	}
+}
+
+static void find_modules_through_aliases_one(const char *bus, struct pciusb_entry *e) {
+	char *modalias_path;
+	asprintf(&modalias_path,
+		 "/sys/bus/pci/devices/%04x:%02x:%02x.%x/modalias",
+		 e->pci_domain, e->pci_bus, e->pci_device, e->pci_function);
+	set_modules_from_modalias_file(e, modalias_path);
+	free(modalias_path);
 }
 
 static void find_modules_through_aliases(const char *bus, struct pciusb_entries *entries) {
