@@ -24,6 +24,8 @@ static void set_default_alias_file(void) {
 		uname(&rel_buf);
 		asprintf(&dirname, "%s/%s", MODULE_DIR, rel_buf.release);
 		asprintf(&aliasfilename, "%s/modules.alias", dirname);
+		free(dirname);
+
 		/* fallback on ldetect-lst's modules.alias and prefer it if more recent */
 		if (stat(aliasfilename, &st_alias) ||
 		    (!stat(fallback_aliases, &st_fallback) && st_fallback.st_mtime > st_alias.st_mtime)) {
@@ -31,8 +33,6 @@ static void set_default_alias_file(void) {
 		} else {
 			aliasdefault = aliasfilename;
 		}
-		free(aliasfilename);
-		free(dirname);
 	}
 }
 
@@ -155,6 +155,8 @@ static void find_modules_through_aliases(const char *bus, struct pciusb_entries 
 			continue;
 		find_modules_through_aliases_one(bus, e);
 	}
+
+	ifree(aliasdefault);
 }
 
 extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup descr_lookup, int is_pci) {
