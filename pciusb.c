@@ -216,7 +216,7 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 	fh_close(&f);
 
 	/* If no special case in pcitable, then lookup modalias for devices */
-	int bus = is_pci ? "pci" : "usb";
+	const char *bus = is_pci ? "pci" : "usb";
 	find_modules_through_aliases(bus, entries);
 
 	return 1;
