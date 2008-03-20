@@ -52,6 +52,7 @@ static void print_dmi_entries(struct dmi_entries entries) {
 
 int main(int argc, char **argv) {
 	char ** ptr = argv;
+	int fake = 0;
 
 	while (ptr && *ptr) {
 		if (!strcmp(*ptr, "-h") || !strcmp(*ptr, "--help")) {
@@ -65,19 +66,23 @@ int main(int argc, char **argv) {
 		}
 		if (!strcmp(*ptr, "-v"))
 			verboze = 1;
-		else if (!strcmp(*ptr, "-u"))
+		else if (!strcmp(*ptr, "-u")) {
 		  proc_usb_path = *++ptr;
-		else if (!strcmp(*ptr, "-p"))
+		  fake = 1;
+		} else if (!strcmp(*ptr, "-p")) {
 		  proc_pci_path = *++ptr;
-		else if (!strcmp(*ptr, "--dmidecode"))
+		  fake = 1;
+		} else if (!strcmp(*ptr, "--dmidecode")) {
 		  dmidecode_file = *++ptr;
+		  fake = 1;
+		}
 		ptr++;
 	}
 
-	printit(pci_probe(), print_pci_class);
-	printit(usb_probe(), print_usb_class);
+	if (!fake || proc_pci_path) printit(pci_probe(), print_pci_class);
+	if (!fake || proc_usb_path) printit(usb_probe(), print_usb_class);
 	
-	if (geteuid() == 0 || dmidecode_file) {
+	if (!fake && geteuid() == 0 || dmidecode_file) {
 	    struct dmi_entries dmi_entries = dmi_probe();
 	    print_dmi_entries(dmi_entries);
 	    dmi_entries_free(dmi_entries);
