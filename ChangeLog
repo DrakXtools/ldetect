@@ -1,3 +1,134 @@
+2008-03-20 15:24  Pixel <pixel at mandriva.com>
+
+	* lspcidrake.c: when faking probe (ie -p, -u, --dmidecode), do not
+	  do real probe on other bus
+	  (eg: do not probe pci and usb if using --dmidecode)
+
+2008-02-29 15:01  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: 0.7.23
+
+2008-02-29 15:00  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: fix bus type (and segfault on x86_64)
+
+2008-02-28 18:29  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: 0.7.22
+
+2008-02-28 16:53  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: do not free aliasfilename that early (really use
+	  modules.alias file from kernel or ldetect-lst)
+
+2008-02-27 18:59  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: 0.7.21
+
+2008-02-27 18:51  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: check opendir return code
+
+2008-02-27 18:34  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: find modules from USB modaliases as well (useful when
+	  module is a
+	  dkms one, or during install where modules are not autoloaded,
+	  this could allow to remove most modules from usbtable)
+
+2008-02-27 17:57  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: cosmetics
+
+2008-02-27 17:57  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: extract pci-specific function
+
+2008-02-27 17:55  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: extract set_modules_from_modalias_file
+	  (bus-independant)
+
+2008-02-27 17:43  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: move libmodprobe variables declaration
+
+2008-02-27 17:40  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: make some functions static
+
+2008-02-27 17:39  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: free modalias
+
+2008-02-27 17:39  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: free modalias path earlier
+
+2008-02-27 17:38  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: set module in find_modules_through_aliases_one
+
+2008-02-27 17:31  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: fix indentation
+
+2008-02-27 17:31  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: find default alias file once only
+
+2008-02-27 17:24  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: extract set_modules_from_modalias()
+
+2008-02-27 17:20  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: remove unused symfilename
+
+2008-02-27 17:18  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: pass bus to find_modalias
+
+2008-02-27 16:56  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: extract find_modalias function
+
+2008-02-27 16:52  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: fix indentation
+
+2008-02-27 16:51  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: do not ignore subsequent modaliases if resolving one
+	  fails
+
+2008-02-27 16:25  Olivier Blin <oblin at mandriva.com>
+
+	* common.c, common.h: add back /bin/gzip support, and prefer it if
+	  available (6 hundredths of second faster on my test system, this
+	  should please Titi)
+
+2008-02-27 16:11  Olivier Blin <oblin at mandriva.com>
+
+	* common.c, common.h, dmi.c, pciusb.c: allow to modify the fh type
+	  more easily by adding more wrappers
+
+2008-02-27 16:02  Olivier Blin <oblin at mandriva.com>
+
+	* common.c: remove doble zlib.h include
+
+2008-02-27 16:01  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: rebuild common.o if common.h has been modified
+
+2007-09-28 20:00  Olivier Blin <oblin at mandriva.com>
+
+	* Makefile: 0.7.20
+
+2007-09-28 20:00  Olivier Blin <oblin at mandriva.com>
+
+	* pciusb.c: fix modalias fd leak (thanks to Anssi for the report)
+
 2007-08-27 14:24  Thierry Vignaud <tvignaud at mandriva.com>
 
 	* ChangeLog, Makefile: bump minor (14)
