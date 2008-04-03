@@ -112,8 +112,9 @@ static void find_usb_modules_through_aliases(struct pciusb_entry *e) {
 	DIR *dir;
 	struct dirent *dent;
 
-	asprintf(&device_prefix, "%x-%x", e->pci_bus, e->pci_device);
-	asprintf(&sysfs_path, "/sys/bus/usb/devices/%s", device_prefix);
+	asprintf(&device_prefix, "%d-", e->pci_bus);
+	/* usbdev<busnum>.<devnum> */
+	asprintf(&sysfs_path, "/sys/class/usb_device/usbdev%d.%d/device", e->pci_bus, e->pci_device);
 
 	dir = opendir(sysfs_path);
 	if (!dir)
