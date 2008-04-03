@@ -108,11 +108,11 @@ static void find_pci_modules_through_aliases(struct pciusb_entry *e) {
 }
 
 static void find_usb_modules_through_aliases(struct pciusb_entry *e) {
-	char *device_prefix, *sysfs_path;
+	char *usb_prefix, *sysfs_path;
 	DIR *dir;
 	struct dirent *dent;
 
-	asprintf(&device_prefix, "%d-", e->pci_bus);
+	asprintf(&usb_prefix, "%d-", e->pci_bus);
 	/* usbdev<busnum>.<devnum> */
 	asprintf(&sysfs_path, "/sys/class/usb_device/usbdev%d.%d/device", e->pci_bus, e->pci_device);
 
@@ -121,7 +121,7 @@ static void find_usb_modules_through_aliases(struct pciusb_entry *e) {
 		return;
 	while ((dent = readdir(dir)) != NULL) {
 		if ((dent->d_type == DT_DIR) &&
-		    !strncmp(device_prefix, dent->d_name, strlen(device_prefix))) {
+		    !strncmp(usb_prefix, dent->d_name, strlen(usb_prefix))) {
 			char *modalias_path;
 			asprintf(&modalias_path, "%s/%s/modalias", sysfs_path, dent->d_name);
 			set_modules_from_modalias_file(e, modalias_path);
