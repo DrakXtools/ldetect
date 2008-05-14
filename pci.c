@@ -40,8 +40,7 @@ extern struct pciusb_entries pci_probe(void) {
 	pacc = pci_alloc();
 
 	if (proc_pci_path) {
-          pacc->method_params[PCI_ACCESS_PROC_BUS_PCI] = proc_pci_path;
-          pacc->method = PCI_ACCESS_PROC_BUS_PCI;
+             pci_set_param(pacc, "proc.path", proc_pci_path);
 	}
 
 
