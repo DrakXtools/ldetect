@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <getopt.h>
 #include "libldetect.h"
 
 static int verboze = 0;
@@ -50,33 +51,45 @@ static void print_dmi_entries(struct dmi_entries entries) {
 		printf("%-16s: %s\n", entries.entries[i].module, entries.entries[i].constraints);
 }
 
-int main(int argc, char **argv) {
-	char ** ptr = argv;
-	int fake = 0;
+static void usage(void)
+{
+	printf(
+	"usage: lspcidrake [options]\n"
+	"\t-p, --pci-file <file>\tPCI devices source [/proc/bus/pci/devices by default]\n"
+	"\t-u, --usb-file <file>\tUSB devices source  [/proc/bus/usb/devices by default]\n"
+	"\t-v, --verbose\t\tVerbose mode [print ids and sub-ids], implies full probe\n"
+	"\t-d, --dmidecode <file>\tTo use this dmidecode output instead of calling demicode\n");
+}
 
-	while (ptr && *ptr) {
-		if (!strcmp(*ptr, "-h") || !strcmp(*ptr, "--help")) {
-			printf("usage: lspcidrake [-v|-u]\n"
-				"-p <file>: pci devices source [/proc/bus/pci/devices by default]\n"
-				"-u <file>: usb devices source [/proc/bus/usb/devices by default]\n"
-				"-v : verbose mode [print ids and sub-ids], implies full probe\n"
-				"--dmidecode <file>: to use this dmidecode output instead of calling dmidecode\n"
-				);	
-			return 0;	
+int main(int argc, char **argv) {
+	int opt, fake = 0;
+	struct option options[] = { { "verbose", 0, NULL, 'v' },
+				    { "pci-file", 1, NULL, 'p' },
+				    { "usb-file", 1, NULL, 'u' },
+				    { "dmidecode", 0, NULL, 'd' },
+				    { NULL, 0, NULL, 0 } };
+
+	while ((opt = getopt_long(argc, argv, "vp:u:d", options, NULL)) != -1) {
+		switch (opt) {
+			case 'v':
+				verboze = 1;
+				break;
+			case 'p':
+				proc_pci_path = optarg;
+				fake = 1;
+				break;
+			case 'u':
+				proc_usb_path = optarg;
+				fake = 1;
+				break;
+			case 'd':
+				dmidecode_file = optarg;
+				fake = 1;
+				break;
+			default:
+				usage();
+				return 1;
 		}
-		if (!strcmp(*ptr, "-v"))
-			verboze = 1;
-		else if (!strcmp(*ptr, "-u")) {
-		  proc_usb_path = *++ptr;
-		  fake = 1;
-		} else if (!strcmp(*ptr, "-p")) {
-		  proc_pci_path = *++ptr;
-		  fake = 1;
-		} else if (!strcmp(*ptr, "--dmidecode")) {
-		  dmidecode_file = *++ptr;
-		  fake = 1;
-		}
-		ptr++;
 	}
 
 	if (!fake || proc_pci_path) printit(pci_probe(), print_pci_class);
