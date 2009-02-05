@@ -81,7 +81,7 @@ fh fh_open(const char *name) {
 }
 
 char* fh_gets(char *line, int size, fh *f) {
-        char *ret;
+        char *ret = NULL;
         switch (f->gztype) {
         case ZLIB:
                 ret = gzgets(f->u.zlib_fh, line, size);
@@ -94,7 +94,7 @@ char* fh_gets(char *line, int size, fh *f) {
 }
 
 int fh_close(fh *f) {
-        int ret;
+        int ret = EOF;
         switch (f->gztype) {
         case ZLIB:
                 ret = gzclose(f->u.zlib_fh);
