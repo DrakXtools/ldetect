@@ -18,6 +18,8 @@ struct pciusb_entry {
   unsigned short pci_device; /* pci device id 5 bits wide */
   unsigned short pci_function; /* pci function id 3 bits wide */
 
+  unsigned short usb_port; /* pci function id 3 bits wide */
+
   char *module;
   char *text;
   char* class;

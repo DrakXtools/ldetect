@@ -38,13 +38,14 @@ extern struct pciusb_entries usb_probe(void) {
 
 		switch (buf[0]) {
 		case 'T': {
-			unsigned short pci_bus, pci_device;
+			unsigned short pci_bus, pci_device, usb_port;
 			e = &r.entries[r.nb++];
 			pciusb_initialize(e);
 
-			if (sscanf(buf, "T:  Bus=%02hd Lev=%*02d Prnt=%*04d Port=%*02d Cnt=%*02d Dev#=%3hd Spd=%*3s MxCh=%*2d", &pci_bus, &pci_device) == 2) {
+			if (sscanf(buf, "T:  Bus=%02hd Lev=%*02d Prnt=%*04d Port=%02hd Cnt=%*02d Dev#=%3hd Spd=%*3s MxCh=%*2d", &pci_bus, &usb_port, &pci_device) == 3) {
 				e->pci_bus = pci_bus;
 				e->pci_device = pci_device;
+				e->usb_port = usb_port;
 			} else fprintf(stderr, "%s %d: unknown ``T'' line\n", proc_usb_path, line);
 			break;
 		}
