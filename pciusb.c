@@ -127,8 +127,8 @@ static void find_usb_modules_through_aliases(struct pciusb_entry *e) {
 			asprintf(&modalias_path, "%s/%s/modalias", sysfs_path, dent->d_name);
 			set_modules_from_modalias_file(e, modalias_path);
 			free(modalias_path);
-			/* use first modalias only for now
-			   we would need a other_modules field in pciusb_entry */
+			/* maybe we would need a "other_modules" field in pciusb_entry 
+			   to list modules from all USB interfaces */
 			if (e->module)
 				break;
 		}
