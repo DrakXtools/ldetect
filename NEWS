@@ -1,3 +1,10 @@
+Version 0.7.28 - 27 March 2009, Olivier Blin
+
+- do not use random string as device description
+- use /sys/bus/usb/devices instead of /sys/class/usb_device
+  (disabled in recent kernel) to find modalias
+  (this breaks ABI because we now need to keep port number)
+
 Version 0.7.26 - 14 May 2008, Thierry Vignaud
 
 - adapt to pciutils-3.x API
