@@ -1,4 +1,4 @@
-Version 0.7.28 - 27 March 2009, Olivier Blin
+Version 0.8.0 - 27 March 2009, Olivier Blin
 
 - do not use random string as device description
 - use /sys/bus/usb/devices instead of /sys/class/usb_device
