@@ -9,7 +9,7 @@ libdir = $(prefix)/lib
 includedir = $(prefix)/include
 
 binaries = lspcidrake
-lib_objs = common.o pciusb.o pci.o usb.o pciclass.o usbclass.o dmi.o
+lib_objs = common.o modalias.o pciusb.o pci.o usb.o pciclass.o usbclass.o dmi.o 
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
 CFLAGS = -Wall -W -Wstrict-prototypes -Os -fPIC -fvisibility=hidden

@@ -19,6 +19,8 @@ typedef enum {
 
 extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup, int is_pci) NON_EXPORTED;
 extern void pciusb_initialize(struct pciusb_entry *e) NON_EXPORTED;
+extern char *modalias_resolve_module(const char *modalias) NON_EXPORTED;
+extern void modalias_cleanup(void) NON_EXPORTED;
 
 #define MAX_DEVICES 100
 #define BUF_SIZE 512
