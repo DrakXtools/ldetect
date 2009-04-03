@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "sysfs/libsysfs.h"
+#include "libsysfs.h"
 #include "libldetect.h"
 #include "common.h"
 

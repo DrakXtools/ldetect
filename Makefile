@@ -46,8 +46,8 @@ pciusb.o:	pciusb.c libldetect.h common.h
 pci.o:	pci.c libldetect.h common.h
 usb.o:	usb.c libldetect.h common.h
 dmi.o:	dmi.c libldetect.h common.h
-sysfs_attr.o:	sysfs/sysfs_attr.c sysfs/sysfs.h sysfs/libsysfs.h
-sysfs_utils.o:	sysfs/sysfs_utils.c sysfs/sysfs.h sysfs/libsysfs.h
+sysfs_attr.o:	sysfs_attr.c sysfs.h libsysfs.h
+sysfs_utils.o:	sysfs_utils.c sysfs.h libsysfs.h
 
 clean:
 	rm -f *~ *.o pciclass.c usbclass.c $(binaries) $(libraries)
