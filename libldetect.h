@@ -75,10 +75,6 @@ extern char *dmidecode_file;
 /* hid ************************************************************************/
 /******************************************************************************/
 struct hid_entry {
-  unsigned short vendor; /* PCI vendor id */
-  unsigned short product;
-  unsigned short version;
-
   char *module;
   char *text;
 };
