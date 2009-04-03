@@ -111,9 +111,10 @@ static void parse_device(struct hid_entries *entries, const char *dev)
 		device_name = strdup("HID Device");
 
 	modname = modalias_resolve_module(modalias);
-	DEBUG("%s: module name is [%s]\n", HID_BUS_NAME, modname);
-	add_entry(entries, device_name, modname);
 	free(modalias);
+	DEBUG("%s: module name is [%s]\n", HID_BUS_NAME, modname);
+	if (modname != NULL) 
+		add_entry(entries, device_name, modname);
 }
 
 
