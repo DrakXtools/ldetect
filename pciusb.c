@@ -30,6 +30,7 @@ static void set_default_alias_file(void) {
 		/* fallback on ldetect-lst's modules.alias and prefer it if more recent */
 		if (stat(aliasfilename, &st_alias) ||
 		    (!stat(fallback_aliases, &st_fallback) && st_fallback.st_mtime > st_alias.st_mtime)) {
+			free(aliasfilename);
 			aliasdefault = fallback_aliases;
 		} else {
 			aliasdefault = aliasfilename;
@@ -50,10 +51,11 @@ static void resolve_and_set_modules_from_modalias(struct pciusb_entry *e, char *
 
 	if (!aliases) {
 		/* We only use canned aliases as last resort. */
+		char *dkms_file = table_name_to_file("dkms-modules.alias");
 		char *alias_filelist[] = {
 			"/lib/module-init-tools/ldetect-lst-modules.alias",
 			aliasdefault,
-			table_name_to_file("dkms-modules.alias"),
+			dkms_file,
 			NULL,
 		};
 		char **alias_file = alias_filelist;
@@ -64,6 +66,7 @@ static void resolve_and_set_modules_from_modalias(struct pciusb_entry *e, char *
 			aliases = apply_blacklist(aliases, blacklist);
 			alias_file++;
 		}
+		free(dkms_file);
 	}
 	if (aliases) {
 		// take the last one because we find eg: generic/ata_generic/sata_sil
@@ -118,8 +121,9 @@ static void find_usb_modules_through_aliases(struct pciusb_entry *e) {
 	asprintf(&sysfs_path, "/sys/bus/usb/devices/%d-%d", e->pci_bus, e->usb_port + 1);
 
 	dir = opendir(sysfs_path);
-	if (!dir)
-		return;
+	if (!dir) {
+		goto end;
+	}
 	while ((dent = readdir(dir)) != NULL) {
 		if ((dent->d_type == DT_DIR) &&
 		    !strncmp(usb_prefix, dent->d_name, strlen(usb_prefix))) {
@@ -134,7 +138,9 @@ static void find_usb_modules_through_aliases(struct pciusb_entry *e) {
 		}
 	}
 	closedir(dir);
+end:
 	free(sysfs_path);
+	free(usb_prefix);
 }
 
 static void find_modules_through_aliases_one(const char *bus, struct pciusb_entry *e) {

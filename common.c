@@ -74,6 +74,7 @@ fh fh_open(const char *name) {
                                 exit(3);
                         }
                 }
+		free(fname_gz);
 	}
 
 	free(fname);
