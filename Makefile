@@ -61,7 +61,16 @@ install: build
 dist: dis
 dis ../$(NAME)-$(VERSION).tar.bz2: tar
 
-tar: dist-svn
+tar:
+	@if [ -e ".svn" ]; then \
+		$(MAKE) dist-svn; \
+	elif [ -e ".git" ]; then \
+		$(MAKE) dist-git; \
+	else \
+		echo "Unknown SCM (not SVN nor GIT)";\
+		exit 1; \
+	fi;
+	$(info $(NAME)-$(VERSION).tar.bz2 is ready)
 
 dist-svn:
 	svn export -q -rBASE . $(NAME)-$(VERSION)
