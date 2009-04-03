@@ -9,7 +9,7 @@ libdir = $(prefix)/lib
 includedir = $(prefix)/include
 
 binaries = lspcidrake
-lib_objs = common.o modalias.o pciusb.o pci.o usb.o pciclass.o usbclass.o dmi.o 
+lib_objs = common.o hid.o modalias.o pciusb.o pci.o usb.o pciclass.o usbclass.o dmi.o sysfs_attr.o sysfs_utils.o
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
 CFLAGS = -Wall -W -Wstrict-prototypes -Os -fPIC -fvisibility=hidden
@@ -46,6 +46,8 @@ pciusb.o:	pciusb.c libldetect.h common.h
 pci.o:	pci.c libldetect.h common.h
 usb.o:	usb.c libldetect.h common.h
 dmi.o:	dmi.c libldetect.h common.h
+sysfs_attr.o:	sysfs/sysfs_attr.c sysfs/sysfs.h sysfs/libsysfs.h
+sysfs_utils.o:	sysfs/sysfs_utils.c sysfs/sysfs.h sysfs/libsysfs.h
 
 clean:
 	rm -f *~ *.o pciclass.c usbclass.c $(binaries) $(libraries)

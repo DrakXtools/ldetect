@@ -71,5 +71,25 @@ extern struct dmi_entries dmi_probe(void);
 extern void dmi_entries_free(struct dmi_entries entries);
 extern char *dmidecode_file;
 
+/******************************************************************************/
+/* hid ************************************************************************/
+/******************************************************************************/
+struct hid_entry {
+  unsigned short vendor; /* PCI vendor id */
+  unsigned short product;
+  unsigned short version;
+
+  char *module;
+  char *text;
+};
+struct hid_entries {
+  struct hid_entry *entries;
+  unsigned int nb;
+};
+
+extern struct hid_entries hid_probe(void);
+extern void hid_entries_free(struct hid_entries *entries);
+extern const char *sysfs_hid_path;
+
 #endif
 #pragma GCC visibility pop
