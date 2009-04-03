@@ -1,3 +1,6 @@
+- fixes some memory leaks
+- enumerate hid bus
+
 Version 0.8.0 - 27 March 2009, Olivier Blin
 
 - do not use random string as device description
