@@ -51,6 +51,13 @@ static void print_dmi_entries(struct dmi_entries entries) {
 		printf("%-16s: %s\n", entries.entries[i].module, entries.entries[i].constraints);
 }
 
+static void print_hid_entries(struct hid_entries entries) {
+	unsigned int i;
+	for (i = 0; i < entries.nb; i++)
+		printf("%-16s: %s\n", entries.entries[i].module,
+		       entries.entries[i].text);	 
+}
+
 static void usage(void)
 {
 	printf(
@@ -99,6 +106,12 @@ int main(int argc, char **argv) {
 	    struct dmi_entries dmi_entries = dmi_probe();
 	    print_dmi_entries(dmi_entries);
 	    dmi_entries_free(dmi_entries);
+	}
+
+	if (!fake || sysfs_hid_path) {
+	    struct hid_entries hid_entries = hid_probe();
+	    print_hid_entries(hid_entries);
+	    hid_entries_free(&hid_entries);
 	}
 
 	return 0;
