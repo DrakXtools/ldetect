@@ -14,6 +14,52 @@
 
 static char *aliasdefault = NULL;
 
+static void free_aliases(struct module_alias *aliases) {
+	while (aliases->next) {
+		struct module_alias *next;
+		next = aliases->next;
+		free(aliases->module);
+		free(aliases);
+		aliases = next;
+	}
+	free(aliases);
+}
+
+static void free_options(struct module_options *modoptions) {
+	while (modoptions->next) {
+		struct module_options *next;
+		next = modoptions->next;
+		free(modoptions->modulename);
+		free(modoptions->options);
+		free(modoptions);
+		modoptions = next;
+	}
+	free(modoptions);
+}
+
+static void free_commands(struct module_command *commands) {
+	while (commands->next) {
+		struct module_command *next;
+		next = commands->next;
+		free(commands->modulename);
+		free(commands->command);
+		free(commands);
+		commands = next;
+	}
+	free(commands);
+}
+
+static void free_blacklist(struct module_blacklist *blacklist) {
+	while (blacklist->next) {
+		struct module_blacklist *next;
+		next = blacklist->next;
+		free(blacklist->modulename);
+		free(blacklist);
+		blacklist = next;
+	}
+	free(blacklist);
+}
+
 static void set_default_alias_file(void) {
 	struct utsname rel_buf;
 	if (!aliasdefault) {
@@ -71,12 +117,19 @@ char *modalias_resolve_module(const char *modalias) {
 		}
 		free(dkms_file);
 	}
+	free_blacklist(blacklist);
+	free_commands(commands);
+	free_options(modoptions);
 	if (aliases) {
+		char *result;
 		// take the last one because we find eg: generic/ata_generic/sata_sil
-		while (aliases->next)
-			aliases = aliases->next;
+		struct module_alias *it = aliases;
+		while (it->next)
+			it = it->next;
 
-		return strdup(aliases->module);
+		result = strdup(it->module);
+		free_aliases(aliases);
+		return result;
 	}
 
 	return NULL;
