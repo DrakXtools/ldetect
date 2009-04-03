@@ -68,5 +68,9 @@ dist-svn:
 	tar cfj ../$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)
 	rm -rf $(NAME)-$(VERSION)
 
+dist-git:
+	@git archive --prefix=$(NAME)-$(VERSION)/ HEAD | bzip2 >../$(NAME)-$(VERSION).tar.bz2;
+
+
 log:
 	svn2cl --authors ../common/username.xml --accum
