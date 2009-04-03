@@ -58,7 +58,12 @@ install: build
 	cp -a $(libraries) $(libdir)
 	install libldetect.h $(includedir)
 
-dis ../$(NAME)-$(VERSION).tar.bz2: clean
+dist: dis
+dis ../$(NAME)-$(VERSION).tar.bz2: tar
+
+tar: dist-svn
+
+dist-svn:
 	svn export -q -rBASE . $(NAME)-$(VERSION)
 	tar cfj ../$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)
 	rm -rf $(NAME)-$(VERSION)
