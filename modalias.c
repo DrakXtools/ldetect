@@ -15,6 +15,8 @@
 static char *aliasdefault = NULL;
 
 static void free_aliases(struct module_alias *aliases) {
+	if (aliases == NULL) 
+		return;
 	while (aliases->next) {
 		struct module_alias *next;
 		next = aliases->next;
@@ -26,6 +28,8 @@ static void free_aliases(struct module_alias *aliases) {
 }
 
 static void free_options(struct module_options *modoptions) {
+	if (modoptions == NULL) 
+		return;
 	while (modoptions->next) {
 		struct module_options *next;
 		next = modoptions->next;
@@ -38,6 +42,8 @@ static void free_options(struct module_options *modoptions) {
 }
 
 static void free_commands(struct module_command *commands) {
+	if (commands == NULL) 
+		return;
 	while (commands->next) {
 		struct module_command *next;
 		next = commands->next;
@@ -50,6 +56,8 @@ static void free_commands(struct module_command *commands) {
 }
 
 static void free_blacklist(struct module_blacklist *blacklist) {
+	if (blacklist == NULL) 
+		return;
 	while (blacklist->next) {
 		struct module_blacklist *next;
 		next = blacklist->next;
