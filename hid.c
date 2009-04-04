@@ -1,4 +1,3 @@
-#define _GNU_SOURCE
 #include <sys/types.h>
 #include <dirent.h>
 #include <fnmatch.h>
@@ -49,7 +48,9 @@ static char *get_field_value(const char *fields, const char *field_name)
 	modalias = strstr(fields, field_name);
 	if (modalias == NULL)
 		return NULL;
-	end = strchrnul(modalias, '\n');
+	end = strchr(modalias, '\n');
+	if (end == NULL)
+		end = modalias + strlen(modalias);
 
 	return strndup(modalias+strlen(field_name), end - (modalias+strlen(field_name)));
 }
