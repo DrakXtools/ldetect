@@ -70,7 +70,7 @@ static void add_entry(struct hid_entries *entry_list, char *name, char *module)
     
 	struct hid_entry *new_entries;
 
-	new_entries = realloc(entry_list->entries, (entry_list->nb+1)*sizeof(entry_list->entries));
+	new_entries = realloc(entry_list->entries, (entry_list->nb+1)*sizeof(*(entry_list->entries)));
 	if (new_entries != NULL) {
 		new_entries[entry_list->nb].module = module;
 		new_entries[entry_list->nb].text = name;
