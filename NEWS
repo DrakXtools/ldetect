@@ -1,3 +1,10 @@
+- fix parsing of /proc/bus/usb/device I: lines and use the class
+  of the first interface used by a driver instead of the first
+  interface (or first one like before when none is used).
+  That fixed presenting something as usb_storage even if the
+  device is ignored by usb_storage driver and handled on another 
+  interface by option driver
+
 Version 0.8.1 - 3 April 2009, Christophe Fergeau
 
 - enumerate hid bus
