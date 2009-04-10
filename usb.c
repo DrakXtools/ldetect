@@ -60,7 +60,7 @@ extern struct pciusb_entries usb_probe(void) {
 		case 'I': if (e->class_id == 0 || e->module == NULL) {
 			char driver[50];
 			int class_id, sub, prot = 0;
-			if (sscanf(buf, "I:%*1c If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=%s", &class_id, &sub, &prot, driver) == 4) {
+			if (sscanf(buf, "I:* If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=%s", &class_id, &sub, &prot, driver) == 4) {
 				unsigned long cid = (class_id * 0x100 + sub) * 0x100 + prot;
 				if (e->class_id == 0)
 					e->class_id = cid;
@@ -80,6 +80,8 @@ extern struct pciusb_entries usb_probe(void) {
 				if (e->class_id == (0x1*0x100+ 0x01)) /* USB_AUDIO_CLASS*0x100 + USB_SUBCLASS_AUDIO_CONTROL*/
 					e->module = strdup("snd_usb_audio");
 
+			} else if (sscanf(buf, "I:  If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=%s", &class_id, &sub, &prot, driver) == 4) {
+				/* Ignore interfaces not active */
 			} else fprintf(stderr, "%s %d: unknown ``I'' line\n", proc_usb_path, line);
 			break;
 		}
