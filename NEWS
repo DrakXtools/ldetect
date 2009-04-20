@@ -1,3 +1,5 @@
+Version 0.8.3 - 20 April 2009, Pascal Terjan
+
 - fix parsing of /proc/bus/usb/device I: lines and use the class
   of the first interface used by a driver instead of the first
   interface (or first one like before when none is used).
