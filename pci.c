@@ -97,7 +97,8 @@ extern struct pciusb_entries pci_probe(void) {
 
 		close(devf);
 	}
-	realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
+	r.entries = realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
+
 	pci_cleanup(pacc);
 
 	if (pciusb_find_modules(&r, "pcitable", DO_NOT_LOAD, 1))
