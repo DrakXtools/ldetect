@@ -1,3 +1,8 @@
+Version 0.8.4 - 25 June 2009, Pascal Terjan
+
+- fix freed memory usage in usb_probe and pci_probe
+- use usb.ids
+
 Version 0.8.3 - 20 April 2009, Pascal Terjan
 
 - fix parsing of /proc/bus/usb/device I: lines and use the class
