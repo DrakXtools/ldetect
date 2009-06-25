@@ -27,7 +27,7 @@
 #ifndef _NAMES_H
 #define _NAMES_H
 
-#include <sys/types.h>
+#include <stdint.h>
 
 /* ---------------------------------------------------------------------- */
 
