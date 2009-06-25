@@ -5,9 +5,36 @@
 #include <unistd.h>
 #include "libldetect.h"
 #include "common.h"
+#include "names.h"
 
 static char *proc_usb_path_default = "/proc/bus/usb/devices";
 char *proc_usb_path = NULL;
+
+static void build_text(struct pciusb_entry *e, char *vendor_text, char *product_text) {
+	if(e) {
+		if(!vendor_text) {
+			char const* vendorname;
+			vendorname = names_vendor(e->vendor);
+			if(vendorname) {
+				vendor_text = malloc(strlen(vendorname)+2);
+				sprintf(vendor_text, "%s|", vendorname);
+			} else 
+				vendor_text = strdup("Unknown|");
+		}
+		if(!product_text) {
+			char const* productname;
+			productname = names_product(e->vendor, e->device);
+			if(productname) {
+				product_text = strdup(productname);
+			} else 
+				product_text = strdup("Unknown");
+		}
+		vendor_text = realloc(vendor_text, strlen(vendor_text)+strlen(product_text)+1);
+		e->text = vendor_text;
+		strcat(e->text, product_text);
+		free(product_text);
+	}
+}
 
 
 extern struct pciusb_entries usb_probe(void) {
@@ -16,8 +43,10 @@ extern struct pciusb_entries usb_probe(void) {
 	int line;
 	struct pciusb_entries r;
 	struct pciusb_entry *e = NULL;
+	char *vendor_text = NULL, *product_text = NULL;
 	r.nb = 0;
 
+	names_init("/usr/share/usb.ids");
 	if (!(f = fopen(proc_usb_path ? proc_usb_path : proc_usb_path_default, "r"))) {
 		if (proc_usb_path) {
 		        char *err_msg;
@@ -39,6 +68,9 @@ extern struct pciusb_entries usb_probe(void) {
 		switch (buf[0]) {
 		case 'T': {
 			unsigned short pci_bus, pci_device, usb_port;
+			build_text(e, vendor_text, product_text);
+			vendor_text = NULL;
+			product_text = NULL;
 			e = &r.entries[r.nb++];
 			pciusb_initialize(e);
 
@@ -91,21 +123,21 @@ extern struct pciusb_entries usb_probe(void) {
 			size_t length = strlen(buf) -1;
 			if (sscanf(buf, "S:  Manufacturer=%n%c", &offset, &dummy) == 1) {
 				buf[length] = '|'; /* replacing '\n' by '|' */
-				e->text = strdup(buf + offset);
+				vendor_text = strdup(buf + offset);
 			} else if (sscanf(buf, "S:  Product=%n%c", &offset, &dummy) == 1) {
-				if (!e->text) 
-					e->text = strdup("Unknown|");
 				buf[length] = 0; /* removing '\n' */
-				e->text = realloc(e->text, strlen(e->text) + length-offset + 2);
-				strcat(e->text, buf + offset);
+				product_text = strdup(buf + offset);
 			}
 		}
 		}
 	}
+
+	build_text(e, vendor_text, product_text);
+
 	fclose(f);
 	r.entries = realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
 
-	pciusb_find_modules(&r, "usbtable", LOAD, 0);
+	pciusb_find_modules(&r, "usbtable", DO_NOT_LOAD, 0);
 	return r;
 }
 
