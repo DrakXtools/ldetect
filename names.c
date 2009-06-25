@@ -58,43 +58,43 @@
 
 struct vendor {
 	struct vendor *next;
-	u_int16_t vendorid;
+	uint16_t vendorid;
 	char name[1];
 };
 
 struct product {
 	struct product *next;
-	u_int16_t vendorid, productid;
+	uint16_t vendorid, productid;
 	char name[1];
 };
 
 struct class {
 	struct class *next;
-	u_int8_t classid;
+	uint8_t classid;
 	char name[1];
 };
 
 struct subclass {
 	struct subclass *next;
-	u_int8_t classid, subclassid;
+	uint8_t classid, subclassid;
 	char name[1];
 };
 
 struct protocol {
 	struct protocol *next;
-	u_int8_t classid, subclassid, protocolid;
+	uint8_t classid, subclassid, protocolid;
 	char name[1];
 };
 
 struct audioterminal {
 	struct audioterminal *next;
-	u_int16_t termt;
+	uint16_t termt;
 	char name[1];
 };
 
 struct videoterminal {
 	struct videoterminal *next;
-	u_int16_t termt;
+	uint16_t termt;
 	char name[1];
 };
 
@@ -150,12 +150,12 @@ static const char *names_genericstrtable(struct genericstrtable *t[HASHSZ], unsi
         return NULL;
 }
 
-const char *names_hid(u_int8_t hidd)
+const char *names_hid(uint8_t hidd)
 {
 	return names_genericstrtable(hiddescriptors, hidd);
 }
 
-const char *names_reporttag(u_int8_t rt)
+const char *names_reporttag(uint8_t rt)
 {
 	return names_genericstrtable(reports, rt);
 }
@@ -170,17 +170,17 @@ const char *names_hutus(unsigned int data)
 	return names_genericstrtable(hutus, data);
 }
 
-const char *names_langid(u_int16_t langid)
+const char *names_langid(uint16_t langid)
 {
 	return names_genericstrtable(langids, langid);
 }
 
-const char *names_physdes(u_int8_t ph)
+const char *names_physdes(uint8_t ph)
 {
 	return names_genericstrtable(physdess, ph);
 }
 
-const char *names_bias(u_int8_t b)
+const char *names_bias(uint8_t b)
 {
 	return names_genericstrtable(biass, b);
 }
@@ -190,7 +190,7 @@ const char *names_countrycode(unsigned int countrycode)
 	return names_genericstrtable(countrycodes, countrycode);
 }
 
-const char *names_vendor(u_int16_t vendorid)
+const char *names_vendor(uint16_t vendorid)
 {
 	struct vendor *v;
 
@@ -201,7 +201,7 @@ const char *names_vendor(u_int16_t vendorid)
 	return NULL;
 }
 
-const char *names_product(u_int16_t vendorid, u_int16_t productid)
+const char *names_product(uint16_t vendorid, uint16_t productid)
 {
 	struct product *p;
 
@@ -212,7 +212,7 @@ const char *names_product(u_int16_t vendorid, u_int16_t productid)
 	return NULL;
 }
 
-const char *names_class(u_int8_t classid)
+const char *names_class(uint8_t classid)
 {
 	struct class *c;
 
@@ -223,7 +223,7 @@ const char *names_class(u_int8_t classid)
 	return NULL;
 }
 
-const char *names_subclass(u_int8_t classid, u_int8_t subclassid)
+const char *names_subclass(uint8_t classid, uint8_t subclassid)
 {
 	struct subclass *s;
 
@@ -234,7 +234,7 @@ const char *names_subclass(u_int8_t classid, u_int8_t subclassid)
 	return NULL;
 }
 
-const char *names_protocol(u_int8_t classid, u_int8_t subclassid, u_int8_t protocolid)
+const char *names_protocol(uint8_t classid, uint8_t subclassid, uint8_t protocolid)
 {
 	struct protocol *p;
 
@@ -245,7 +245,7 @@ const char *names_protocol(u_int8_t classid, u_int8_t subclassid, u_int8_t proto
 	return NULL;
 }
 
-const char *names_audioterminal(u_int16_t termt)
+const char *names_audioterminal(uint16_t termt)
 {
 	struct audioterminal *at;
 
@@ -256,7 +256,7 @@ const char *names_audioterminal(u_int16_t termt)
 	return NULL;
 }
 
-const char *names_videoterminal(u_int16_t termt)
+const char *names_videoterminal(uint16_t termt)
 {
 	struct videoterminal *vt;
 
@@ -269,7 +269,7 @@ const char *names_videoterminal(u_int16_t termt)
 
 /* ---------------------------------------------------------------------- */
 
-static int new_vendor(const char *name, u_int16_t vendorid)
+static int new_vendor(const char *name, uint16_t vendorid)
 {
 	struct vendor *v;
 	unsigned int h = hashnum(vendorid);
@@ -288,7 +288,7 @@ static int new_vendor(const char *name, u_int16_t vendorid)
 	return 0;
 }
 
-static int new_product(const char *name, u_int16_t vendorid, u_int16_t productid)
+static int new_product(const char *name, uint16_t vendorid, uint16_t productid)
 {
 	struct product *p;
 	unsigned int h = hashnum((vendorid << 16) | productid);
@@ -308,7 +308,7 @@ static int new_product(const char *name, u_int16_t vendorid, u_int16_t productid
 	return 0;
 }
 
-static int new_class(const char *name, u_int8_t classid)
+static int new_class(const char *name, uint8_t classid)
 {
 	struct class *c;
 	unsigned int h = hashnum(classid);
@@ -327,7 +327,7 @@ static int new_class(const char *name, u_int8_t classid)
 	return 0;
 }
 
-static int new_subclass(const char *name, u_int8_t classid, u_int8_t subclassid)
+static int new_subclass(const char *name, uint8_t classid, uint8_t subclassid)
 {
 	struct subclass *s;
 	unsigned int h = hashnum((classid << 8) | subclassid);
@@ -347,7 +347,7 @@ static int new_subclass(const char *name, u_int8_t classid, u_int8_t subclassid)
 	return 0;
 }
 
-static int new_protocol(const char *name, u_int8_t classid, u_int8_t subclassid, u_int8_t protocolid)
+static int new_protocol(const char *name, uint8_t classid, uint8_t subclassid, uint8_t protocolid)
 {
 	struct protocol *p;
 	unsigned int h = hashnum((classid << 16) | (subclassid << 8) | protocolid);
@@ -368,7 +368,7 @@ static int new_protocol(const char *name, u_int8_t classid, u_int8_t subclassid,
 	return 0;
 }
 
-static int new_audioterminal(const char *name, u_int16_t termt)
+static int new_audioterminal(const char *name, uint16_t termt)
 {
 	struct audioterminal *at;
 	unsigned int h = hashnum(termt);
@@ -387,7 +387,7 @@ static int new_audioterminal(const char *name, u_int16_t termt)
 	return 0;
 }
 
-static int new_videoterminal(const char *name, u_int16_t termt)
+static int new_videoterminal(const char *name, uint16_t termt)
 {
 	struct videoterminal *vt;
 	unsigned int h = hashnum(termt);
@@ -424,12 +424,12 @@ static int new_genericstrtable(struct genericstrtable *t[HASHSZ], const char *na
         return 0;
 }
 
-static int new_hid(const char *name, u_int8_t hidd)
+static int new_hid(const char *name, uint8_t hidd)
 {
 	return new_genericstrtable(hiddescriptors, name, hidd);
 }
 
-static int new_reporttag(const char *name, u_int8_t rt)
+static int new_reporttag(const char *name, uint8_t rt)
 {
 	return new_genericstrtable(reports, name, rt);
 }
@@ -444,16 +444,16 @@ static int new_hutus(const char *name, unsigned int data)
 	return new_genericstrtable(hutus, name, data);
 }
 
-static int new_langid(const char *name, u_int16_t langid)
+static int new_langid(const char *name, uint16_t langid)
 {
 	return new_genericstrtable(langids, name, langid);
 }
 
-static int new_physdes(const char *name, u_int8_t ph)
+static int new_physdes(const char *name, uint8_t ph)
 {
 	return new_genericstrtable(physdess, name, ph);
 }
-static int new_bias(const char *name, u_int8_t b)
+static int new_bias(const char *name, uint8_t b)
 {
 	return new_genericstrtable(biass, name, b);
 }
