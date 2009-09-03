@@ -79,7 +79,7 @@ static char *get_after_colon(char *s) {
 	} else return NULL;
 }
 
-static struct category *lookup_category(const char *cat_name) {
+static const struct category *lookup_category(const char *cat_name) {
 	int i;
 	for (i = 0; i < nb_categories; i++)
 		if (streq(categories[i].cat_name, cat_name))
@@ -87,7 +87,7 @@ static struct category *lookup_category(const char *cat_name) {
 	return NULL;
 }
 
-static int lookup_field(struct category *category, const char *field_name) {
+static int lookup_field(const struct category *category, const char *field_name) {
 	unsigned int i;
 	for (i = 0; i < category->nb_fields; i++)
 		if (streq(category->fields[i], field_name))
@@ -108,9 +108,7 @@ static struct criteria criteria_from_dmidecode(void) {
 	FILE *f;
 	char buf[BUF_SIZE];
 
-	struct criteria r;
-
-	r.nb = 0;
+	struct criteria r = {0, NULL};
 
 	if (!(f = dmidecode_file ? fopen(dmidecode_file, "r") : popen("dmidecode", "r"))) {
 		perror("dmidecode");
@@ -119,7 +117,7 @@ static struct criteria criteria_from_dmidecode(void) {
 
 	r.criteria = malloc(sizeof(*r.criteria) * MAX_DEVICES);
 
-	struct category *category = NULL;
+	const struct category *category = NULL;
 
 	/* dmidecode output is less indented as of 2.7 */
 	int tab_level = 1;
@@ -155,7 +153,7 @@ static struct criteria criteria_from_dmidecode(void) {
 		r.nb = 0;
 		return r;
 	}
-	realloc(r.criteria, sizeof(*r.criteria) * r.nb);
+	r.criteria = realloc(r.criteria, sizeof(*r.criteria) * r.nb);
 
 	return r;
 }
@@ -263,7 +261,7 @@ static struct dmi_entries entries_matching_criteria(struct criteria criteria) {
 	foreach_indent(0, ifree(constraints[i]));
 	fh_close(&f);
 
-	realloc(r.entries, sizeof(*r.entries) * r.nb);
+	r.entries = realloc(r.entries, sizeof(*r.entries) * r.nb);
 	return r;
 }
 

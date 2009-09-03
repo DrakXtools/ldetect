@@ -1,5 +1,7 @@
 - do not display any warning when driver field is empty in
   /proc/bus/usb/devices (#53412)
+- fix freed memory usage in criteria_from_dmidecode and entries_matching_criteria
+- fix const warnings in dmi.c
 
 Version 0.8.4 - 25 June 2009, Pascal Terjan
 
