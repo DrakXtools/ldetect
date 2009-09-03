@@ -1,3 +1,6 @@
+- do not display any warning when driver field is empty in
+  /proc/bus/usb/devices (#53412)
+
 Version 0.8.4 - 25 June 2009, Pascal Terjan
 
 - fix freed memory usage in usb_probe and pci_probe
