@@ -1,4 +1,6 @@
 - display PCI revision (#42576)
+- try harder to fetch the right driver between '8139cp' & '8139too'
+  according to PCI revision
 
 Version 0.8.6 - 23 September 2009, Pascal Terjan
 

@@ -95,6 +95,13 @@ extern struct pciusb_entries pci_probe(void) {
 		}
 		class_prog = buf[PCI_CLASS_PROG];
 
+                if (e->device == 0x10ec && e->subvendor == 0x8139) {
+                     if (e->pci_revision < 0x20)
+                          e->module = strdup("8139too");
+                     else
+                          e->module = strdup("8139cp");
+                }
+
 		close(devf);
 	}
 	r.entries = realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
