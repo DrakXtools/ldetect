@@ -17,7 +17,7 @@ struct pciusb_entry {
   unsigned short pci_bus; /* pci bus id 8 bits wide */
   unsigned short pci_device; /* pci device id 5 bits wide */
   unsigned short pci_function; /* pci function id 3 bits wide */
-  unsigned short pci_revision:8; /* pci function id 3 bits wide */
+  unsigned short pci_revision:8; /* pci revision 8 bits wide */
 
   unsigned short usb_port; /* pci function id 3 bits wide */
 
