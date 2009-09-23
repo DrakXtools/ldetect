@@ -86,6 +86,7 @@ extern struct pciusb_entries pci_probe(void) {
 		/* we divide by 2 because we address the array as a word array since we read a word */
 		e->subvendor = bufi[PCI_SUBSYSTEM_VENDOR_ID/2]; // == (u16)!(buf[PCI_SUBSYSTEM_VENDOR_ID] | (buf[PCI_SUBSYSTEM_VENDOR_ID+1] << 8))
 		e->subdevice = bufi[PCI_SUBSYSTEM_ID/2];
+		e->pci_revision = buf[PCI_CLASS_REVISION];
 				
 		if ((e->subvendor == 0 && e->subdevice == 0) ||
 		    (e->subvendor == e->vendor && e->subdevice == e->device)) {
