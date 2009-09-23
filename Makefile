@@ -84,3 +84,6 @@ dist-git:
 
 log:
 	svn2cl --authors ../common/username.xml --accum
+
+run:
+	LD_LIBRARY_PATH=$(PWD)  ./lspcidrake
