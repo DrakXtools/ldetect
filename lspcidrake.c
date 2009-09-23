@@ -23,6 +23,8 @@ static void printit(struct pciusb_entries entries, void print_class(unsigned lon
 				printf(" subv:%04x subd:%04x", e->subvendor, e->subdevice);
 			printf(")");
 		}
+		if (e->pci_revision)    
+                     printf(" (rev: %02x)", e->pci_revision);
 		printf("\n");
 	}
 	pciusb_free(&entries);
