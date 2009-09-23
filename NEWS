@@ -1,3 +1,5 @@
+Version 0.8.6 - 23 September 2009, Pascal Terjan
+
 - parse only once usb.ids (avoids displaying Duplicate errors)
 
 Version 0.8.5 - 14 September 2009, Pascal Terjan
