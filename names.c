@@ -138,6 +138,8 @@ static struct genericstrtable *hutus[HASHSZ] = { NULL, };
 static struct genericstrtable *langids[HASHSZ] = { NULL, };
 static struct genericstrtable *countrycodes[HASHSZ] = { NULL, };
 
+static int init_done = 0;
+
 /* ---------------------------------------------------------------------- */
 
 static const char *names_genericstrtable(struct genericstrtable *t[HASHSZ], unsigned int index)
@@ -799,7 +801,9 @@ static void parse(usb_file f)
 int names_init(char *n)
 {
 	usb_file f;
-	
+	if(init_done)
+		return 0;	
+	init_done = 1;
 	if (!(f = usb_fopen(n, "r"))) {
 		return errno;
 	}
