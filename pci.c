@@ -9,7 +9,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <dirent.h>
-#include <pci/pci.h>
 #include "common.h"
 
 static char *proc_pci_path_default = "/proc/bus/pci/devices";
