@@ -1,3 +1,5 @@
+- do not display random revisions for USB devices
+
 Version 0.9.1 - 28 September 2009, Thierry Vignaud
 
 - fix inverted test for choosing between '8139cp' & '8139too' drivers (#53349)
