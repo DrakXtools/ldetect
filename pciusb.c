@@ -172,6 +172,7 @@ extern void pciusb_initialize(struct pciusb_entry *e) {
 	e->pci_bus = 0xffff;
 	e->pci_device = 0xffff;
 	e->pci_function = 0xffff;
+	e->pci_revision = 0;
 	e->usb_port = 0xffff;
 	e->module = NULL;
 	e->text   = NULL;
