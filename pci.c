@@ -56,6 +56,7 @@ extern struct pciusb_entries pci_probe(void) {
 
 		struct pciusb_entry *e = &r.entries[r.nb];
 		unsigned char class_prog = 0;
+		memset(buf, 0, BUF_SIZE); // make sure not to retrieve values from previous devices
 		pci_fill_info(dev, PCI_FILL_IDENT | PCI_FILL_CLASS);
 
 		pciusb_initialize(e);
