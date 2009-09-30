@@ -7,7 +7,7 @@
 /******************************************************************************/
 struct pciusb_entry {
   unsigned short vendor; /* PCI vendor id */
-  unsigned short device;
+  unsigned short device; /* PCI device id */
 
   unsigned short subvendor; /* 0xffff if not probe_type'd or no subid */
   unsigned short subdevice; /* 0xffff if not probe_type'd or no subid */
