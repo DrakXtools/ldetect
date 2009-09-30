@@ -29,7 +29,6 @@ static void __attribute__((noreturn)) error_and_die(char *msg, ...)
 
 extern struct pciusb_entries pci_probe(void) {
 	u8 buf[BUF_SIZE];
-	unsigned short *bufi = (unsigned short *) &buf;
 	struct pciusb_entries r;
 
 	static struct pci_access *pacc;
@@ -76,17 +75,17 @@ extern struct pciusb_entries pci_probe(void) {
 		e->pci_function = dev->func;
 
 		e->class_id = dev->device_class;
-		/* we divide by 2 because we address the array as a word array since we read a word */
-		e->subvendor = bufi[PCI_SUBSYSTEM_VENDOR_ID/2]; // == (u16)!(buf[PCI_SUBSYSTEM_VENDOR_ID] | (buf[PCI_SUBSYSTEM_VENDOR_ID+1] << 8))
-		e->subdevice = bufi[PCI_SUBSYSTEM_ID/2];
-		e->pci_revision = buf[PCI_CLASS_REVISION];
+		e->subvendor = pci_read_word(dev, PCI_SUBSYSTEM_VENDOR_ID);
+		e->subdevice = pci_read_word(dev, PCI_SUBSYSTEM_ID);
+
+		e->pci_revision = pci_read_byte(dev, PCI_REVISION_ID);
 				
 		if ((e->subvendor == 0 && e->subdevice == 0) ||
 		    (e->subvendor == e->vendor && e->subdevice == e->device)) {
 			e->subvendor = 0xffff;
 			e->subdevice = 0xffff;
 		}
-		class_prog = buf[PCI_CLASS_PROG];
+		class_prog = pci_read_byte(dev, PCI_CLASS_PROG);
 
                 if (e->vendor == 0x10ec && e->device == 0x8139) {
                      if (e->pci_revision < 0x20)
