@@ -55,7 +55,6 @@ extern struct pciusb_entries pci_probe(void) {
 	for (dev = pacc->devices; dev; dev = dev->next, r.nb++) {
 
 		struct pciusb_entry *e = &r.entries[r.nb];
-		unsigned char class_prog = 0;
 		memset(buf, 0, CONFIG_SPACE_SIZE); // make sure not to retrieve values from previous devices
 		pci_setup_cache(dev, (u8*)buf, CONFIG_SPACE_SIZE);
 		pci_read_block(dev, 0, buf, CONFIG_SPACE_SIZE);
@@ -87,7 +86,6 @@ extern struct pciusb_entries pci_probe(void) {
 			e->subvendor = 0xffff;
 			e->subdevice = 0xffff;
 		}
-		class_prog = pci_read_byte(dev, PCI_CLASS_PROG);
 
 		for (cap = dev->first_cap; cap; cap = cap->next) {
                           switch (cap->id) {
