@@ -97,6 +97,7 @@ extern struct pciusb_entries pci_probe(void) {
                           }
                 }
 
+                /* special case for realtek 8139 that has two drivers */
                 if (e->vendor == 0x10ec && e->device == 0x8139) {
                      if (e->pci_revision < 0x20)
                           e->module = strdup("8139too");
