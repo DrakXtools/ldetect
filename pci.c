@@ -80,7 +80,6 @@ extern struct pciusb_entries pci_probe(void) {
 		e->class_id = dev->device_class;
 		e->subvendor = pci_read_word(dev, PCI_SUBSYSTEM_VENDOR_ID);
 		e->subdevice = pci_read_word(dev, PCI_SUBSYSTEM_ID);
-
 		e->pci_revision = pci_read_byte(dev, PCI_REVISION_ID);
 				
 		if ((e->subvendor == 0 && e->subdevice == 0) ||
