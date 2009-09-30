@@ -12,6 +12,7 @@
 #include <pci/header.h>
 #include "common.h"
 
+/* /proc files're 256 bytes but we only need first 64 bytes*/
 #define CONFIG_SPACE_SIZE 64
 
 static char *proc_pci_path_default = "/proc/bus/pci/devices";
