@@ -13,11 +13,11 @@ struct pciusb_entry {
   unsigned short subdevice; /* 0xffff if not probe_type'd or no subid */
   unsigned long class_id; /* 0 if not probe_type'd */
 
-  unsigned short pci_domain; /* pci domain id (16 bits wide in libpci) */
-  unsigned short pci_bus; /* pci bus id 8 bits wide */
-  unsigned short pci_device; /* pci device id 5 bits wide */
-  unsigned short pci_function; /* pci function id 3 bits wide */
-  unsigned short pci_revision:8; /* pci revision 8 bits wide */
+  unsigned short pci_domain; /* PCI domain id (16 bits wide in libpci) */
+  unsigned short pci_bus; /* PCI bus id 8 bits wide */
+  unsigned short pci_device; /* PCI device id 5 bits wide */
+  unsigned short pci_function; /* PCI function id 3 bits wide */
+  unsigned short pci_revision:8; /* PCI revision 8 bits wide */
 
   unsigned short usb_port; /* USB port */
   unsigned short is_pciexpress:1; /* is it PCI express */
