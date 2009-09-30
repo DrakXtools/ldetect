@@ -11,6 +11,8 @@
 #include <dirent.h>
 #include "common.h"
 
+#define CONFIG_SPACE_ZIZE 64
+
 static char *proc_pci_path_default = "/proc/bus/pci/devices";
 char* proc_pci_path = NULL;
 
@@ -81,7 +83,7 @@ extern struct pciusb_entries pci_probe(void) {
 		    if (!found)
 			continue;
 		}
-		read(devf, &buf, 0x30); /* these files're 256 bytes but we only need first 48 bytes*/
+		read(devf, &buf, CONFIG_SPACE_ZIZE); /* these files're 256 bytes but we only need first 48 bytes*/
 		e->class_id = dev->device_class;
 		/* we divide by 2 because we address the array as a word array since we read a word */
 		e->subvendor = bufi[PCI_SUBSYSTEM_VENDOR_ID/2]; // == (u16)!(buf[PCI_SUBSYSTEM_VENDOR_ID] | (buf[PCI_SUBSYSTEM_VENDOR_ID+1] << 8))
