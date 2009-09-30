@@ -20,6 +20,7 @@ struct pciusb_entry {
   unsigned short pci_revision:8; /* pci revision 8 bits wide */
 
   unsigned short usb_port; /* pci function id 3 bits wide */
+  unsigned short is_pciexpress:1; /* is it PCI express */
 
   char *module;
   char *text;

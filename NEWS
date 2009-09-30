@@ -1,4 +1,5 @@
 - do not display random revisions for USB devices
+- retrieve PCI capabilities in order to better identify PCI Express devices
 
 Version 0.9.1 - 28 September 2009, Thierry Vignaud
 

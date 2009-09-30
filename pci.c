@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <pci/header.h>
 #include "common.h"
 
 #define CONFIG_SPACE_ZIZE 64
@@ -34,6 +35,7 @@ extern struct pciusb_entries pci_probe(void) {
 	static struct pci_access *pacc;
 	struct pci_dev *dev;
 	char classbuf[128], vendorbuf[128], devbuf[128];
+	struct pci_cap *cap;
 
 	pacc = pci_alloc();
 
@@ -56,7 +58,7 @@ extern struct pciusb_entries pci_probe(void) {
 		memset(buf, 0, BUF_SIZE); // make sure not to retrieve values from previous devices
 		pci_setup_cache(dev, (u8*)buf, CONFIG_SPACE_ZIZE);
 		pci_read_block(dev, 0, buf, CONFIG_SPACE_ZIZE);
-		pci_fill_info(dev, PCI_FILL_IDENT | PCI_FILL_CLASS);
+		pci_fill_info(dev, PCI_FILL_IDENT | PCI_FILL_CLASS | PCI_FILL_CAPS | PCI_FILL_EXT_CAPS);
 
 		pciusb_initialize(e);
 
@@ -86,6 +88,14 @@ extern struct pciusb_entries pci_probe(void) {
 			e->subdevice = 0xffff;
 		}
 		class_prog = pci_read_byte(dev, PCI_CLASS_PROG);
+
+		for (cap = dev->first_cap; cap; cap = cap->next) {
+                          switch (cap->id) {
+                          case PCI_CAP_ID_EXP:
+                               e->is_pciexpress = 1;
+                               break;
+                          }
+                }
 
                 if (e->vendor == 0x10ec && e->device == 0x8139) {
                      if (e->pci_revision < 0x20)

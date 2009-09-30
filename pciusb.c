@@ -178,6 +178,7 @@ extern void pciusb_initialize(struct pciusb_entry *e) {
 	e->text   = NULL;
 	e->class  = NULL;
 	e->already_found = 0;
+	e->is_pciexpress = 0;
 }
 
 extern void pciusb_free(struct pciusb_entries *entries) {
