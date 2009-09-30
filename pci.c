@@ -28,11 +28,9 @@ static void __attribute__((noreturn)) error_and_die(char *msg, ...)
 }
 
 extern struct pciusb_entries pci_probe(void) {
-	int devf;
 	u8 buf[BUF_SIZE];
 	unsigned short *bufi = (unsigned short *) &buf;
 	struct pciusb_entries r;
-	char file[32];
 
 	static struct pci_access *pacc;
 	struct pci_dev *dev;
@@ -57,6 +55,8 @@ extern struct pciusb_entries pci_probe(void) {
 		struct pciusb_entry *e = &r.entries[r.nb];
 		unsigned char class_prog = 0;
 		memset(buf, 0, BUF_SIZE); // make sure not to retrieve values from previous devices
+		pci_setup_cache(dev, (u8*)buf, CONFIG_SPACE_ZIZE);
+		pci_read_block(dev, 0, buf, CONFIG_SPACE_ZIZE);
 		pci_fill_info(dev, PCI_FILL_IDENT | PCI_FILL_CLASS);
 
 		pciusb_initialize(e);
@@ -74,17 +74,7 @@ extern struct pciusb_entries pci_probe(void) {
 		e->pci_bus =    dev->bus;
 		e->pci_device = dev->dev;
 		e->pci_function = dev->func;
-		snprintf(file, sizeof(file), "/proc/bus/pci/%02x/%02x.%d", e->pci_bus, e->pci_device, e->pci_function);
-		if ((devf = open(file, O_RDONLY)) == -1) {
-		    /* try with pci domains */
-		    int found = 0;
-              snprintf(file, sizeof(file), "/proc/bus/pci/%04x:%02x/%02x.%d", dev->domain, e->pci_bus, e->pci_device, e->pci_function);
-			    if ((devf = open(file, O_RDONLY)) >= 0)
-				found = 1;
-		    if (!found)
-			continue;
-		}
-		read(devf, &buf, CONFIG_SPACE_ZIZE); /* these files're 256 bytes but we only need first 48 bytes*/
+
 		e->class_id = dev->device_class;
 		/* we divide by 2 because we address the array as a word array since we read a word */
 		e->subvendor = bufi[PCI_SUBSYSTEM_VENDOR_ID/2]; // == (u16)!(buf[PCI_SUBSYSTEM_VENDOR_ID] | (buf[PCI_SUBSYSTEM_VENDOR_ID+1] << 8))
@@ -105,7 +95,6 @@ extern struct pciusb_entries pci_probe(void) {
                           e->module = strdup("8139cp");
                 }
 
-		close(devf);
 	}
 	r.entries = realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
 
