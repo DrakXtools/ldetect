@@ -29,7 +29,7 @@ static void __attribute__((noreturn)) error_and_die(char *msg, ...)
 
 extern struct pciusb_entries pci_probe(void) {
 	int devf;
-	char buf[BUF_SIZE];
+	u8 buf[BUF_SIZE];
 	unsigned short *bufi = (unsigned short *) &buf;
 	struct pciusb_entries r;
 	char file[32];
