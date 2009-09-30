@@ -12,7 +12,7 @@
 #include <pci/header.h>
 #include "common.h"
 
-#define CONFIG_SPACE_ZIZE 64
+#define CONFIG_SPACE_SIZE 64
 
 static char *proc_pci_path_default = "/proc/bus/pci/devices";
 char* proc_pci_path = NULL;
@@ -29,7 +29,7 @@ static void __attribute__((noreturn)) error_and_die(char *msg, ...)
 }
 
 extern struct pciusb_entries pci_probe(void) {
-	u8 buf[CONFIG_SPACE_ZIZE];
+	u8 buf[CONFIG_SPACE_SIZE];
 	struct pciusb_entries r;
 
 	static struct pci_access *pacc;
@@ -55,9 +55,9 @@ extern struct pciusb_entries pci_probe(void) {
 
 		struct pciusb_entry *e = &r.entries[r.nb];
 		unsigned char class_prog = 0;
-		memset(buf, 0, CONFIG_SPACE_ZIZE); // make sure not to retrieve values from previous devices
-		pci_setup_cache(dev, (u8*)buf, CONFIG_SPACE_ZIZE);
-		pci_read_block(dev, 0, buf, CONFIG_SPACE_ZIZE);
+		memset(buf, 0, CONFIG_SPACE_SIZE); // make sure not to retrieve values from previous devices
+		pci_setup_cache(dev, (u8*)buf, CONFIG_SPACE_SIZE);
+		pci_read_block(dev, 0, buf, CONFIG_SPACE_SIZE);
 		pci_fill_info(dev, PCI_FILL_IDENT | PCI_FILL_CLASS | PCI_FILL_CAPS | PCI_FILL_EXT_CAPS);
 
 		pciusb_initialize(e);
