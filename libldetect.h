@@ -21,11 +21,11 @@ struct pciusb_entry {
 
   unsigned short usb_port; /* USB port */
   unsigned short is_pciexpress:1; /* is it PCI express */
+  int already_found:1;
 
   char *module;
   char *text;
   char* class;
-  int already_found:1;
 };
 struct pciusb_entries {
   struct pciusb_entry *entries;

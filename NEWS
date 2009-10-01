@@ -1,3 +1,5 @@
+- reduce memory footprint
+
 Version 0.10.0 - 30 September 2009, Thierry Vignaud
 
 - do not display random revisions for USB devices
