@@ -169,9 +169,9 @@ extern void pciusb_initialize(struct pciusb_entry *e) {
 	e->subvendor = 0xffff;
 	e->subdevice = 0xffff;
 	e->class_id = 0;
-	e->pci_bus = 0xffff;
-	e->pci_device = 0xffff;
-	e->pci_function = 0xffff;
+	e->pci_bus = 0xff;
+	e->pci_device = 0xff;
+	e->pci_function = 0xff;
 	e->pci_revision = 0;
 	e->usb_port = 0xffff;
 	e->module = NULL;

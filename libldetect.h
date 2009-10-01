@@ -2,26 +2,28 @@
 #ifndef LIBLDETECT
 #define LIBLDETECT
 
+#include <stdint.h>
+
 /******************************************************************************/
 /* pciusb *********************************************************************/
 /******************************************************************************/
 struct pciusb_entry {
-  unsigned short vendor; /* PCI vendor id */
-  unsigned short device; /* PCI device id */
+  uint16_t vendor; /* PCI vendor id */
+  uint16_t device; /* PCI device id */
 
-  unsigned short subvendor; /* 0xffff if not probe_type'd or no subid */
-  unsigned short subdevice; /* 0xffff if not probe_type'd or no subid */
-  unsigned long class_id; /* 0 if not probe_type'd */
+  uint16_t subvendor; /* 0xffff if not probe_type'd or no subid */
+  uint16_t subdevice; /* 0xffff if not probe_type'd or no subid */
+  unsigned long class_id; /* 0 if not probe_type'd ; big because of USB backend */
 
-  unsigned short pci_domain; /* PCI domain id (16 bits wide in libpci) */
-  unsigned short pci_bus; /* PCI bus id 8 bits wide */
-  unsigned short pci_device; /* PCI device id 5 bits wide */
-  unsigned short pci_function; /* PCI function id 3 bits wide */
-  unsigned short pci_revision:8; /* PCI revision 8 bits wide */
+  uint16_t pci_domain; /* PCI domain id (16 bits wide in libpci) */
+  uint8_t pci_bus; /* PCI bus id 8 bits wide */
+  uint8_t pci_device; /* PCI device id 5 bits wide */
+  uint8_t pci_function; /* PCI function id 3 bits wide */
+  uint8_t pci_revision; /* PCI revision 8 bits wide */
 
   unsigned short usb_port; /* USB port */
-  unsigned short is_pciexpress:1; /* is it PCI express */
-  int already_found:1;
+  uint8_t is_pciexpress:1; /* is it PCI express */
+  uint8_t already_found:1;
 
   char *module;
   char *text;
