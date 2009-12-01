@@ -51,7 +51,7 @@ extern struct pciusb_entries pci_probe(void) {
 	r.nb = 0;
 	r.entries = malloc(sizeof(struct pciusb_entry) * MAX_DEVICES);
 
-	for (dev = pacc->devices; dev; dev = dev->next, r.nb++) {
+	for (dev = pacc->devices; dev && r.nb < MAX_DEVICES; dev = dev->next, r.nb++) {
 
 		struct pciusb_entry *e = &r.entries[r.nb];
 		memset(buf, 0, CONFIG_SPACE_SIZE); // make sure not to retrieve values from previous devices

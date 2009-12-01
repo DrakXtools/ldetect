@@ -1,3 +1,4 @@
+- do not crash if there're more than 100 PCI devices
 - further use libpci in order to check for PCIe capability
 
 Version 0.11.0 - 1 October 2009, Thierry Vignaud
