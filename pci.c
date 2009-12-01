@@ -36,7 +36,6 @@ extern struct pciusb_entries pci_probe(void) {
 	static struct pci_access *pacc;
 	struct pci_dev *dev;
 	char classbuf[128], vendorbuf[128], devbuf[128];
-	struct pci_cap *cap;
 
 	pacc = pci_alloc();
 
@@ -87,13 +86,8 @@ extern struct pciusb_entries pci_probe(void) {
 			e->subdevice = 0xffff;
 		}
 
-		for (cap = dev->first_cap; cap; cap = cap->next) {
-                          switch (cap->id) {
-                          case PCI_CAP_ID_EXP:
+		if (pci_find_cap(dev,PCI_CAP_ID_EXP, PCI_CAP_NORMAL))
                                e->is_pciexpress = 1;
-                               break;
-                          }
-                }
 
                 /* special case for realtek 8139 that has two drivers */
                 if (e->vendor == 0x10ec && e->device == 0x8139) {
