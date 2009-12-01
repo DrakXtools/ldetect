@@ -98,6 +98,8 @@ extern struct pciusb_entries pci_probe(void) {
                 }
 
 	}
+
+	/* shrink to real size */
 	r.entries = realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
 
 	pci_cleanup(pacc);

@@ -135,6 +135,8 @@ extern struct pciusb_entries usb_probe(void) {
 	build_text(e, vendor_text, product_text);
 
 	fclose(f);
+
+	/* shrink to real size */
 	r.entries = realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
 
 	pciusb_find_modules(&r, "usbtable", DO_NOT_LOAD, 0);
