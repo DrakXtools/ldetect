@@ -57,7 +57,7 @@ extern struct pciusb_entries pci_probe(void) {
 		memset(buf, 0, CONFIG_SPACE_SIZE); // make sure not to retrieve values from previous devices
 		pci_setup_cache(dev, (u8*)buf, CONFIG_SPACE_SIZE);
 		pci_read_block(dev, 0, buf, CONFIG_SPACE_SIZE);
-		pci_fill_info(dev, PCI_FILL_IDENT | PCI_FILL_CLASS | PCI_FILL_CAPS | PCI_FILL_EXT_CAPS);
+		pci_fill_info(dev, PCI_FILL_IDENT | PCI_FILL_CLASS | PCI_FILL_CAPS);
 
 		pciusb_initialize(e);
 
