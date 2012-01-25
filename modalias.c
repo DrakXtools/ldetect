@@ -82,7 +82,7 @@ char *modalias_resolve_module(const char *modalias) {
 	/* Returns the resolved alias, options */
 	parse_toplevel_config(NULL, &conf, 0, 0);
 
-	errfn_t error;
+	errfn_t error = mod_warn;
         aliases = find_matching_aliases(modalias, "", &conf, dirname, error, mit_dry_run, &list);
 
 	/* only load blacklisted modules with specific request (no alias) */

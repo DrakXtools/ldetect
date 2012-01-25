@@ -1,3 +1,5 @@
+- make sure to behave properly on errors in libmodprobe (#3309)
+
 Version 0.11.2 - 18 October 2011, Thierry Vignaud
 
 - adapt to new module-init-tools-3.16's API
