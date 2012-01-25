@@ -43,6 +43,7 @@ extern void pciusb_free(struct pciusb_entries *entries);
 extern struct pciusb_entries pci_probe(void);
 extern const char *pci_class2text(unsigned long class_id);
 extern char *proc_pci_path;
+extern char *get_pci_description(int vendor_id, int device_id);
 
 /******************************************************************************/
 /* usb ************************************************************************/

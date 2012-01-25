@@ -1,3 +1,4 @@
+- add new API for drakx's stage1 in order to find unknown PCI devices
 - don't exit(1) on systems without pci (eg: ARM) (rtp)
 
 Version 0.11.1 - 1 December 2009, Thierry Vignaud

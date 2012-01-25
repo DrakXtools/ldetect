@@ -29,6 +29,26 @@ static void __attribute__((noreturn)) error_and_die(char *msg, ...)
   exit(1);
 }
 
+static struct pci_access *pacc;
+char* get_pci_description(int vendor_id, int device_id) {
+        char vendorbuf[128], devbuf[128];
+        char *buf = malloc(256);
+
+        if (!pacc) {
+           pacc = pci_alloc();
+           pci_init(pacc);               /* Initialize the PCI library */
+           pacc->numeric_ids = 0;
+           pci_init(pacc);
+	}
+
+          asprintf(&buf, "%s|%s",
+                   pci_lookup_name(pacc, vendorbuf, sizeof(vendorbuf), PCI_LOOKUP_VENDOR | PCI_LOOKUP_NO_NUMBERS, vendor_id, device_id),
+                   pci_lookup_name(pacc, devbuf,    sizeof(devbuf),    PCI_LOOKUP_DEVICE, vendor_id, device_id)
+               );
+        //pci_cleanup(pacc); // only used by stage1's merge-pcitable.pl that doesn't care about leaking _one_ struct
+        return buf;
+}
+
 extern struct pciusb_entries pci_probe(void) {
 	u8 buf[CONFIG_SPACE_SIZE];
 	struct pciusb_entries r;
