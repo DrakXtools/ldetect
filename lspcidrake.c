@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
 	if (!fake || proc_pci_path) printit(pci_probe(), print_pci_class);
 	if (!fake || proc_usb_path) printit(usb_probe(), print_usb_class);
 	
-	if (!fake && geteuid() == 0 || dmidecode_file) {
+	if ((!fake && geteuid() == 0) || dmidecode_file) {
 	    struct dmi_entries dmi_entries = dmi_probe();
 	    print_dmi_entries(dmi_entries);
 	    dmi_entries_free(dmi_entries);
