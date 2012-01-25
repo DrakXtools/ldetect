@@ -1,3 +1,5 @@
+Version 0.11.3 - 21 November 2011, Thierry Vignaud
+
 - make sure to behave properly on errors in libmodprobe (#3309)
 - use saner API for quieting libmodprobe
 - switch back to dynamically linking against libmodprobe
