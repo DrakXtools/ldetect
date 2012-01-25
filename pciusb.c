@@ -190,6 +190,7 @@ extern void pciusb_free(struct pciusb_entries *entries) {
 		struct pciusb_entry *e = &entries->entries[i];
 		ifree(e->module);
 		ifree(e->text);
+		ifree(e->class);
 	}
 	if (entries->nb) ifree(entries->entries);
 }

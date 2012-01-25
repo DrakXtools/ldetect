@@ -1,3 +1,5 @@
+- plug some memleaks
+
 Version 0.11.3 - 21 November 2011, Thierry Vignaud
 
 - make sure to behave properly on errors in libmodprobe (#3309)
