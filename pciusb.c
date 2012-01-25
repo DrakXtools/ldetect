@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <modprobe.h>
 #include <dirent.h>
 #include "common.h"
 
