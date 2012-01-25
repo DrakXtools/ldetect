@@ -57,7 +57,7 @@ extern struct pciusb_entries usb_probe(void) {
 			free(err_msg);
 		}
 		r.entries = NULL;
-		return r;
+		goto exit;
 	}
 
 	r.entries = malloc(sizeof(struct pciusb_entry) * MAX_DEVICES);
@@ -140,6 +140,9 @@ extern struct pciusb_entries usb_probe(void) {
 	r.entries = realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
 
 	pciusb_find_modules(&r, "usbtable", DO_NOT_LOAD, 0);
+
+exit:
+	names_exit();
 	return r;
 }
 
