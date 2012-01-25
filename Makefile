@@ -75,11 +75,11 @@ tar:
 
 dist-svn:
 	svn export -q -rBASE . $(NAME)-$(VERSION)
-	tar cfj ../$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)
+	tar cfa ../$(NAME)-$(VERSION).tar.xz $(NAME)-$(VERSION)
 	rm -rf $(NAME)-$(VERSION)
 
 dist-git:
-	@git archive --prefix=$(NAME)-$(VERSION)/ HEAD | bzip2 >../$(NAME)-$(VERSION).tar.bz2;
+	@git archive --prefix=$(NAME)-$(VERSION)/ HEAD | xz >../$(NAME)-$(VERSION).tar.xz;
 
 
 log:
