@@ -1,4 +1,5 @@
 - fix double free
+- fix segfaulting when calling usb_probe() more than once
 
 Version 0.11.4 - 5 January 2012, Thierry Vignaud
 
