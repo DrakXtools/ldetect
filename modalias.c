@@ -8,9 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <list.h>
-#include <logging.h>
-#include <modprobe.h>
+#include <libkmod.h>
 #include <dirent.h>
 #include "common.h"
 
@@ -26,19 +24,6 @@ static void get_version(void) {
 }
 
 
-static void free_blacklist(struct module_blacklist *blacklist) {
-	if (blacklist == NULL) 
-		return;
-	while (blacklist->next) {
-		struct module_blacklist *next;
-		next = blacklist->next;
-		free(blacklist->modulename);
-		free(blacklist);
-		blacklist = next;
-	}
-	free(blacklist);
-}
-
 char*dirname;
 
 static void set_default_alias_file(void) {
@@ -50,7 +35,7 @@ static void set_default_alias_file(void) {
 		struct stat st_alias, st_fallback;
 
 		uname(&rel_buf);
-		asprintf(&dirname, "%s/%s", MODULE_DIR, rel_buf.release);
+		asprintf(&dirname, "%s/%s", "/lib/modules", rel_buf.release);
 		asprintf(&aliasfilename, "%s/modules.alias", dirname);
 		free(dirname);
 
@@ -67,60 +52,66 @@ static void set_default_alias_file(void) {
 }
 
 char *modalias_resolve_module(const char *modalias) {
-	struct module_alias *aliases = NULL;
-	struct module_blacklist *blacklist = NULL;
-       struct modprobe_conf conf = {};
-	LIST_HEAD(list);
+        struct kmod_ctx *ctx;
+	struct kmod_list *l, *list = NULL;
+	int err;
+	char* dkms_file,  *str = NULL;
 
 	if (!aliasdefault)
 		set_default_alias_file();
 
 	get_version();
 
-	/* Makes module-init-tools quiet */
-	set_quiet(1);
+	/* We only use canned aliases as last resort. */
+	dkms_file = table_name_to_file("dkms-modules.alias");
+	const char *alias_filelist[] = {
+		"/lib/module-init-tools/ldetect-lst-modules.alias",
+		aliasdefault,
+		dkms_file,
+		NULL,
+	};
 
-	/* Returns the resolved alias, options */
-	parse_toplevel_config(NULL, &conf, 0, 0);
-
-	errfn_t error = mod_warn;
-        aliases = find_matching_aliases(modalias, "", &conf, dirname, error, mit_dry_run, &list);
-
-	/* only load blacklisted modules with specific request (no alias) */
-	apply_blacklist(&aliases, conf.blacklist);
-
-	if (!aliases) {
-		/* We only use canned aliases as last resort. */
-		char *dkms_file = table_name_to_file("dkms-modules.alias");
-		const char *alias_filelist[] = {
-			"/lib/module-init-tools/ldetect-lst-modules.alias",
-			aliasdefault,
-			dkms_file,
-			NULL,
-		};
-		const char **alias_file = alias_filelist;
-		while (!aliases && *alias_file) {
-			parse_config_file(*alias_file, &conf, 0, 0);
-			aliases = find_matching_aliases(modalias, "", &conf, dirname, error, mit_dry_run, &list);
-			apply_blacklist(&aliases, blacklist);
-			alias_file++;
-		}
-		free(dkms_file);
+	/* Init libkmod */
+	ctx = kmod_new(dirname, alias_filelist);
+	if (!ctx) {
+		fputs("Error: kmod_new() failed!\n", stderr);
+		goto exit;
 	}
-	free_blacklist(blacklist);
-	if (aliases) {
-		char *result;
-		// take the last one because we find eg: generic/ata_generic/sata_sil
-		struct module_alias *it = aliases;
-		while (it->next)
-			it = it->next;
+	kmod_load_resources(ctx);
 
-		result = strdup(it->module);
-		free_aliases(aliases);
-		return result;
+	err = kmod_module_new_from_lookup(ctx, modalias, &list);
+	if (err < 0)
+		goto exit;
+
+	// No module found...
+	if (list == NULL)
+		goto exit;
+
+	// filter through blacklist
+	struct kmod_list *filtered = NULL;
+	err = kmod_module_get_filtered_blacklist(ctx, list, &filtered);
+	kmod_module_unref_list(list);
+	if (err <0)
+		goto exit;
+	list = filtered;
+
+	kmod_list_foreach(l, list) {
+		struct kmod_module *mod = kmod_module_get_module(l);
+		//if (str) // keep last one
+		//	free(str);
+		if (!str) // keep first one
+		str = strdup(kmod_module_get_name(mod));
+		kmod_module_unref(mod);
+		if (err < 0)
+			break;
 	}
 
-	return NULL;
+	kmod_module_unref_list(list);
+
+exit:
+	free(dkms_file);
+	kmod_unref(ctx);
+	return str;
 }
 
 void modalias_cleanup(void) {
