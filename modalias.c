@@ -65,6 +65,9 @@ char *modalias_resolve_module(const char *modalias) {
 	/* We only use canned aliases as last resort. */
 	dkms_file = table_name_to_file("dkms-modules.alias");
 	const char *alias_filelist[] = {
+		"/run/modprobe.d",
+		"/etc/modprobe.d",
+		"/lib/modprobe.d",
 		"/lib/module-init-tools/ldetect-lst-modules.alias",
 		aliasdefault,
 		dkms_file,
