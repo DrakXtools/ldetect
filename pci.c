@@ -37,6 +37,11 @@ extern struct pciusb_entries pci_probe(void) {
 	struct pci_dev *dev;
 	char classbuf[128], vendorbuf[128], devbuf[128];
 
+	r.nb = 0;
+	if ((access(proc_pci_path_default, R_OK) != 0)
+		|| (proc_pci_path && (access(proc_pci_path_default, R_OK) != 0)))
+		return r;
+
 	pacc = pci_alloc();
 
 	if (proc_pci_path) {
