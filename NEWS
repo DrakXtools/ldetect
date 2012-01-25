@@ -1,5 +1,6 @@
 - make sure to behave properly on errors in libmodprobe (#3309)
 - use saner API for quieting libmodprobe
+- switch back to dynamically linking against libmodprobe
 
 Version 0.11.2 - 18 October 2011, Thierry Vignaud
 
