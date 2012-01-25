@@ -116,6 +116,5 @@ exit:
 
 void modalias_cleanup(void) {
     ifree(aliasdefault);
-    free(version);
-    version = NULL;
+    ifree(version);
 }
