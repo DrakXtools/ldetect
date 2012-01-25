@@ -12,7 +12,7 @@ static void printit(struct pciusb_entries entries, void print_class(unsigned lon
 		struct pciusb_entry *e = &entries.entries[i];
 		printf("%-16s: ", e->module ? e->module : "unknown");
 		if (e->text)
-			printf(e->text);
+			printf("%s", e->text);
 		else	printf("unknown (%04x/%04x/%04x/%04x)", e->vendor, e->device, e->subvendor, e->subdevice);
 		if (e->class_id) {
 			print_class(e->class_id);
