@@ -59,7 +59,6 @@ static void set_default_alias_file(void) {
 		    (!stat(fallback_aliases, &st_fallback) && st_fallback.st_mtime > st_alias.st_mtime)) {
 			free(aliasfilename);
 			aliasdefault = fallback_aliases;
-			free(aliasfilename);
 		} else {
 			aliasdefault = aliasfilename;
 			free(fallback_aliases);
