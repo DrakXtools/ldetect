@@ -13,7 +13,7 @@ lib_objs = common.o hid.o modalias.o pciusb.o pci.o usb.o pciclass.o usbclass.o 
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
 CFLAGS = -Wall -W -Wstrict-prototypes -Os -fPIC -fvisibility=hidden -g
-CPPFLAGS += $(shell pkg-config --cflags libkmod libpci liblzma zlib)
+CPPFLAGS += $(shell getconf LFS_CFLAGS) $(shell pkg-config --cflags libkmod libpci liblzma zlib)
 LIBS += $(shell pkg-config --libs libkmod libpci liblzma zlib)
 
 RPM ?= $(HOME)/rpm
