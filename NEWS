@@ -1,3 +1,4 @@
+- adapt to new module-init-tools-3.16's API
 - add new API for drakx's stage1 in order to find unknown PCI devices
 - don't exit(1) on systems without pci (eg: ARM) (rtp)
 

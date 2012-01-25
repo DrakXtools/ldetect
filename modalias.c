@@ -8,11 +8,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <list.h>
+#include <logging.h>
 #include <modprobe.h>
 #include <dirent.h>
 #include "common.h"
 
 static char *aliasdefault = NULL;
+static char * version = NULL;
+
+static void get_version(void) {
+	if (version != NULL)
+		return;
+	struct utsname buf;
+	uname(&buf);
+	version = strdup(buf.release);
+}
 
 static void free_aliases(struct module_alias *aliases) {
 	if (aliases == NULL) 
@@ -68,6 +79,8 @@ static void free_blacklist(struct module_blacklist *blacklist) {
 	free(blacklist);
 }
 
+char*dirname;
+
 static void set_default_alias_file(void) {
 	struct utsname rel_buf;
 	if (!aliasdefault) {
@@ -93,41 +106,43 @@ static void set_default_alias_file(void) {
 }
 
 char *modalias_resolve_module(const char *modalias) {
-	struct module_command *commands = NULL;
-	struct module_options *modoptions = NULL;
 	struct module_alias *aliases = NULL;
 	struct module_blacklist *blacklist = NULL;
-	const char *config = NULL;
+       struct modprobe_conf conf = {};
+	LIST_HEAD(list);
 
 	if (!aliasdefault)
 		set_default_alias_file();
 
+	get_version();
 	/* Returns the resolved alias, options */
-	read_toplevel_config(config, modalias, 0,
-			     0, &modoptions, &commands, &aliases, &blacklist);
+	parse_toplevel_config(NULL, &conf, 0, 0);
+
+	errfn_t error;
+        aliases = find_matching_aliases(modalias, "", &conf, dirname, error, mit_dry_run, &list);
+
+	/* only load blacklisted modules with specific request (no alias) */
+	apply_blacklist(&aliases, conf.blacklist);
 
 	if (!aliases) {
 		/* We only use canned aliases as last resort. */
 		char *dkms_file = table_name_to_file("dkms-modules.alias");
-		char *alias_filelist[] = {
+		const char *alias_filelist[] = {
 			"/lib/module-init-tools/ldetect-lst-modules.alias",
 			aliasdefault,
 			dkms_file,
 			NULL,
 		};
-		char **alias_file = alias_filelist;
+		const char **alias_file = alias_filelist;
 		while (!aliases && *alias_file) {
-			read_config(*alias_file, modalias, 0,
-				    0, &modoptions, &commands,
-				    &aliases, &blacklist);
-			aliases = apply_blacklist(aliases, blacklist);
+			parse_config_file(*alias_file, &conf, 0, 0);
+			aliases = find_matching_aliases(modalias, "", &conf, dirname, error, mit_dry_run, &list);
+			apply_blacklist(&aliases, blacklist);
 			alias_file++;
 		}
 		free(dkms_file);
 	}
 	free_blacklist(blacklist);
-	free_commands(commands);
-	free_options(modoptions);
 	if (aliases) {
 		char *result;
 		// take the last one because we find eg: generic/ata_generic/sata_sil
