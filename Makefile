@@ -18,6 +18,10 @@ RPM ?= $(HOME)/rpm
 
 build: $(binaries) $(libraries)
 
+lspcidrake.static: lspcidrake.c libldetect.a
+	$(CC) $(CFLAGS) -o $@ $^ -lpci -lkmod -llzma -lz -lcompat -lc
+	#$(CC) $(CFLAGS) $^ libldetect.a -lkmod -lxz -lz.a  -o $@
+
 lspcidrake: lspcidrake.c libldetect.so
 
 $(lib_major).$(LIB_MINOR): $(lib_objs)
