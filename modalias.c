@@ -25,46 +25,6 @@ static void get_version(void) {
 	version = strdup(buf.release);
 }
 
-static void free_aliases(struct module_alias *aliases) {
-	if (aliases == NULL) 
-		return;
-	while (aliases->next) {
-		struct module_alias *next;
-		next = aliases->next;
-		free(aliases->module);
-		free(aliases);
-		aliases = next;
-	}
-	free(aliases);
-}
-
-static void free_options(struct module_options *modoptions) {
-	if (modoptions == NULL) 
-		return;
-	while (modoptions->next) {
-		struct module_options *next;
-		next = modoptions->next;
-		free(modoptions->modulename);
-		free(modoptions->options);
-		free(modoptions);
-		modoptions = next;
-	}
-	free(modoptions);
-}
-
-static void free_commands(struct module_command *commands) {
-	if (commands == NULL) 
-		return;
-	while (commands->next) {
-		struct module_command *next;
-		next = commands->next;
-		free(commands->modulename);
-		free(commands->command);
-		free(commands);
-		commands = next;
-	}
-	free(commands);
-}
 
 static void free_blacklist(struct module_blacklist *blacklist) {
 	if (blacklist == NULL) 
