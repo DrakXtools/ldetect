@@ -1,3 +1,5 @@
+Version 0.11.4 - 5 January 2012, Thierry Vignaud
+
 - plug some memleaks
 - sync with names with usbutils-005
   (thus fixing more memleaks)
