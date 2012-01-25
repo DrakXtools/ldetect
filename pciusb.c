@@ -106,7 +106,7 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 	int line;
 
 	/* Makes module-init-tools quiet */
-	quiet = 1;
+	set_quiet(1);
 
 	f = fh_open(fpciusbtable);
 
