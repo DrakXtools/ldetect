@@ -75,6 +75,10 @@ char *modalias_resolve_module(const char *modalias) {
 		set_default_alias_file();
 
 	get_version();
+
+	/* Makes module-init-tools quiet */
+	quiet = 1;
+
 	/* Returns the resolved alias, options */
 	parse_toplevel_config(NULL, &conf, 0, 0);
 

@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <logging.h>
 #include "common.h"
 
 static void set_modules_from_modalias_file(struct pciusb_entry *e, char *modalias_path) {
@@ -103,6 +104,9 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 	fh f;
 	char buf[2048];
 	int line;
+
+	/* Makes module-init-tools quiet */
+	quiet = 1;
 
 	f = fh_open(fpciusbtable);
 
