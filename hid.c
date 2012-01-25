@@ -116,6 +116,8 @@ static void parse_device(struct hid_entries *entries, const char *dev)
 	DEBUG("%s: module name is [%s]\n", HID_BUS_NAME, modname);
 	if (modname != NULL) 
 		add_entry(entries, device_name, modname);
+	free(device_name);
+	modalias_cleanup();
 }
 
 

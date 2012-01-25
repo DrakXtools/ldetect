@@ -125,4 +125,6 @@ char *modalias_resolve_module(const char *modalias) {
 
 void modalias_cleanup(void) {
     ifree(aliasdefault);
+    free(version);
+    version = NULL;
 }
