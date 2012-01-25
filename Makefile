@@ -12,20 +12,22 @@ binaries = lspcidrake
 lib_objs = common.o hid.o modalias.o pciusb.o pci.o usb.o pciclass.o usbclass.o dmi.o sysfs_attr.o sysfs_utils.o names.o
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
-CFLAGS = -Wall -W -Wstrict-prototypes -Os -fPIC -fvisibility=hidden -g $(shell pkg-config --cflags libkmod libpci liblzma zlib)
+CFLAGS = -Wall -W -Wstrict-prototypes -Os -fPIC -fvisibility=hidden -g
+CPPFLAGS += $(shell pkg-config --cflags libkmod libpci liblzma zlib)
+LIBS += $(shell pkg-config --libs libkmod libpci liblzma zlib)
 
 RPM ?= $(HOME)/rpm
 
 build: $(binaries) $(libraries)
 
 lspcidrake.static: lspcidrake.c libldetect.a
-	$(CC) $(CFLAGS) -o $@ $^ -lcompat -lc $(shell pkg-config --cflags libkmod libpci liblzma zlib)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lcompat -lc $(LIBS)
 	#$(CC) $(CFLAGS) $^ libldetect.a -lkmod -lxz -lz.a  -o $@
 
 lspcidrake: lspcidrake.c libldetect.so
 
 $(lib_major).$(LIB_MINOR): $(lib_objs)
-	$(CC) -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ -lpci -lkmod -lz
+	$(CC) $(LDFLAGS) -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
 $(lib_major): $(lib_major).$(LIB_MINOR)
 	ln -sf $< $@
 libldetect.so: $(lib_major)
