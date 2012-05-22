@@ -1,5 +1,7 @@
-Version 0.12.2 - 25 January 2012, by Per Øyvind Karlsen
+Version 0.12.2 - 22 May 2012, by Per Øyvind Karlsen
 
+- generate PCI classes info using ids from pcutils header instead of deprecated
+  kernel header (Andrey Bondrov)
 - fix compile breakage
 - accept $LDFLAGS
 - use pkgconfig for getting required cflags & libs

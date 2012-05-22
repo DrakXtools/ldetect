@@ -37,7 +37,7 @@ libldetect.a: $(lib_objs)
 	ar -cru $@ $^
 	ranlib $@
 
-pciclass.c: /usr/include/linux/pci.h /usr/include/linux/pci_ids.h
+pciclass.c: /usr/include/pci/pci.h /usr/include/pci/header.h
 	rm -f $@
 	perl generate_pciclass.pl $^ > $@
 	chmod a-w $@

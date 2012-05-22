@@ -8,7 +8,7 @@ static struct {
 } classes[] = {
 );
 
-/^#define PCI_CLASS_(\w+)\s+(0x\w{4})/ and print qq(  { $2, "$1" },\n) while <>;
+/^#define\s+PCI_CLASS_(\w+)\s+(0x\w{4})/ and print qq(  { $2, "$1" },\n) while <>;
 
 print '
 };
