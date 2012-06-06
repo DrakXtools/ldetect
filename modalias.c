@@ -92,7 +92,7 @@ char *modalias_resolve_module(const char *modalias) {
 
 	// filter through blacklist
 	struct kmod_list *filtered = NULL;
-	err = kmod_module_get_filtered_blacklist(ctx, list, &filtered);
+	err =  kmod_module_apply_filter(ctx, KMOD_FILTER_BLACKLIST, list, &filtered);
 	kmod_module_unref_list(list);
 	if (err <0)
 		goto exit;
