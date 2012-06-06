@@ -66,7 +66,9 @@ fh fh_open(const char *name) {
                                 perror("pciusb"); 
                                 exit(2);
                         }
-		} else {
+		}
+#ifdef HAVE_LIBZ
+		else {
                         ret.gztype = ZLIB;
                         ret.u.zlib_fh = gzopen(fname_gz, "r");
                         if (!ret.u.zlib_fh) {
@@ -75,6 +77,7 @@ fh fh_open(const char *name) {
                         }
                 }
 		free(fname_gz);
+#endif
 	}
 
 	free(fname);
@@ -85,8 +88,10 @@ char* fh_gets(char *line, int size, fh *f) {
         char *ret = NULL;
         switch (f->gztype) {
         case ZLIB:
+#ifdef HAVE_LIBZ
                 ret = gzgets(f->u.zlib_fh, line, size);
                 break;
+#endif
         case GZIP:
                 ret = fgets(line, size, f->u.gzip_fh.f);
                 break;
@@ -98,8 +103,10 @@ int fh_close(fh *f) {
         int ret = EOF;
         switch (f->gztype) {
         case ZLIB:
+#ifdef HAVE_LIBZ
                 ret = gzclose(f->u.zlib_fh);
                 break;
+#endif
         case GZIP:
                 ret = fclose(f->u.gzip_fh.f);
                 if (f->u.gzip_fh.pid > 0)

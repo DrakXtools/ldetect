@@ -1,6 +1,6 @@
 NAME = ldetect
 LIB_MAJOR = 0.12
-LIB_MINOR = 2
+LIB_MINOR = 3
 VERSION=$(LIB_MAJOR).$(LIB_MINOR)
 
 prefix = /usr
@@ -13,8 +13,12 @@ lib_objs = common.o hid.o modalias.o pciusb.o pci.o usb.o pciclass.o usbclass.o 
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
 CFLAGS = -Wall -W -Wstrict-prototypes -Os -fPIC -fvisibility=hidden -g
-CPPFLAGS += $(shell getconf LFS_CFLAGS) $(shell pkg-config --cflags libkmod libpci liblzma zlib)
-LIBS += $(shell pkg-config --libs libkmod libpci liblzma zlib)
+CPPFLAGS += $(shell getconf LFS_CFLAGS) $(shell pkg-config --cflags libkmod libpci)
+LIBS += $(shell pkg-config --libs libkmod libpci)
+ifneq ($(ZLIB),0)
+CPPFLAGS += $(shell pkg-config --cflags zlib) -DHAVE_LIBZ
+LIBS += $(shell pkg-config --libs zlib)
+endif
 
 RPM ?= $(HOME)/rpm
 

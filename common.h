@@ -2,7 +2,9 @@
 #define LIBLDETECT_COMMON
 
 #include "libldetect.h"
+#ifdef HAVE_LIBZ
 #include <zlib.h>
+#endif
 
 #define NON_EXPORTED __attribute__((visibility("hidden")))
 
@@ -32,7 +34,9 @@ typedef struct {
 			FILE *f;
 			pid_t pid;
 		} gzip_fh;
+#ifdef HAVE_LIBZ
 		gzFile zlib_fh;
+#endif
 	} u;
 } fh;
 

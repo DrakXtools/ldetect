@@ -1,3 +1,7 @@
+Version 0.12.3 -  6 June 2012, by Per Øyvind Karlsen
+
+- add support for building without zlib support
+
 Version 0.12.2 - 22 May 2012, by Per Øyvind Karlsen
 
 - generate PCI classes info using ids from pcutils header instead of deprecated
