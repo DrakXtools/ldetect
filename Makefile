@@ -31,7 +31,7 @@ lspcidrake.static: lspcidrake.c $(lib_src)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -flto -o $@ $^ $(LIBS)
 
 lspcidrake: lspcidrake.c libldetect.so
-	$(CC) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -flto -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -flto -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
 
 $(lib_major).$(LIB_MINOR): $(lib_src)
 	$(CC) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -flto -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
