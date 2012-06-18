@@ -2,9 +2,8 @@
 
 print q(/* This is auto-generated from </usr/share/usb.ids>, don't modify! */
 
+#include <stdlib.h>
 #include "libldetect.h"
-
-#define NULL 0
 
 struct node {
   int id;
