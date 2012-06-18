@@ -9,7 +9,8 @@ libdir = $(prefix)/lib
 includedir = $(prefix)/include
 
 binaries = lspcidrake
-lib_objs = common.o hid.o modalias.o pciusb.o pci.o usb.o pciclass.o usbclass.o dmi.o sysfs_attr.o sysfs_utils.o names.o
+lib_src = common.c hid.c modalias.c pciusb.c pci.c usb.c pciclass.c usbclass.c dmi.c sysfs_attr.c sysfs_utils.c names.c
+lib_objs = $(subst .c,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
 CFLAGS = -Wall -W -Wstrict-prototypes -Os -fPIC -fvisibility=hidden -g
@@ -19,19 +20,30 @@ ifneq ($(ZLIB),0)
 CPPFLAGS += $(shell pkg-config --cflags zlib liblzma) -DHAVE_LIBZ
 LIBS += $(shell pkg-config --libs zlib liblzma)
 endif
+WHOLE_PROGRAM = 1
 
 RPM ?= $(HOME)/rpm
 
 build: $(binaries) $(libraries)
 
+ifneq (0, $(WHOLE_PROGRAM))
+lspcidrake.static: lspcidrake.c $(lib_src)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+lspcidrake: lspcidrake.c libldetect.so
+	$(CC) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -flto -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
+
+$(lib_major).$(LIB_MINOR): $(lib_src)
+	$(CC) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -flto -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
+else
 lspcidrake.static: lspcidrake.c libldetect.a
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lcompat -lc $(LIBS)
-	#$(CC) $(CFLAGS) $^ libldetect.a -lkmod -lxz -lz.a  -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 lspcidrake: lspcidrake.c libldetect.so
 
 $(lib_major).$(LIB_MINOR): $(lib_objs)
 	$(CC) $(LDFLAGS) -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
+endif
 $(lib_major): $(lib_major).$(LIB_MINOR)
 	ln -sf $< $@
 libldetect.so: $(lib_major)

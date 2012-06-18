@@ -1,5 +1,6 @@
 Version 0.12.4 - 18 June 2012, by Per Øyvind Karlsen
 
+- add support for building with -fwhole-program and use it by default
 - fix generated usbclass.c & pciclass.c to have functions matching their
   prototypes
 

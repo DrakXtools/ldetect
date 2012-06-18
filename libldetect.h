@@ -4,6 +4,8 @@
 
 #include <stdint.h>
 
+#define EXPORTED __attribute__((externally_visible))
+
 /******************************************************************************/
 /* pciusb *********************************************************************/
 /******************************************************************************/
@@ -34,21 +36,21 @@ struct pciusb_entries {
   unsigned int nb;
 };
 
-extern void pciusb_free(struct pciusb_entries *entries);
+extern void pciusb_free(struct pciusb_entries *entries) EXPORTED;
 
 
 /******************************************************************************/
 /* pci ************************************************************************/
 /******************************************************************************/
-extern struct pciusb_entries pci_probe(void);
-extern const char *pci_class2text(unsigned long class_id);
-extern char *proc_pci_path;
-extern char *get_pci_description(int vendor_id, int device_id);
+extern struct pciusb_entries pci_probe(void) EXPORTED;
+extern const char *pci_class2text(unsigned long class_id) EXPORTED;
+extern char *proc_pci_path EXPORTED;
+extern char *get_pci_description(int vendor_id, int device_id) EXPORTED;
 
 /******************************************************************************/
 /* usb ************************************************************************/
 /******************************************************************************/
-extern struct pciusb_entries usb_probe(void);
+extern struct pciusb_entries usb_probe(void) EXPORTED;
 
 struct usb_class_text {
   const char *usb_class_text;
@@ -56,9 +58,9 @@ struct usb_class_text {
   const char *usb_prot_text;
 };
 
-extern struct usb_class_text usb_class2text(unsigned long class_id);
+struct usb_class_text usb_class2text(unsigned long class_id) EXPORTED;
 
-extern char *proc_usb_path;
+extern char *proc_usb_path EXPORTED;
 
 /******************************************************************************/
 /* dmi ************************************************************************/
@@ -72,9 +74,9 @@ struct dmi_entries {
   unsigned int nb;
 };
 
-extern struct dmi_entries dmi_probe(void);
-extern void dmi_entries_free(struct dmi_entries entries);
-extern char *dmidecode_file;
+extern struct dmi_entries dmi_probe(void) EXPORTED;
+extern void dmi_entries_free(struct dmi_entries entries) EXPORTED;
+extern char *dmidecode_file EXPORTED;
 
 /******************************************************************************/
 /* hid ************************************************************************/
@@ -88,9 +90,9 @@ struct hid_entries {
   unsigned int nb;
 };
 
-extern struct hid_entries hid_probe(void);
-extern void hid_entries_free(struct hid_entries *entries);
-extern const char *sysfs_hid_path;
+extern struct hid_entries hid_probe(void) EXPORTED;
+extern void hid_entries_free(struct hid_entries *entries) EXPORTED;
+extern const char *sysfs_hid_path EXPORTED;
 
 #endif
 #pragma GCC visibility pop
