@@ -2,6 +2,8 @@
 
 print q(/* This auto-generated from <pci.h>, don't modify! */
 
+#include "libldetect.h"
+
 static struct {
   unsigned short id;
   const char *name;
