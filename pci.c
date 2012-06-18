@@ -49,7 +49,7 @@ char* get_pci_description(int vendor_id, int device_id) {
         return buf;
 }
 
-extern struct pciusb_entries pci_probe(void) {
+struct pciusb_entries pci_probe(void) {
 	u8 buf[CONFIG_SPACE_SIZE];
 	struct pciusb_entries r;
 

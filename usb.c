@@ -37,7 +37,7 @@ static void build_text(struct pciusb_entry *e, char *vendor_text, char *product_
 }
 
 
-extern struct pciusb_entries usb_probe(void) {
+struct pciusb_entries usb_probe(void) {
 	FILE *f;
 	char buf[BUF_SIZE];
 	int line;

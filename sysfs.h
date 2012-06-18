@@ -48,11 +48,11 @@ do { \
 	strncat(to, from, max - strlen(to)-1); \
 } while (0)
 
-extern struct sysfs_attribute *get_attribute(void *dev, const char *name);
-extern struct dlist *read_dir_subdirs(const char *path);
-extern struct dlist *read_dir_links(const char *path);
-extern struct dlist *get_dev_attributes_list(void *dev);
-extern struct dlist *get_attributes_list(struct dlist *alist, const char *path);
+struct sysfs_attribute *get_attribute(void *dev, const char *name);
+struct dlist *read_dir_subdirs(const char *path);
+struct dlist *read_dir_links(const char *path);
+struct dlist *get_dev_attributes_list(void *dev);
+struct dlist *get_attributes_list(struct dlist *alist, const char *path);
 
 /* Debugging */
 #ifdef DEBUG

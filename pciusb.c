@@ -99,7 +99,7 @@ static void find_modules_through_aliases(const char *bus, struct pciusb_entries 
 	modalias_cleanup();
 }
 
-extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup descr_lookup, int is_pci) {
+int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup descr_lookup, int is_pci) {
 	fh f;
 	char buf[2048];
 	int line;
@@ -162,7 +162,7 @@ extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciu
 	return 1;
 }
 
-extern void pciusb_initialize(struct pciusb_entry *e) {
+void pciusb_initialize(struct pciusb_entry *e) {
 	e->vendor = 0xffff;
 	e->device = 0xffff;
 	e->subvendor = 0xffff;
@@ -180,7 +180,7 @@ extern void pciusb_initialize(struct pciusb_entry *e) {
 	e->is_pciexpress = 0;
 }
 
-extern void pciusb_free(struct pciusb_entries *entries) {
+void pciusb_free(struct pciusb_entries *entries) {
 	unsigned int i;
 	for (i = 0; i < entries->nb; i++) {
 		struct pciusb_entry *e = &entries->entries[i];

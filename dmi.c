@@ -265,7 +265,7 @@ static struct dmi_entries entries_matching_criteria(struct criteria criteria) {
 	return r;
 }
 
-extern void dmi_entries_free(struct dmi_entries entries) {
+void dmi_entries_free(struct dmi_entries entries) {
 	unsigned int i;
 	for (i = 0; i < entries.nb; i++) {
 		free(entries.entries[i].constraints);
@@ -275,7 +275,7 @@ extern void dmi_entries_free(struct dmi_entries entries) {
 	entries.nb = 0;
 }
 
-extern struct dmi_entries dmi_probe(void) {
+struct dmi_entries dmi_probe(void) {
 	struct criteria criteria = criteria_from_dmidecode();
 	struct dmi_entries entries = entries_matching_criteria(criteria);
 	free_criteria(criteria);

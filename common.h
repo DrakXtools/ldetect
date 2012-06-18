@@ -12,17 +12,17 @@
 
 #define GZIP_BIN "/bin/gzip"
 
-extern char *table_name_to_file(const char *name);
+char *table_name_to_file(const char *name);
 
 typedef enum {
      LOAD,
      DO_NOT_LOAD,
 } descr_lookup;
 
-extern int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup, int is_pci) NON_EXPORTED;
-extern void pciusb_initialize(struct pciusb_entry *e) NON_EXPORTED;
-extern char *modalias_resolve_module(const char *modalias) NON_EXPORTED;
-extern void modalias_cleanup(void) NON_EXPORTED;
+int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup, int is_pci) NON_EXPORTED;
+void pciusb_initialize(struct pciusb_entry *e) NON_EXPORTED;
+char *modalias_resolve_module(const char *modalias) NON_EXPORTED;
+void modalias_cleanup(void) NON_EXPORTED;
 
 #define MAX_DEVICES 100
 #define BUF_SIZE 512
@@ -43,9 +43,9 @@ typedef struct {
 #define psizeof(a) (sizeof(a) / sizeof(*(a)))
 #define ifree(p) do { if (p) { free(p); p = NULL; } } while (0)
 
-extern fh fh_open(const char *name) NON_EXPORTED;
-extern char* fh_gets(char *line, int size, fh *f) NON_EXPORTED;
-extern int fh_close(fh *f) NON_EXPORTED;
+fh fh_open(const char *name) NON_EXPORTED;
+char* fh_gets(char *line, int size, fh *f) NON_EXPORTED;
+int fh_close(fh *f) NON_EXPORTED;
 #pragma GCC visibility pop
 
 #endif

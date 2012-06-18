@@ -28,28 +28,28 @@
 
 /* ---------------------------------------------------------------------- */
 
-extern const char *names_vendor(uint16_t vendorid);
-extern const char *names_product(uint16_t vendorid, uint16_t productid);
-extern const char *names_class(uint8_t classid);
-extern const char *names_subclass(uint8_t classid, uint8_t subclassid);
-extern const char *names_protocol(uint8_t classid, uint8_t subclassid,
+const char *names_vendor(uint16_t vendorid);
+const char *names_product(uint16_t vendorid, uint16_t productid);
+const char *names_class(uint8_t classid);
+const char *names_subclass(uint8_t classid, uint8_t subclassid);
+const char *names_protocol(uint8_t classid, uint8_t subclassid,
 				  uint8_t protocolid);
-extern const char *names_audioterminal(uint16_t termt);
-extern const char *names_videoterminal(uint16_t termt);
-extern const char *names_hid(uint8_t hidd);
-extern const char *names_reporttag(uint8_t rt);
-extern const char *names_huts(unsigned int data);
-extern const char *names_hutus(unsigned int data);
-extern const char *names_langid(uint16_t langid);
-extern const char *names_physdes(uint8_t ph);
-extern const char *names_bias(uint8_t b);
-extern const char *names_countrycode(unsigned int countrycode);
+const char *names_audioterminal(uint16_t termt);
+const char *names_videoterminal(uint16_t termt);
+const char *names_hid(uint8_t hidd);
+const char *names_reporttag(uint8_t rt);
+const char *names_huts(unsigned int data);
+const char *names_hutus(unsigned int data);
+const char *names_langid(uint16_t langid);
+const char *names_physdes(uint8_t ph);
+const char *names_bias(uint8_t b);
+const char *names_countrycode(unsigned int countrycode);
 
-extern int get_vendor_string(char *buf, size_t size, uint16_t vid);
-extern int get_product_string(char *buf, size_t size, uint16_t vid, uint16_t pid);
+int get_vendor_string(char *buf, size_t size, uint16_t vid);
+int get_product_string(char *buf, size_t size, uint16_t vid, uint16_t pid);
 
-extern int names_init(char *n);
-extern void names_exit(void);
+int names_init(char *n);
+void names_exit(void);
 
 /* ---------------------------------------------------------------------- */
 #endif /* _NAMES_H */

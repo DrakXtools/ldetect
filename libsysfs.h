@@ -74,13 +74,13 @@ extern "C" {
 /*
  * Function Prototypes
  */
-extern int sysfs_get_name_from_path(const char *path, char *name, size_t len);
+int sysfs_get_name_from_path(const char *path, char *name, size_t len);
 
 /* sysfs directory and file access */
-extern void sysfs_close_attribute(struct sysfs_attribute *sysattr);
-extern struct sysfs_attribute *sysfs_open_attribute(const char *path);
-extern int sysfs_read_attribute(struct sysfs_attribute *sysattr);
-extern int sysfs_write_attribute(struct sysfs_attribute *sysattr,
+void sysfs_close_attribute(struct sysfs_attribute *sysattr);
+struct sysfs_attribute *sysfs_open_attribute(const char *path);
+int sysfs_read_attribute(struct sysfs_attribute *sysattr);
+int sysfs_write_attribute(struct sysfs_attribute *sysattr,
 		const char *new_value, size_t len);
 
 #ifdef __cplusplus
