@@ -28,7 +28,7 @@ build: $(binaries) $(libraries)
 
 ifneq (0, $(WHOLE_PROGRAM))
 lspcidrake.static: lspcidrake.c $(lib_src)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -flto -o $@ $^ $(LIBS)
 
 lspcidrake: lspcidrake.c libldetect.so
 	$(CC) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -flto -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
