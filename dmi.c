@@ -30,15 +30,6 @@ static const struct category categories[] = {
 };
 static int nb_categories = psizeof(categories);
 
-struct criterion {
-	char *name;
-	char *val;
-};
-struct criteria {
-	unsigned int nb;
-	struct criterion *criteria;
-};
-
 /*********************************************************************************/
 static int streq(const char *s1, const char *s2) {
 	return strcmp(s1, s2) == 0;
@@ -92,7 +83,7 @@ static int lookup_field(const struct category *category, const char *field_name)
 	return 0;
 }
 
-static char *lookup_criteria(struct criteria criteria, const char *field) {
+static char *lookup_criteria(criteria_t criteria, const char *field) {
 	for (unsigned int i = 0; i < criteria.nb; i++)
 		if (streq(criteria.criteria[i].name, field))
 			return criteria.criteria[i].val;
@@ -100,11 +91,11 @@ static char *lookup_criteria(struct criteria criteria, const char *field) {
 }
 
 /*********************************************************************************/
-static struct criteria criteria_from_dmidecode(void) {
+static criteria_t criteria_from_dmidecode(void) {
 	FILE *f;
 	char buf[BUF_SIZE];
 
-	struct criteria r = {0, NULL};
+	criteria_t r = {0, NULL};
 
 	if (!(f = dmidecode_file ? fopen(dmidecode_file, "r") : popen("dmidecode", "r"))) {
 		perror("dmidecode");
@@ -138,7 +129,7 @@ static struct criteria criteria_from_dmidecode(void) {
 			char *s = buf + tab_level + 1;
 			char *val = get_after_colon(s);
 			if (val && lookup_field(category, s)) {
-				struct criterion *criterion = &r.criteria[r.nb++];
+				criterion_t *criterion = &r.criteria[r.nb++];
 				asprintf(&criterion->name, "%s/%s", category->cat_name, s);
 				remove_ending_spaces(val);
 				criterion->val = strdup(skip_leading_spaces(val));
@@ -154,19 +145,10 @@ static struct criteria criteria_from_dmidecode(void) {
 	return r;
 }
 
-static void free_criteria(struct criteria criteria) {
-	for (unsigned int i = 0; i < criteria.nb; i++) {
-		free(criteria.criteria[i].name);
-		free(criteria.criteria[i].val);
-	}
-	if (criteria.nb) free(criteria.criteria);
-	criteria.nb = 0;
-}
-
-static struct dmi_hid_entries entries_matching_criteria(struct criteria criteria) {
+static dmi_hid_entries_t entries_matching_criteria(criteria_t criteria) {
 	fh f;
 	char buf[2048];
-	struct dmi_hid_entries r;
+	dmi_hid_entries_t r;
 	#define MAX_INDENT 20
 	int valid[MAX_INDENT];
 	char *constraints[MAX_INDENT];
@@ -204,7 +186,7 @@ static struct dmi_hid_entries entries_matching_criteria(struct criteria criteria
 				was_a_blank_line = 0;
 				
 				if (valid[refine]) {
-					struct dmi_hid_entry *entry = &r.entries[r.nb++];
+					dmi_hid_entry_t *entry = &r.entries[r.nb++];
 
 					s += strlen("=> ");
 					char *val = get_after_colon(s);
@@ -258,10 +240,10 @@ static struct dmi_hid_entries entries_matching_criteria(struct criteria criteria
 	return r;
 }
 
-struct dmi_hid_entries dmi_probe(void) {
-	struct criteria criteria = criteria_from_dmidecode();
-	struct dmi_hid_entries entries = entries_matching_criteria(criteria);
-	free_criteria(criteria);
+dmi_hid_entries_t dmi_probe(void) {
+	criteria_t criteria = criteria_from_dmidecode();
+	dmi_hid_entries_t entries = entries_matching_criteria(criteria);
+	free_entries(criteria);
 
 	return entries;
 }

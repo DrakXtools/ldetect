@@ -49,7 +49,7 @@ static void print_usb_class(unsigned long class_id) {
   }
 }
 
-static void print_dmi_hid_entries(struct dmi_hid_entries entries, int dmi) {
+static void print_dmi_hid_entries(dmi_hid_entries_t entries, int dmi) {
 	for (unsigned int i = 0; i < entries.nb; i++)
 		printf("%-16s: %s\n", entries.entries[i].module,
 		dmi ? entries.entries[i].constraints : entries.entries[i].text);
@@ -108,15 +108,15 @@ int main(int argc, char **argv) {
 	if (!fake || proc_usb_path) printit(usb_probe(), print_usb_class);
 	
 	if ((!fake && geteuid() == 0) || dmidecode_file) {
-	    struct dmi_hid_entries dmi_entries = dmi_probe();
+	    dmi_hid_entries_t dmi_entries = dmi_probe();
 	    print_dmi_hid_entries(dmi_entries, 1);
-	    dmi_hid_entries_free(dmi_entries);
+	    free_entries(dmi_entries);
 	}
 
 	if (!fake || sysfs_hid_path) {
-	    struct dmi_hid_entries hid_entries = hid_probe();
+	    dmi_hid_entries_t hid_entries = hid_probe();
 	    print_dmi_hid_entries(hid_entries, 0);
-	    dmi_hid_entries_free(hid_entries);
+	    free_entries(hid_entries);
 	}
 
 	return 0;

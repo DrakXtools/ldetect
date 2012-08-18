@@ -66,33 +66,46 @@ extern char *proc_usb_path EXPORTED;
 /* dmi & hid ******************************************************************/
 /******************************************************************************/
 
-struct dmi_hid_entry {
-	char *module;
+struct entry {
+	union {
+		char *module;
+		char *name;
+	};
 	union {
 		char *constraints;
 		char *text;
+		char *val;
+	};
+};
+typedef struct entry dmi_hid_entry_t;
+typedef struct entry criterion_t;
+
+struct entries {
+	unsigned int nb;
+	union {
+		struct entry *entries;
+		struct entry *criteria;
 	};
 };
 
-struct dmi_hid_entries {
-	struct dmi_hid_entry *entries;
-	unsigned int nb;
-};
+typedef struct entries dmi_hid_entries_t;
+typedef struct entries criteria_t;
 
-void dmi_hid_entries_free(struct dmi_hid_entries entries) EXPORTED;
+
+void free_entries(struct entries entries) EXPORTED;
 
 /******************************************************************************/
 /* dmi ************************************************************************/
 /******************************************************************************/
 
-struct dmi_hid_entries dmi_probe(void) EXPORTED;
+struct entries dmi_probe(void) EXPORTED;
 extern char *dmidecode_file EXPORTED;
 
 /******************************************************************************/
 /* hid ************************************************************************/
 /******************************************************************************/
 
-struct dmi_hid_entries hid_probe(void) EXPORTED;
+struct entries hid_probe(void) EXPORTED;
 extern const char *sysfs_hid_path EXPORTED;
 
 #endif

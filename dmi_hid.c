@@ -2,7 +2,7 @@
 
 #include "libldetect.h"
 
-void dmi_hid_entries_free(struct dmi_hid_entries entries) {
+void free_entries(struct entries entries) {
 	for (unsigned int i = 0; i < entries.nb; i++) {
 		free(entries.entries[i].constraints);
 		free(entries.entries[i].module);

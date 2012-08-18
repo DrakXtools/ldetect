@@ -66,10 +66,10 @@ static char *parse_name(char *fields)
 	return get_field_value(fields, "HID_NAME=");
 }
 
-static void add_entry(struct dmi_hid_entries *entry_list, char *name, char *module)
+static void add_entry(dmi_hid_entries_t *entry_list, char *name, char *module)
 {
     
-	struct dmi_hid_entry *new_entries;
+	dmi_hid_entry_t *new_entries;
 
 	new_entries = realloc(entry_list->entries, (entry_list->nb+1)*sizeof(*(entry_list->entries)));
 	if (new_entries != NULL) {
@@ -80,7 +80,7 @@ static void add_entry(struct dmi_hid_entries *entry_list, char *name, char *modu
 	}
 }
 
-static void parse_device(struct dmi_hid_entries *entries, const char *dev)
+static void parse_device(dmi_hid_entries_t *entries, const char *dev)
 {
 	char keyfile[SYSFS_PATH_MAX];
 	char *modalias;
@@ -121,10 +121,10 @@ static void parse_device(struct dmi_hid_entries *entries, const char *dev)
 }
 
 
-struct dmi_hid_entries hid_probe(void)
+dmi_hid_entries_t hid_probe(void)
 {
 	DIR *dir;
-	struct dmi_hid_entries entry_list = {NULL, 0};
+	dmi_hid_entries_t entry_list = {0, NULL};
 
 	dir = opendir(sysfs_hid_path);
 	if (dir == NULL)
