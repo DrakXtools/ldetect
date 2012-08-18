@@ -14,6 +14,7 @@ lib_objs = $(subst .c,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
 CFLAGS = -Wall -W -Wstrict-prototypes -Os -fPIC -fvisibility=hidden -g
+CPPFLAGS += -std=gnu99
 CPPFLAGS += $(shell getconf LFS_CFLAGS) $(shell pkg-config --cflags libkmod libpci)
 LIBS += $(shell pkg-config --libs libkmod libpci)
 ifneq ($(ZLIB),0)

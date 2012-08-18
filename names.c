@@ -108,9 +108,9 @@ struct genericstrtable {
 
 static unsigned int hashnum(unsigned int num)
 {
-	unsigned int mask1 = HASH1 << 27, mask2 = HASH2 << 27;
-
-	for (; mask1 >= HASH1; mask1 >>= 1, mask2 >>= 1)
+	for (unsigned int mask1 = HASH1 << 27, mask2 = HASH2 << 27;
+			mask1 >= HASH1;
+			mask1 >>= 1, mask2 >>= 1)
 		if (num & mask1)
 			num ^= mask2;
 	return num & (HASHSZ-1);
@@ -139,9 +139,7 @@ static struct genericstrtable *countrycodes[HASHSZ] = { NULL, };
 static const char *names_genericstrtable(struct genericstrtable *t[HASHSZ],
 					 unsigned int idx)
 {
-	struct genericstrtable *h;
-
-	for (h = t[hashnum(idx)]; h; h = h->next)
+	for (struct genericstrtable *h = t[hashnum(idx)]; h; h = h->next)
 		if (h->num == idx)
 			return h->name;
 	return NULL;
@@ -189,10 +187,7 @@ const char *names_countrycode(unsigned int countrycode)
 
 const char *names_vendor(uint16_t vendorid)
 {
-	struct vendor *v;
-
-	v = vendors[hashnum(vendorid)];
-	for (; v; v = v->next)
+	for (struct vendor *v = vendors[hashnum(vendorid)]; v; v = v->next)
 		if (v->vendorid == vendorid)
 			return v->name;
 	return NULL;
@@ -200,10 +195,8 @@ const char *names_vendor(uint16_t vendorid)
 
 const char *names_product(uint16_t vendorid, uint16_t productid)
 {
-	struct product *p;
-
-	p = products[hashnum((vendorid << 16) | productid)];
-	for (; p; p = p->next)
+	for (struct product *p = products[hashnum((vendorid << 16) | productid)];
+			p; p = p->next)
 		if (p->vendorid == vendorid && p->productid == productid)
 			return p->name;
 	return NULL;
@@ -211,10 +204,9 @@ const char *names_product(uint16_t vendorid, uint16_t productid)
 
 const char *names_class(uint8_t classid)
 {
-	struct class *c;
-
-	c = classes[hashnum(classid)];
-	for (; c; c = c->next)
+	struct class *c = classes[hashnum(classid)];
+	for (struct class *c = classes[hashnum(classid)];
+			c; c = c->next)
 		if (c->classid == classid)
 			return c->name;
 	return NULL;
@@ -222,10 +214,8 @@ const char *names_class(uint8_t classid)
 
 const char *names_subclass(uint8_t classid, uint8_t subclassid)
 {
-	struct subclass *s;
-
-	s = subclasses[hashnum((classid << 8) | subclassid)];
-	for (; s; s = s->next)
+	for (struct subclass *s = subclasses[hashnum((classid << 8) | subclassid)];
+			s; s = s->next)
 		if (s->classid == classid && s->subclassid == subclassid)
 			return s->name;
 	return NULL;
@@ -233,10 +223,8 @@ const char *names_subclass(uint8_t classid, uint8_t subclassid)
 
 const char *names_protocol(uint8_t classid, uint8_t subclassid, uint8_t protocolid)
 {
-	struct protocol *p;
-
-	p = protocols[hashnum((classid << 16) | (subclassid << 8) | protocolid)];
-	for (; p; p = p->next)
+	for (struct protocol *p = protocols[hashnum((classid << 16) | (subclassid << 8) | protocolid)];
+			p; p = p->next)
 		if (p->classid == classid && p->subclassid == subclassid && p->protocolid == protocolid)
 			return p->name;
 	return NULL;
@@ -244,10 +232,8 @@ const char *names_protocol(uint8_t classid, uint8_t subclassid, uint8_t protocol
 
 const char *names_audioterminal(uint16_t termt)
 {
-	struct audioterminal *at;
-
-	at = audioterminals[hashnum(termt)];
-	for (; at; at = at->next)
+	for (struct audioterminal *at = audioterminals[hashnum(termt)];
+			at; at = at->next)
 		if (at->termt == termt)
 			return at->name;
 	return NULL;
@@ -255,10 +241,8 @@ const char *names_audioterminal(uint16_t termt)
 
 const char *names_videoterminal(uint16_t termt)
 {
-	struct videoterminal *vt;
-
-	vt = videoterminals[hashnum(termt)];
-	for (; vt; vt = vt->next)
+	for (struct videoterminal *vt = videoterminals[hashnum(termt)];
+			vt; vt = vt->next)
 		if (vt->termt == termt)
 			return vt->name;
 	return NULL;
@@ -294,11 +278,10 @@ int get_product_string(char *buf, size_t size, uint16_t vid, uint16_t pid)
 
 static int new_vendor(const char *name, uint16_t vendorid)
 {
-	struct vendor *v;
 	unsigned int h = hashnum(vendorid);
+	struct vendor *v;
 
-	v = vendors[h];
-	for (; v; v = v->next)
+	for (v = vendors[h]; v; v = v->next)
 		if (v->vendorid == vendorid)
 			return -1;
 	v = malloc(sizeof(struct vendor) + strlen(name));
@@ -313,11 +296,10 @@ static int new_vendor(const char *name, uint16_t vendorid)
 
 static int new_product(const char *name, uint16_t vendorid, uint16_t productid)
 {
-	struct product *p;
 	unsigned int h = hashnum((vendorid << 16) | productid);
+	struct product *p;
 
-	p = products[h];
-	for (; p; p = p->next)
+	for (p = products[h]; p; p = p->next)
 		if (p->vendorid == vendorid && p->productid == productid)
 			return -1;
 	p = malloc(sizeof(struct product) + strlen(name));
@@ -333,11 +315,10 @@ static int new_product(const char *name, uint16_t vendorid, uint16_t productid)
 
 static int new_class(const char *name, uint8_t classid)
 {
-	struct class *c;
 	unsigned int h = hashnum(classid);
+	struct class *c;
 
-	c = classes[h];
-	for (; c; c = c->next)
+	for (c = classes[h]; c; c = c->next)
 		if (c->classid == classid)
 			return -1;
 	c = malloc(sizeof(struct class) + strlen(name));
@@ -352,11 +333,10 @@ static int new_class(const char *name, uint8_t classid)
 
 static int new_subclass(const char *name, uint8_t classid, uint8_t subclassid)
 {
-	struct subclass *s;
 	unsigned int h = hashnum((classid << 8) | subclassid);
+	struct subclass *s;
 
-	s = subclasses[h];
-	for (; s; s = s->next)
+	for (s = subclasses[h]; s; s = s->next)
 		if (s->classid == classid && s->subclassid == subclassid)
 			return -1;
 	s = malloc(sizeof(struct subclass) + strlen(name));
@@ -372,11 +352,10 @@ static int new_subclass(const char *name, uint8_t classid, uint8_t subclassid)
 
 static int new_protocol(const char *name, uint8_t classid, uint8_t subclassid, uint8_t protocolid)
 {
-	struct protocol *p;
 	unsigned int h = hashnum((classid << 16) | (subclassid << 8) | protocolid);
+	struct protocol *p;
 
-	p = protocols[h];
-	for (; p; p = p->next)
+	for (p = protocols[h]; p; p = p->next)
 		if (p->classid == classid && p->subclassid == subclassid && p->protocolid == protocolid)
 			return -1;
 	p = malloc(sizeof(struct protocol) + strlen(name));
@@ -393,11 +372,9 @@ static int new_protocol(const char *name, uint8_t classid, uint8_t subclassid, u
 
 static int new_audioterminal(const char *name, uint16_t termt)
 {
-	struct audioterminal *at;
 	unsigned int h = hashnum(termt);
-
-	at = audioterminals[h];
-	for (; at; at = at->next)
+	struct audioterminal *at;
+	for (at = audioterminals[h]; at; at = at->next)
 		if (at->termt == termt)
 			return -1;
 	at = malloc(sizeof(struct audioterminal) + strlen(name));
@@ -412,11 +389,10 @@ static int new_audioterminal(const char *name, uint16_t termt)
 
 static int new_videoterminal(const char *name, uint16_t termt)
 {
-	struct videoterminal *vt;
 	unsigned int h = hashnum(termt);
+	struct videoterminal *vt;
 
-	vt = videoterminals[h];
-	for (; vt; vt = vt->next)
+	for (vt = videoterminals[h]; vt; vt = vt->next)
 		if (vt->termt == termt)
 			return -1;
 	vt = malloc(sizeof(struct videoterminal) + strlen(name));
@@ -432,8 +408,8 @@ static int new_videoterminal(const char *name, uint16_t termt)
 static int new_genericstrtable(struct genericstrtable *t[HASHSZ],
 			       const char *name, unsigned int idx)
 {
-	struct genericstrtable *g;
 	unsigned int h = hashnum(idx);
+	struct genericstrtable *g;
 
 	for (g = t[h]; g; g = g->next)
 		if (g->num == idx)
@@ -492,9 +468,8 @@ static int new_countrycode(const char *name, unsigned int countrycode)
 static void free_vendor(void)
 {
 	struct vendor *cur, *tmp;
-	int i;
 
-	for (i = 0; i < HASHSZ; i++) {
+	for (int i = 0; i < HASHSZ; i++) {
 		cur = vendors[i];
 		vendors[i] = NULL;
 		while (cur) {
@@ -508,9 +483,8 @@ static void free_vendor(void)
 static void free_product(void)
 {
 	struct product *cur, *tmp;
-	int i;
 
-	for (i = 0; i < HASHSZ; i++) {
+	for (int i = 0; i < HASHSZ; i++) {
 		cur = products[i];
 		products[i] = NULL;
 		while (cur) {
@@ -524,9 +498,8 @@ static void free_product(void)
 static void free_class(void)
 {
 	struct class *cur, *tmp;
-	int i;
 
-	for (i = 0; i < HASHSZ; i++) {
+	for (int i = 0; i < HASHSZ; i++) {
 		cur = classes[i];
 		classes[i] = NULL;
 		while (cur) {
@@ -540,9 +513,8 @@ static void free_class(void)
 static void free_subclass(void)
 {
 	struct subclass *cur, *tmp;
-	int i;
 
-	for (i = 0; i < HASHSZ; i++) {
+	for (int i = 0; i < HASHSZ; i++) {
 		cur = subclasses[i];
 		subclasses[i] = NULL;
 		while (cur) {
@@ -556,9 +528,8 @@ static void free_subclass(void)
 static void free_protocol(void)
 {
 	struct protocol *cur, *tmp;
-	int i;
 
-	for (i = 0; i < HASHSZ; i++) {
+	for (int i = 0; i < HASHSZ; i++) {
 		cur = protocols[i];
 		protocols[i] = NULL;
 		while (cur) {
@@ -572,9 +543,8 @@ static void free_protocol(void)
 static void free_audioterminal(void)
 {
 	struct audioterminal *cur, *tmp;
-	int i;
 
-	for (i = 0; i < HASHSZ; i++) {
+	for (int i = 0; i < HASHSZ; i++) {
 		cur = audioterminals[i];
 		audioterminals[i] = NULL;
 		while (cur) {
@@ -589,9 +559,8 @@ static void free_audioterminal(void)
 static void free_videoterminal(void)
 {
 	struct videoterminal *cur, *tmp;
-	int i;
 
-	for (i = 0; i < HASHSZ; i++) {
+	for (int i = 0; i < HASHSZ; i++) {
 		cur = videoterminals[i];
 		videoterminals[i] = NULL;
 		while (cur) {
@@ -605,9 +574,8 @@ static void free_videoterminal(void)
 static void _free_genericstrtable(struct genericstrtable *t[HASHSZ])
 {
 	struct genericstrtable *cur, *tmp;
-	int i;
 
-	for (i = 0; i < HASHSZ; i++) {
+	for (int i = 0; i < HASHSZ; i++) {
 		cur = t[i];
 		t[i] = NULL;
 		while (cur) {

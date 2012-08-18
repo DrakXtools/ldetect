@@ -56,8 +56,7 @@ static int remove_suffix_in_place(char *s, const char *suffix) {
 		return 0;
 }
 static void remove_ending_spaces(char *s) {
-	char *p;
-	for (p = s + strlen(s) - 1; p >= s; p--) {
+	for (char *p = s + strlen(s) - 1; p >= s; p--) {
 		if (*p != '\n' && *p != '\r' && *p != ' ' && *p != '\t')
 			break;
 		*p = '\0';
@@ -80,24 +79,21 @@ static char *get_after_colon(char *s) {
 }
 
 static const struct category *lookup_category(const char *cat_name) {
-	int i;
-	for (i = 0; i < nb_categories; i++)
+	for (int i = 0; i < nb_categories; i++)
 		if (streq(categories[i].cat_name, cat_name))
 			return &categories[i];
 	return NULL;
 }
 
 static int lookup_field(const struct category *category, const char *field_name) {
-	unsigned int i;
-	for (i = 0; i < category->nb_fields; i++)
+	for (unsigned int i = 0; i < category->nb_fields; i++)
 		if (streq(category->fields[i], field_name))
 			return 1;
 	return 0;
 }
 
 static char *lookup_criteria(struct criteria criteria, const char *field) {
-	unsigned int i;
-	for (i = 0; i < criteria.nb; i++)
+	for (unsigned int i = 0; i < criteria.nb; i++)
 		if (streq(criteria.criteria[i].name, field))
 			return criteria.criteria[i].val;
 	return NULL;
@@ -159,8 +155,7 @@ static struct criteria criteria_from_dmidecode(void) {
 }
 
 static void free_criteria(struct criteria criteria) {
-	unsigned int i;
-	for (i = 0; i < criteria.nb; i++) {
+	for (unsigned int i = 0; i < criteria.nb; i++) {
 		free(criteria.criteria[i].name);
 		free(criteria.criteria[i].val);
 	}
@@ -171,7 +166,6 @@ static void free_criteria(struct criteria criteria) {
 static struct dmi_hid_entries entries_matching_criteria(struct criteria criteria) {
 	fh f;
 	char buf[2048];
-	int line;
 	struct dmi_hid_entries r;
 	#define MAX_INDENT 20
 	int valid[MAX_INDENT];
@@ -187,13 +181,13 @@ static struct dmi_hid_entries entries_matching_criteria(struct criteria criteria
 
 	r.entries = malloc(sizeof(*r.entries) * MAX_DEVICES);
 
-#define foreach_indent(min, action) do { int i; for (i = min; i < MAX_INDENT; i++) { action; } } while (0)
+#define foreach_indent(min, action) do { for (int i = min; i < MAX_INDENT; i++) { action; } } while (0)
 	
 	foreach_indent(0, valid[i] = 1; constraints[i] = NULL);
 
 	int previous_refine = 0;
 
-	for (line = 1; fh_gets(buf, sizeof(buf) - 1, &f); line++) {
+	for (int line = 1; fh_gets(buf, sizeof(buf) - 1, &f); line++) {
 		char *s = skip_leading_spaces(buf);
 		if (*s == '#') continue; // skip comments
 
@@ -220,8 +214,7 @@ static struct dmi_hid_entries entries_matching_criteria(struct criteria criteria
 					char tmp[BUF_SIZE];
 					tmp[0] = '\0';
 
-					int i;
-					for (i = 0; i <= refine; i++)
+					for (int i = 0; i <= refine; i++)
 						if (constraints[i]) {
 							if (i) strncat(tmp, "|", BUF_SIZE);
 							strncat(tmp, constraints[i], BUF_SIZE);

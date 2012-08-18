@@ -124,14 +124,13 @@ static void parse_device(struct dmi_hid_entries *entries, const char *dev)
 struct dmi_hid_entries hid_probe(void)
 {
 	DIR *dir;
-	struct dirent *dent;
 	struct dmi_hid_entries entry_list = {NULL, 0};
 
 	dir = opendir(sysfs_hid_path);
 	if (dir == NULL)
 		goto end_probe;
 
-	for (dent = readdir(dir); dent != NULL; dent = readdir(dir)) {
+	for (struct dirent *dent = readdir(dir); dent != NULL; dent = readdir(dir)) {
 		if (dent->d_name[0] == '.')
 			continue;
 		DEBUG("%s: device found %s\n", HID_BUS_NAME, dent->d_name);

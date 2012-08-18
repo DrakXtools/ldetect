@@ -86,8 +86,7 @@ static void find_modules_through_aliases_one(const char *bus, struct pciusb_entr
 }
 
 static void find_modules_through_aliases(const char *bus, struct pciusb_entries *entries) {
-	unsigned int i;
-	for (i = 0; i < entries->nb; i++) {
+	for (unsigned int i = 0; i < entries->nb; i++) {
 		struct pciusb_entry *e = &entries->entries[i];
 
 		// No special case found in pcitable ? Then lookup modalias for PCI devices
@@ -102,14 +101,13 @@ static void find_modules_through_aliases(const char *bus, struct pciusb_entries 
 int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup descr_lookup, int is_pci) {
 	fh f;
 	char buf[2048];
-	int line;
 
 	f = fh_open(fpciusbtable);
 
-	for (line = 1; fh_gets(buf, sizeof(buf) - 1, &f); line++) {
+	for (int line = 1; fh_gets(buf, sizeof(buf) - 1, &f); line++) {
 		unsigned short vendor, device, subvendor, subdevice;
 		char *p = NULL, *q = NULL;
-		int offset; unsigned int i;
+		int offset;
 		int nb;
 		if (buf[0]=='#')
 			continue; // skip comments
@@ -122,7 +120,7 @@ int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable
 				continue; // skip bad line
 			}
 		}
-		for (i = 0; i < entries->nb; i++) {
+		for (unsigned int i = 0; i < entries->nb; i++) {
 			struct pciusb_entry *e = &entries->entries[i];
 			if (e->already_found)
 				continue;	// skip since already found with sub ids
@@ -181,8 +179,7 @@ void pciusb_initialize(struct pciusb_entry *e) {
 }
 
 void pciusb_free(struct pciusb_entries *entries) {
-	unsigned int i;
-	for (i = 0; i < entries->nb; i++) {
+	for (unsigned int i = 0; i < entries->nb; i++) {
 		struct pciusb_entry *e = &entries->entries[i];
 		ifree(e->module);
 		ifree(e->text);

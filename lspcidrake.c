@@ -10,8 +10,7 @@
 static int verboze = 0;
 
 static void printit(struct pciusb_entries entries, void print_class(unsigned long )) {
-	unsigned int i;
-	for (i = 0; i < entries.nb; i++) {
+	for (unsigned int i = 0; i < entries.nb; i++) {
 		struct pciusb_entry *e = &entries.entries[i];
 		printf("%-16s: ", e->module ? e->module : "unknown");
 		if (e->text)
@@ -51,8 +50,7 @@ static void print_usb_class(unsigned long class_id) {
 }
 
 static void print_dmi_hid_entries(struct dmi_hid_entries entries, int dmi) {
-	unsigned int i;
-	for (i = 0; i < entries.nb; i++)
+	for (unsigned int i = 0; i < entries.nb; i++)
 		printf("%-16s: %s\n", entries.entries[i].module,
 		dmi ? entries.entries[i].constraints : entries.entries[i].text);
 	/* the inline bool above is certainly a bit silly as the two
