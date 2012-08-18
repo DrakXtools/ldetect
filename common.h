@@ -40,7 +40,7 @@ typedef struct {
 	} u;
 } fh;
 
-#define psizeof(a) (sizeof(a) / sizeof(*(a)))
+#define psizeof(a) (sizeof(a) / sizeof(a[0]))
 #define ifree(p) do { if (p) { free(p); p = NULL; } } while (0)
 
 fh fh_open(const char *name) NON_EXPORTED;
