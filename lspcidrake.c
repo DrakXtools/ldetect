@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <getopt.h>
 #include "libldetect.h"
+#ifdef DRAKX_ONE_BINARY
+#include "lspcidrake.h"
+#endif
 
 static int verboze = 0;
 
@@ -70,7 +73,12 @@ static void usage(void)
 	"\t-d, --dmidecode <file>\tTo use this dmidecode output instead of calling demicode\n");
 }
 
+#ifdef DRAKX_ONE_BINARY
+int lspcidrake_main(int argc, char **argv) {
+#else
 int main(int argc, char **argv) {
+#endif
+
 	int opt, fake = 0;
 	struct option options[] = { { "verbose", 0, NULL, 'v' },
 				    { "pci-file", 1, NULL, 'p' },
