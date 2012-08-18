@@ -1,3 +1,7 @@
+Version 0.12.5 - 18 August 2012, by Per Øyvind Karlsen
+
+- link with -flto & -Wl,-O2
+
 Version 0.12.4 - 18 June 2012, by Per Øyvind Karlsen
 
 - add support for building with -fwhole-program and use it by default
