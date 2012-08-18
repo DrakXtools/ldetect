@@ -42,6 +42,7 @@ typedef struct {
 
 #define psizeof(a) (sizeof(a) / sizeof(a[0]))
 #define ifree(p) do { if (p) { free(p); p = NULL; } } while (0)
+#define alloc_v(v) calloc(1, sizeof(v[0]));
 
 fh fh_open(const char *name) NON_EXPORTED;
 char* fh_gets(char *line, int size, fh *f) NON_EXPORTED;
