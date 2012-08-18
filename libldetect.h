@@ -63,35 +63,36 @@ struct usb_class_text usb_class2text(unsigned long class_id) EXPORTED;
 extern char *proc_usb_path EXPORTED;
 
 /******************************************************************************/
-/* dmi ************************************************************************/
+/* dmi & hid ******************************************************************/
 /******************************************************************************/
-struct dmi_entry {
-  char *constraints;
-  char *module;
-};
-struct dmi_entries {
-  struct dmi_entry *entries;
-  unsigned int nb;
+
+struct dmi_hid_entry {
+	char *module;
+	union {
+		char *constraints;
+		char *text;
+	};
 };
 
-struct dmi_entries dmi_probe(void) EXPORTED;
-void dmi_entries_free(struct dmi_entries entries) EXPORTED;
+struct dmi_hid_entries {
+	struct dmi_hid_entry *entries;
+	unsigned int nb;
+};
+
+void dmi_hid_entries_free(struct dmi_hid_entries entries) EXPORTED;
+
+/******************************************************************************/
+/* dmi ************************************************************************/
+/******************************************************************************/
+
+struct dmi_hid_entries dmi_probe(void) EXPORTED;
 extern char *dmidecode_file EXPORTED;
 
 /******************************************************************************/
 /* hid ************************************************************************/
 /******************************************************************************/
-struct hid_entry {
-  char *module;
-  char *text;
-};
-struct hid_entries {
-  struct hid_entry *entries;
-  unsigned int nb;
-};
 
-struct hid_entries hid_probe(void) EXPORTED;
-void hid_entries_free(struct hid_entries *entries) EXPORTED;
+struct dmi_hid_entries hid_probe(void) EXPORTED;
 extern const char *sysfs_hid_path EXPORTED;
 
 #endif

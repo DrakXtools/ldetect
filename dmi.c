@@ -168,11 +168,11 @@ static void free_criteria(struct criteria criteria) {
 	criteria.nb = 0;
 }
 
-static struct dmi_entries entries_matching_criteria(struct criteria criteria) {
+static struct dmi_hid_entries entries_matching_criteria(struct criteria criteria) {
 	fh f;
 	char buf[2048];
 	int line;
-	struct dmi_entries r;
+	struct dmi_hid_entries r;
 	#define MAX_INDENT 20
 	int valid[MAX_INDENT];
 	char *constraints[MAX_INDENT];
@@ -210,7 +210,7 @@ static struct dmi_entries entries_matching_criteria(struct criteria criteria) {
 				was_a_blank_line = 0;
 				
 				if (valid[refine]) {
-					struct dmi_entry *entry = &r.entries[r.nb++];
+					struct dmi_hid_entry *entry = &r.entries[r.nb++];
 
 					s += strlen("=> ");
 					char *val = get_after_colon(s);
@@ -265,19 +265,9 @@ static struct dmi_entries entries_matching_criteria(struct criteria criteria) {
 	return r;
 }
 
-void dmi_entries_free(struct dmi_entries entries) {
-	unsigned int i;
-	for (i = 0; i < entries.nb; i++) {
-		free(entries.entries[i].constraints);
-		free(entries.entries[i].module);
-	}
-	if (entries.nb) free(entries.entries);
-	entries.nb = 0;
-}
-
-struct dmi_entries dmi_probe(void) {
+struct dmi_hid_entries dmi_probe(void) {
 	struct criteria criteria = criteria_from_dmidecode();
-	struct dmi_entries entries = entries_matching_criteria(criteria);
+	struct dmi_hid_entries entries = entries_matching_criteria(criteria);
 	free_criteria(criteria);
 
 	return entries;

@@ -66,10 +66,10 @@ static char *parse_name(char *fields)
 	return get_field_value(fields, "HID_NAME=");
 }
 
-static void add_entry(struct hid_entries *entry_list, char *name, char *module)
+static void add_entry(struct dmi_hid_entries *entry_list, char *name, char *module)
 {
     
-	struct hid_entry *new_entries;
+	struct dmi_hid_entry *new_entries;
 
 	new_entries = realloc(entry_list->entries, (entry_list->nb+1)*sizeof(*(entry_list->entries)));
 	if (new_entries != NULL) {
@@ -80,7 +80,7 @@ static void add_entry(struct hid_entries *entry_list, char *name, char *module)
 	}
 }
 
-static void parse_device(struct hid_entries *entries, const char *dev)
+static void parse_device(struct dmi_hid_entries *entries, const char *dev)
 {
 	char keyfile[SYSFS_PATH_MAX];
 	char *modalias;
@@ -121,11 +121,11 @@ static void parse_device(struct hid_entries *entries, const char *dev)
 }
 
 
-struct hid_entries hid_probe(void)
+struct dmi_hid_entries hid_probe(void)
 {
 	DIR *dir;
 	struct dirent *dent;
-	struct hid_entries entry_list = {NULL, 0};
+	struct dmi_hid_entries entry_list = {NULL, 0};
 
 	dir = opendir(sysfs_hid_path);
 	if (dir == NULL)
@@ -145,12 +145,3 @@ end_probe:
 	return entry_list;
 }
 
-void hid_entries_free(struct hid_entries *entries)
-{
-	unsigned int i;
-	for (i = 0; i < entries->nb; i++) {
-	    free(entries->entries[i].module);
-	    free(entries->entries[i].text);
-	}
-	free(entries->entries);
-}
