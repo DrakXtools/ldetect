@@ -204,7 +204,6 @@ const char *names_product(uint16_t vendorid, uint16_t productid)
 
 const char *names_class(uint8_t classid)
 {
-	struct class *c = classes[hashnum(classid)];
 	for (struct class *c = classes[hashnum(classid)];
 			c; c = c->next)
 		if (c->classid == classid)
