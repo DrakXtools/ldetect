@@ -124,7 +124,8 @@ static void parse_device(dmi_hid_entries_t *entries, const char *dev)
 dmi_hid_entries_t hid_probe(void)
 {
 	DIR *dir;
-	dmi_hid_entries_t entry_list = {0, NULL};
+	dmi_hid_entries_t entry_list;
+	memset(&entry_list, 0, sizeof(entry_list));
 
 	dir = opendir(sysfs_hid_path);
 	if (dir == NULL)

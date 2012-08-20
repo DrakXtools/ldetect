@@ -95,7 +95,8 @@ static criteria_t criteria_from_dmidecode(void) {
 	FILE *f;
 	char buf[BUF_SIZE];
 
-	criteria_t r = {0, NULL};
+	criteria_t r;
+	memset(&r, sizeof(r), 0);
 
 	if (!(f = dmidecode_file ? fopen(dmidecode_file, "r") : popen("dmidecode", "r"))) {
 		perror("dmidecode");
