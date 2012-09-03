@@ -17,7 +17,7 @@
 /* /proc files're 256 bytes but we only need first 64 bytes*/
 #define CONFIG_SPACE_SIZE 64
 
-static char *proc_pci_path_default = "/proc/bus/pci/devices";
+static char proc_pci_path_default[] = "/proc/bus/pci/devices";
 char* proc_pci_path = NULL;
 
 static void __attribute__((noreturn)) error_and_die(char *msg, ...)
