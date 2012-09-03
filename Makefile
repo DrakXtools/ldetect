@@ -1,14 +1,3 @@
-NAME = ldetect
-LIB_MAJOR = 0.13
-LIB_MINOR = 0
-VERSION=$(LIB_MAJOR).$(LIB_MINOR)
-
-prefix = /usr
-bindir = $(prefix)/bin
-libdir = $(prefix)/lib
-includedir = $(prefix)/include
-
-binaries = lspcidrake
 lib_src = common.c modalias.c pciusb.c pci.c usb.c pciclass.c usbclass.c dmi.c dmi_hid.c hid.c sysfs_attr.c sysfs_utils.c names.c
 lib_objs = $(subst .c,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
@@ -25,6 +14,18 @@ WHOLE_PROGRAM = 1
 RPM ?= $(HOME)/rpm
 
 ifndef MDK_STAGE_ONE
+NAME = ldetect
+LIB_MAJOR = 0.13
+LIB_MINOR = 0
+VERSION=$(LIB_MAJOR).$(LIB_MINOR)
+
+prefix = /usr
+bindir = $(prefix)/bin
+libdir = $(prefix)/lib
+includedir = $(prefix)/include
+
+binaries = lspcidrake
+
 build: $(binaries) $(libraries)
 
 ifneq (0, $(WHOLE_PROGRAM))
