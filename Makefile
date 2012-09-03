@@ -24,6 +24,7 @@ WHOLE_PROGRAM = 1
 
 RPM ?= $(HOME)/rpm
 
+ifndef MDK_STAGE_ONE
 build: $(binaries) $(libraries)
 
 ifneq (0, $(WHOLE_PROGRAM))
@@ -111,3 +112,4 @@ log:
 
 run: lspcidrake
 	LD_LIBRARY_PATH=$(PWD)  ./lspcidrake
+endif
