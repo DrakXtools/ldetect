@@ -11,7 +11,15 @@ LIBS += $(shell pkg-config --libs zlib liblzma)
 endif
 WHOLE_PROGRAM = 1
 
-RPM ?= $(HOME)/rpm
+ldetect_srcdir ?= .
+
+$(ldetect_srcdir)/pciclass.c: /usr/include/pci/pci.h /usr/include/pci/header.h
+	rm -f $@
+	perl $(ldetect_srcdir)/generate_pciclass.pl $^ > $@
+
+$(ldetect_srcdir)/usbclass.c: /usr/share/usb.ids
+	rm -f $@
+	perl $(ldetect_srcdir)/generate_usbclass.pl $^ > $@
 
 ifndef MDK_STAGE_ONE
 NAME = ldetect
@@ -54,16 +62,6 @@ libldetect.so: $(lib_major)
 libldetect.a: $(lib_objs)
 	ar -cru $@ $^
 	ranlib $@
-
-pciclass.c: /usr/include/pci/pci.h /usr/include/pci/header.h
-	rm -f $@
-	perl generate_pciclass.pl $^ > $@
-	chmod a-w $@
-
-usbclass.c: /usr/share/usb.ids
-	rm -f $@
-	perl generate_usbclass.pl $^ > $@
-	chmod a-w $@
 
 common.o:	common.c common.h
 pciusb.o:	pciusb.c libldetect.h common.h
