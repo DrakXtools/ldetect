@@ -1,10 +1,10 @@
-lib_src = common.c modalias.c pciusb.c pci.c usb.c pciclass.c usbclass.c dmi.c dmi_hid.c hid.c sysfs_attr.c sysfs_utils.c names.c
+lib_src = common.c modalias.c pciusb.c pci.c usb.c pciclass.c usbclass.c dmi.c dmi_hid.c hid.c names.c
 lib_objs = $(subst .c,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
 CFLAGS += -std=gnu99 -Wall -W -Wstrict-prototypes -Os -fPIC -fvisibility=hidden -g
 CPPFLAGS += $(shell getconf LFS_CFLAGS) $(shell pkg-config --cflags libkmod libpci)
-LIBS += $(shell pkg-config --libs libkmod libpci)
+LIBS += $(shell pkg-config --libs libkmod libpci) -lsysfs
 ifneq ($(ZLIB),0)
 CPPFLAGS += $(shell pkg-config --cflags zlib liblzma) -DHAVE_LIBZ
 LIBS += $(shell pkg-config --libs zlib liblzma)
@@ -71,8 +71,6 @@ dmi.o:		dmi.c libldetect.h common.h
 dmi_hid.o:	dmi_hid.c libldetect.h common.h
 hid.o:		hid.c libldetect.h common.h
 names.o:	names.c names.h
-sysfs_attr.o:	sysfs_attr.c sysfs.h libsysfs.h
-sysfs_utils.o:	sysfs_utils.c sysfs.h libsysfs.h
 
 clean:
 	rm -f *~ *.o pciclass.c usbclass.c $(binaries) $(libraries)
