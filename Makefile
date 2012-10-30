@@ -1,4 +1,4 @@
-lib_src = common.c modalias.c pciusb.c pci.c usb.c pciclass.c usbclass.c dmi.c dmi_hid.c hid.c names.c
+lib_src = common.c modalias.c pciusb.c pci.c usb.c pciclass.c usbclass.c dmi.c hid.c names.c
 lib_objs = $(subst .c,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
@@ -68,7 +68,6 @@ pciusb.o:	pciusb.c libldetect.h common.h
 pci.o:		pci.c libldetect.h common.h
 usb.o:		usb.c libldetect.h common.h names.h
 dmi.o:		dmi.c libldetect.h common.h
-dmi_hid.o:	dmi_hid.c libldetect.h common.h
 hid.o:		hid.c libldetect.h common.h
 names.o:	names.c names.h
 
