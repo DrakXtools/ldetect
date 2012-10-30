@@ -26,7 +26,7 @@ static void get_version(void) {
 }
 
 
-char*dirname;
+char *dirname, *dkms_file;
 
 static void set_default_alias_file(void) {
 	struct utsname rel_buf;
@@ -53,11 +53,8 @@ static void set_default_alias_file(void) {
 	}
 }
 
-char *modalias_resolve_module(const char *modalias) {
+struct kmod_ctx* modalias_init() {
         struct kmod_ctx *ctx;
-	struct kmod_list *l, *list = NULL;
-	int err;
-	char* dkms_file,  *str = NULL;
 
 	if (!aliasdefault)
 		set_default_alias_file();
@@ -80,11 +77,18 @@ char *modalias_resolve_module(const char *modalias) {
 	ctx = kmod_new(dirname, alias_filelist);
 	if (!ctx) {
 		fputs("Error: kmod_new() failed!\n", stderr);
-		goto exit;
+		free(dkms_file);
+		kmod_unref(ctx);
+		ctx = NULL;
 	}
 	kmod_load_resources(ctx);
+	return ctx;
+}
 
-	err = kmod_module_new_from_lookup(ctx, modalias, &list);
+char *modalias_resolve_module(struct kmod_ctx *ctx, const char *modalias) {
+	struct kmod_list *l, *list = NULL;
+	char *str = NULL;
+	int err = kmod_module_new_from_lookup(ctx, modalias, &list);
 	if (err < 0)
 		goto exit;
 
@@ -114,12 +118,12 @@ char *modalias_resolve_module(const char *modalias) {
 	kmod_module_unref_list(list);
 
 exit:
-	free(dkms_file);
-	kmod_unref(ctx);
 	return str;
 }
 
-void modalias_cleanup(void) {
+void modalias_cleanup(struct kmod_ctx *ctx) {
     ifree(aliasdefault);
     ifree(version);
+    free(dkms_file);
+    kmod_unref(ctx);
 }

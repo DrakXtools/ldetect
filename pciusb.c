@@ -11,9 +11,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <libkmod.h>
 #include "common.h"
 
-static void set_modules_from_modalias_file(struct pciusb_entry *e, char *modalias_path) {
+static void set_modules_from_modalias_file(struct kmod_ctx *ctx, struct pciusb_entry *e, char *modalias_path) {
 	FILE *file;
 	file = fopen(modalias_path, "r");
 	if (file) {
@@ -30,7 +31,7 @@ static void set_modules_from_modalias_file(struct pciusb_entry *e, char *modalia
 			modalias[size-1] = 0;
 
 		ifree(e->module);
-		e->module = modalias_resolve_module(modalias);
+		e->module = modalias_resolve_module(ctx, modalias);
 		free(modalias);
 	} else {
 		fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
@@ -38,16 +39,16 @@ static void set_modules_from_modalias_file(struct pciusb_entry *e, char *modalia
 	}
 }
 
-static void find_pci_modules_through_aliases(struct pciusb_entry *e) {
+static void find_pci_modules_through_aliases(struct kmod_ctx *ctx, struct pciusb_entry *e) {
 	char *modalias_path;
 	asprintf(&modalias_path,
 		 "/sys/bus/pci/devices/%04x:%02x:%02x.%x/modalias",
 		 e->pci_domain, e->pci_bus, e->pci_device, e->pci_function);
-	set_modules_from_modalias_file(e, modalias_path);
+	set_modules_from_modalias_file(ctx, e, modalias_path);
 	free(modalias_path);
 }
 
-static void find_usb_modules_through_aliases(struct pciusb_entry *e) {
+static void find_usb_modules_through_aliases(struct kmod_ctx *ctx, struct pciusb_entry *e) {
 	char *usb_prefix, *sysfs_path;
 	DIR *dir;
 	struct dirent *dent;
@@ -65,7 +66,7 @@ static void find_usb_modules_through_aliases(struct pciusb_entry *e) {
 		    !strncmp(usb_prefix, dent->d_name, strlen(usb_prefix))) {
 			char *modalias_path;
 			asprintf(&modalias_path, "%s/%s/modalias", sysfs_path, dent->d_name);
-			set_modules_from_modalias_file(e, modalias_path);
+			set_modules_from_modalias_file(ctx, e, modalias_path);
 			free(modalias_path);
 			/* maybe we would need a "other_modules" field in pciusb_entry 
 			   to list modules from all USB interfaces */
@@ -78,26 +79,28 @@ end:
 	free(sysfs_path);
 	free(usb_prefix);
 }
-
-static void find_modules_through_aliases_one(const char *bus, struct pciusb_entry *e) {
+ 
+static void find_modules_through_aliases_one(struct kmod_ctx *ctx, const char *bus, struct pciusb_entry *e) {
 	if (!strcmp("pci", bus)) {
-		find_pci_modules_through_aliases(e);
+		find_pci_modules_through_aliases(ctx, e);
 	} else if (!strcmp("usb", bus)) {
-		find_usb_modules_through_aliases(e);
+		find_usb_modules_through_aliases(ctx, e);
 	}
 }
 
 static void find_modules_through_aliases(const char *bus, struct pciusb_entries *entries) {
+	struct kmod_ctx *ctx = modalias_init();
+
 	for (unsigned int i = 0; i < entries->nb; i++) {
 		struct pciusb_entry *e = &entries->entries[i];
 
 		// No special case found in pcitable ? Then lookup modalias for PCI devices
 		if (e->module && strcmp(e->module, "unknown"))
 			continue;
-		find_modules_through_aliases_one(bus, e);
+		find_modules_through_aliases_one(ctx, bus, e);
 	}
 
-	modalias_cleanup();
+	modalias_cleanup(ctx);
 }
 
 int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup descr_lookup, int is_pci) {

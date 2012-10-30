@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libkmod.h>
 
 #include "libsysfs.h"
 #include "libldetect.h"
@@ -82,7 +83,7 @@ static void add_entry(dmi_hid_entries_t *entry_list, char *name, char *module)
 	}
 }
 
-static void parse_device(dmi_hid_entries_t *entries, const char *dev)
+static void parse_device(struct kmod_ctx *ctx, dmi_hid_entries_t *entries, const char *dev)
 {
 	char keyfile[SYSFS_PATH_MAX];
 	char *modalias;
@@ -114,12 +115,11 @@ static void parse_device(dmi_hid_entries_t *entries, const char *dev)
 	else 
 		device_name = strdup("HID Device");
 
-	modname = modalias_resolve_module(modalias);
+	modname = modalias_resolve_module(ctx, modalias);
 	free(modalias);
 	DEBUG("%s: module name is [%s]\n", HID_BUS_NAME, modname);
 	if (modname != NULL) 
 		add_entry(entries, device_name, modname);
-	modalias_cleanup();
 }
 
 
@@ -127,6 +127,8 @@ dmi_hid_entries_t hid_probe(void)
 {
 	DIR *dir;
 	dmi_hid_entries_t entry_list;
+	struct kmod_ctx *ctx = modalias_init();
+
 	memset(&entry_list, 0, sizeof(entry_list));
 
 	dir = opendir(sysfs_hid_path);
@@ -137,10 +139,11 @@ dmi_hid_entries_t hid_probe(void)
 		if (dent->d_name[0] == '.')
 			continue;
 		DEBUG("%s: device found %s\n", HID_BUS_NAME, dent->d_name);
-		parse_device(&entry_list, dent->d_name);
+		parse_device(ctx, &entry_list, dent->d_name);
 	}
 
 end_probe:
+	modalias_cleanup(ctx);
 	if (dir)
 		closedir(dir);
 
