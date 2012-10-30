@@ -53,7 +53,7 @@ static void set_default_alias_file(void) {
 	}
 }
 
-struct kmod_ctx* modalias_init() {
+struct kmod_ctx* modalias_init(void) {
         struct kmod_ctx *ctx;
 
 	if (!aliasdefault)
