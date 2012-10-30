@@ -9,7 +9,7 @@
 #include "common.h"
 #include "names.h"
 
-static const char *proc_usb_path_default = "/sys/kernel/debug/usb/devices";
+static const char proc_usb_path_default[] = "/sys/kernel/debug/usb/devices";
 const char *proc_usb_path = NULL;
 
 static void build_text(struct pciusb_entry *e, char *vendor_text, char *product_text) {
