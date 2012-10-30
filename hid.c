@@ -126,10 +126,8 @@ static void parse_device(struct kmod_ctx *ctx, dmi_hid_entries_t *entries, const
 dmi_hid_entries_t hid_probe(void)
 {
 	DIR *dir;
-	dmi_hid_entries_t entry_list;
+	dmi_hid_entries_t entry_list = { nb : 0, entries : NULL };
 	struct kmod_ctx *ctx = modalias_init();
-
-	memset(&entry_list, 0, sizeof(entry_list));
 
 	dir = opendir(sysfs_hid_path);
 	if (dir == NULL)
