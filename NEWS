@@ -8,7 +8,7 @@ Version 0.13.0 - 18 August 2012, by Per Øyvind Karlsen
     has been merged into struct dmi_hid_entries
   o dmi_entries_free() & hid_entries_free()
     has been merged into free_entries()
-- link with -flto & -Wl,-O2
+- link with -flto & -Wl,-O1
 
 Version 0.12.4 - 18 June 2012, by Per Øyvind Karlsen
 
