@@ -7,32 +7,14 @@
 
 #define EXPORTED __attribute__((externally_visible))
 
-struct entry {
-	union {
-		char *module;
-		char *name;
-	};
-	union {
-		char *constraints;
-		char *text;
-		char *val;
-	};
-};
-
-struct entries {
-	unsigned int nb;
-	union {
-		struct entry *entries;
-		struct entry *criteria;
-	};
-};
-
-void free_entries(struct entries entries) EXPORTED;
-
 /******************************************************************************/
 /* pciusb *********************************************************************/
 /******************************************************************************/
 struct pciusb_entry {
+  char *module;
+  char *text;
+  char *class;
+
   uint16_t vendor; /* PCI vendor id */
   uint16_t device; /* PCI device id */
 
@@ -49,10 +31,6 @@ struct pciusb_entry {
   unsigned short usb_port; /* USB port */
   bool is_pciexpress:1; /* is it PCI express */
   bool already_found:1;
-
-  char *module;
-  char *text;
-  char* class;
 };
 struct pciusb_entries {
   unsigned int nb;
@@ -89,10 +67,33 @@ extern const char *proc_usb_path EXPORTED;
 /* dmi & hid ******************************************************************/
 /******************************************************************************/
 
+struct entry {
+	union {
+		char *module;
+		char *name;
+	};
+	union {
+		char *constraints;
+		char *text;
+		char *val;
+	};
+};
 typedef struct entry dmi_hid_entry_t;
 typedef struct entry criterion_t;
+
+struct entries {
+	unsigned int nb;
+	union {
+		struct entry *entries;
+		struct entry *criteria;
+	};
+};
+
 typedef struct entries dmi_hid_entries_t;
 typedef struct entries criteria_t;
+
+
+void free_entries(struct entries entries) EXPORTED;
 
 /******************************************************************************/
 /* dmi ************************************************************************/
