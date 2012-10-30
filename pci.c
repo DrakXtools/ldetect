@@ -38,7 +38,7 @@ static void __attribute__((noreturn)) error_and_die(char *msg, ...)
 }
 
 static struct pci_access *pacc;
-char* get_pci_description(int vendor_id, int device_id) {
+char* get_pci_description(uint16_t vendor_id, uint16_t device_id) {
         char vendorbuf[128], devbuf[128];
         char *buf = (char*)malloc(256);
 
