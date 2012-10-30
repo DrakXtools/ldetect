@@ -183,12 +183,11 @@ void pciusb_initialize(struct pciusb_entry *e) {
 	e->is_pciexpress = 0;
 }
 
-void pciusb_free(struct pciusb_entries *entries) {
-	for (unsigned int i = 0; i < entries->nb; i++) {
-		struct pciusb_entry *e = &entries->entries[i];
-		ifree(e->module);
-		ifree(e->text);
-		ifree(e->class);
+void pciusb_free(struct pciusb_entries entries) {
+	for (unsigned int i = 0; i < entries.nb; i++) {
+		ifree(entries.entries[i].module);
+		ifree(entries.entries[i].text);
+		ifree(entries.entries[i].class);
 	}
-	if (entries->nb) ifree(entries->entries);
+	free(entries.entries);
 }

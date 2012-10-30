@@ -29,7 +29,7 @@ static void printit(struct pciusb_entries entries, void print_class(unsigned lon
                      printf(" (rev: %02x)", e->pci_revision);
 		printf("\n");
 	}
-	pciusb_free(&entries);
+	pciusb_free(entries);
 }
 
 static void print_pci_class(unsigned long class_id) {

@@ -33,11 +33,11 @@ struct pciusb_entry {
   char* class;
 };
 struct pciusb_entries {
-  struct pciusb_entry *entries;
   unsigned int nb;
+  struct pciusb_entry *entries;
 };
 
-void pciusb_free(struct pciusb_entries *entries) EXPORTED;
+void pciusb_free(struct pciusb_entries entries) EXPORTED;
 
 
 /******************************************************************************/
