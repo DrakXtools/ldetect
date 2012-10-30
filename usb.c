@@ -16,8 +16,7 @@ const char *proc_usb_path = NULL;
 static void build_text(struct pciusb_entry *e, char *vendor_text, char *product_text) {
 	if(e) {
 		if(!vendor_text) {
-			const char *vendorname;
-			vendorname = names_vendor(e->vendor);
+			const char *vendorname = names_vendor(e->vendor);
 			if(vendorname) {
 				vendor_text = malloc(strlen(vendorname)+2);
 				sprintf(vendor_text, "%s|", vendorname);
@@ -25,12 +24,9 @@ static void build_text(struct pciusb_entry *e, char *vendor_text, char *product_
 				vendor_text = strdup("Unknown|");
 		}
 		if(!product_text) {
-			const char *productname;
-			productname = names_product(e->vendor, e->device);
-			if(productname) {
-				product_text = strdup(productname);
-			} else 
-				product_text = strdup("Unknown");
+			const char *productname = names_product(e->vendor, e->device);
+			if(productname)
+				product_text = productname ? strdup(productname) : strdup("Unknown");
 		}
 		vendor_text = realloc(vendor_text, strlen(vendor_text)+strlen(product_text)+1);
 		e->text = vendor_text;
@@ -67,26 +63,19 @@ struct pciusb_entries usb_probe(void) {
 
 		switch (buf[0]) {
 		case 'T': {
-			unsigned short pci_bus, pci_device, usb_port;
 			build_text(e, vendor_text, product_text);
 			vendor_text = NULL;
 			product_text = NULL;
 			e = &r.entries[r.nb++];
 			pciusb_initialize(e);
 
-			if (sscanf(buf, "T:  Bus=%02hu Lev=%*02d Prnt=%*04d Port=%02hu Cnt=%*02d Dev#=%3hu Spd=%*3s MxCh=%*2d", &pci_bus, &usb_port, &pci_device) == 3) {
-				e->pci_bus = pci_bus;
-				e->pci_device = pci_device;
-				e->usb_port = usb_port;
-			} else fprintf(stderr, "%s %d: unknown ``T'' line\n", proc_usb_path, line);
+			if (!sscanf(buf, "T:  Bus=%02hhu Lev=%*02d Prnt=%*04d Port=%02hu Cnt=%*02d Dev#=%3hhu Spd=%*3s MxCh=%*2d", &e->pci_bus, &e->usb_port, &e->pci_device) == 3)
+				fprintf(stderr, "%s %d: unknown ``T'' line\n", proc_usb_path, line);
 			break;
 		}
 		case 'P': {
-			unsigned short vendor, device;
-			if (sscanf(buf, "P:  Vendor=%hx ProdID=%hx", &vendor, &device) == 2) {
-				e->vendor = vendor;
-				e->device = device;
-			} else fprintf(stderr, "%s %d: unknown ``P'' line\n", proc_usb_path, line);
+			if (!sscanf(buf, "P:  Vendor=%hx ProdID=%hx", &e->vendor, &e->device) == 2)
+				fprintf(stderr, "%s %d: unknown ``P'' line\n", proc_usb_path, line);
 			break;
 		}
 		case 'I': if (e->class_id == 0 || e->module == NULL) {
@@ -97,12 +86,11 @@ struct pciusb_entries usb_probe(void) {
 				if (e->class_id == 0)
 					e->class_id = cid;
 				if (strncmp(driver, "(none)", 6)) {
-					char *p;
+					char *p = strdup(driver);
 					/* Get current class if we are on the first one having used by a driver */
 					e->class_id = cid;
-					e->module = strdup(driver);
+					e->module = p;
 					/* replace '-' characters with '_' to be compliant with modnames from modaliases */
-					p = e->module;
 					while (p && *p) {
 						if (*p == '-') *p = '_';
 						p++;
@@ -120,7 +108,7 @@ struct pciusb_entries usb_probe(void) {
 		case 'S': {
 			int offset;
 			char dummy;
-			size_t length = strlen(buf) -1;
+			size_t length = strlen(buf) - 1;
 			if (sscanf(buf, "S:  Manufacturer=%n%c", &offset, &dummy) == 1) {
 				buf[length] = '|'; /* replacing '\n' by '|' */
 				vendor_text = strdup(buf + offset);
