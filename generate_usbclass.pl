@@ -52,7 +52,7 @@ dump_it(\@l, "classes", '');
 
 print '
 
-static int nb_classes = sizeof(classes) / sizeof(*classes);
+static const int nb_classes = sizeof(classes) / sizeof(*classes);
 
 static void lookup(const char **p, int *a_class, int kind, int nb_nodes, struct node *nodes) {
   int i;
