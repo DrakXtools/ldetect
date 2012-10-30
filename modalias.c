@@ -109,7 +109,7 @@ char *modalias_resolve_module(struct kmod_ctx *ctx, const char *modalias) {
 		//if (str) // keep last one
 		//	free(str);
 		if (!str) // keep first one
-		str = strdup(kmod_module_get_name(mod));
+			str = strdup(kmod_module_get_name(mod));
 		kmod_module_unref(mod);
 		if (err < 0)
 			break;
