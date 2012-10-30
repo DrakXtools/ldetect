@@ -3,6 +3,7 @@
 #define LIBLDETECT
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define EXPORTED __attribute__((externally_visible))
 
@@ -24,8 +25,8 @@ struct pciusb_entry {
   uint8_t pci_revision; /* PCI revision 8 bits wide */
 
   unsigned short usb_port; /* USB port */
-  uint8_t is_pciexpress:1; /* is it PCI express */
-  uint8_t already_found:1;
+  bool is_pciexpress:1; /* is it PCI express */
+  bool already_found:1;
 
   char *module;
   char *text;
