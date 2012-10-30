@@ -13,11 +13,11 @@ WHOLE_PROGRAM = 1
 
 ldetect_srcdir ?= .
 
-$(ldetect_srcdir)/pciclass.c: /usr/include/pci/pci.h /usr/include/pci/header.h
+$(ldetect_srcdir)/pciclass.c: $(ldetect_srcdir)/generate_pciclass.pl /usr/include/pci/pci.h /usr/include/pci/header.h
 	rm -f $@
 	perl $(ldetect_srcdir)/generate_pciclass.pl $^ > $@
 
-$(ldetect_srcdir)/usbclass.c: /usr/share/usb.ids
+$(ldetect_srcdir)/usbclass.c: $(ldetect_srcdir)/generate_usbclass.pl /usr/share/usb.ids 
 	rm -f $@
 	perl $(ldetect_srcdir)/generate_usbclass.pl $^ > $@
 
