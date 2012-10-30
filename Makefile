@@ -13,14 +13,6 @@ WHOLE_PROGRAM = 1
 
 ldetect_srcdir ?= .
 
-$(ldetect_srcdir)/pciclass.c: $(ldetect_srcdir)/generate_pciclass.pl /usr/include/pci/pci.h /usr/include/pci/header.h
-	rm -f $@
-	perl $(ldetect_srcdir)/generate_pciclass.pl $^ > $@
-
-$(ldetect_srcdir)/usbclass.c: $(ldetect_srcdir)/generate_usbclass.pl /usr/share/usb.ids 
-	rm -f $@
-	perl $(ldetect_srcdir)/generate_usbclass.pl $^ > $@
-
 ifndef MDK_STAGE_ONE
 NAME = ldetect
 LIB_MAJOR = 0.13
@@ -109,3 +101,12 @@ log:
 run: lspcidrake
 	LD_LIBRARY_PATH=$(PWD)  ./lspcidrake
 endif
+
+$(ldetect_srcdir)/pciclass.c: $(ldetect_srcdir)/generate_pciclass.pl /usr/include/pci/pci.h /usr/include/pci/header.h
+	rm -f $@
+	perl $(ldetect_srcdir)/generate_pciclass.pl $^ > $@
+
+$(ldetect_srcdir)/usbclass.c: $(ldetect_srcdir)/generate_usbclass.pl /usr/share/usb.ids 
+	rm -f $@
+	perl $(ldetect_srcdir)/generate_usbclass.pl $^ > $@
+
