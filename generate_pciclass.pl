@@ -15,7 +15,7 @@ static struct {
 print '
 };
 
-static int nb_classes = sizeof(classes) / sizeof(*classes);
+static const int nb_classes = sizeof(classes) / sizeof(*classes);
 
 #pragma GCC visibility push(default) 
 const char *pci_class2text(unsigned long class_id) {
