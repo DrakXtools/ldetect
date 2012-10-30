@@ -45,7 +45,7 @@ void pciusb_free(struct pciusb_entries *entries) EXPORTED;
 /******************************************************************************/
 struct pciusb_entries pci_probe(void) EXPORTED;
 const char *pci_class2text(unsigned long class_id) EXPORTED;
-extern char *proc_pci_path EXPORTED;
+extern const char *proc_pci_path EXPORTED;
 char *get_pci_description(int vendor_id, int device_id) EXPORTED;
 
 /******************************************************************************/
