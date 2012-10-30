@@ -92,7 +92,7 @@ struct pciusb_entries pci_probe(void) {
                    pci_lookup_name(pacc, devbuf,    sizeof(devbuf),    PCI_LOOKUP_DEVICE, dev->vendor_id, dev->device_id)
                );
           pci_lookup_name(pacc, classbuf, sizeof(classbuf), PCI_LOOKUP_CLASS, dev->device_class),
-          e->class=strdup(classbuf);    
+          e->class_type =strdup(classbuf);    
 
 		e->vendor =     dev->vendor_id;
 		e->device =     dev->device_id;

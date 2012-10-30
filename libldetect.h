@@ -7,13 +7,17 @@
 
 #define EXPORTED __attribute__((externally_visible))
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /******************************************************************************/
 /* pciusb *********************************************************************/
 /******************************************************************************/
 struct pciusb_entry {
   char *module;
   char *text;
-  char *class;
+  char *class_type;
 
   uint16_t vendor; /* PCI vendor id */
   uint16_t device; /* PCI device id */
@@ -81,7 +85,7 @@ struct entry {
 typedef struct entry dmi_hid_entry_t;
 typedef struct entry criterion_t;
 
-struct entries {
+struct entries_s {
 	unsigned int nb;
 	union {
 		struct entry *entries;
@@ -89,25 +93,29 @@ struct entries {
 	};
 };
 
-typedef struct entries dmi_hid_entries_t;
-typedef struct entries criteria_t;
+typedef struct entries_s dmi_hid_entries_t;
+typedef struct entries_s criteria_t;
 
 
-void free_entries(struct entries entries) EXPORTED;
+void free_entries(struct entries_s entries) EXPORTED;
 
 /******************************************************************************/
 /* dmi ************************************************************************/
 /******************************************************************************/
 
-struct entries dmi_probe(void) EXPORTED;
+struct entries_s dmi_probe(void) EXPORTED;
 extern const char *dmidecode_file EXPORTED;
 
 /******************************************************************************/
 /* hid ************************************************************************/
 /******************************************************************************/
 
-struct entries hid_probe(void) EXPORTED;
+struct entries_s hid_probe(void) EXPORTED;
 extern const char *sysfs_hid_path EXPORTED;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 #pragma GCC visibility pop

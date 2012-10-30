@@ -178,7 +178,7 @@ void pciusb_initialize(struct pciusb_entry *e) {
 	e->usb_port = 0xffff;
 	e->module = NULL;
 	e->text   = NULL;
-	e->class  = NULL;
+	e->class_type  = NULL;
 	e->already_found = 0;
 	e->is_pciexpress = 0;
 }
@@ -187,7 +187,7 @@ void pciusb_free(struct pciusb_entries entries) {
 	for (unsigned int i = 0; i < entries.nb; i++) {
 		ifree(entries.entries[i].module);
 		ifree(entries.entries[i].text);
-		ifree(entries.entries[i].class);
+		ifree(entries.entries[i].class_type);
 	}
 	free(entries.entries);
 }
