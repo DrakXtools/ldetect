@@ -7,6 +7,28 @@
 
 #define EXPORTED __attribute__((externally_visible))
 
+struct entry {
+	union {
+		char *module;
+		char *name;
+	};
+	union {
+		char *constraints;
+		char *text;
+		char *val;
+	};
+};
+
+struct entries {
+	unsigned int nb;
+	union {
+		struct entry *entries;
+		struct entry *criteria;
+	};
+};
+
+void free_entries(struct entries entries) EXPORTED;
+
 /******************************************************************************/
 /* pciusb *********************************************************************/
 /******************************************************************************/
@@ -67,33 +89,10 @@ extern const char *proc_usb_path EXPORTED;
 /* dmi & hid ******************************************************************/
 /******************************************************************************/
 
-struct entry {
-	union {
-		char *module;
-		char *name;
-	};
-	union {
-		char *constraints;
-		char *text;
-		char *val;
-	};
-};
 typedef struct entry dmi_hid_entry_t;
 typedef struct entry criterion_t;
-
-struct entries {
-	unsigned int nb;
-	union {
-		struct entry *entries;
-		struct entry *criteria;
-	};
-};
-
 typedef struct entries dmi_hid_entries_t;
 typedef struct entries criteria_t;
-
-
-void free_entries(struct entries entries) EXPORTED;
 
 /******************************************************************************/
 /* dmi ************************************************************************/
