@@ -1,6 +1,6 @@
 Version 0.13.0 - 18 August 2012, by Per Øyvind Karlsen
 
-- switch to C99 with GNU extensions
+- switch to C11 with GNU extensions
 - refactorize api
   o struct dmi_entry & struct hid_entry
     has been merged into struct dmi_hid_entry

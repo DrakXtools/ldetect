@@ -2,7 +2,7 @@ lib_src = common.c modalias.c pciusb.c pci.c usb.c pciclass.c usbclass.c dmi.c d
 lib_objs = $(subst .c,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
-CFLAGS += -std=gnu99 -Wall -W -Wstrict-prototypes -Os -fPIC -fvisibility=hidden -g
+CFLAGS += -std=gnu11 -Wall -W -Wstrict-prototypes -Os -fPIC -fvisibility=hidden -g
 CPPFLAGS += $(shell getconf LFS_CFLAGS) $(shell pkg-config --cflags libkmod libpci)
 LIBS += $(shell pkg-config --libs libkmod libpci) -lsysfs
 ifneq ($(ZLIB),0)
