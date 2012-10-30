@@ -61,7 +61,7 @@ struct usb_class_text {
 
 struct usb_class_text usb_class2text(unsigned long class_id) EXPORTED;
 
-extern char *proc_usb_path EXPORTED;
+extern const char *proc_usb_path EXPORTED;
 
 /******************************************************************************/
 /* dmi & hid ******************************************************************/
@@ -100,7 +100,7 @@ void free_entries(struct entries entries) EXPORTED;
 /******************************************************************************/
 
 struct entries dmi_probe(void) EXPORTED;
-extern char *dmidecode_file EXPORTED;
+extern const char *dmidecode_file EXPORTED;
 
 /******************************************************************************/
 /* hid ************************************************************************/

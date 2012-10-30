@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include "common.h"
 
-char *dmidecode_file = NULL;
+const char *dmidecode_file = NULL;
 
 
 static const char *cat_BIOS[] = { "Vendor", "Version" };
