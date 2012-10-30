@@ -38,13 +38,13 @@ build: $(binaries) $(libraries)
 
 ifneq (0, $(WHOLE_PROGRAM))
 lspcidrake.static: lspcidrake.c $(lib_src)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -flto -Wl,-O1 -o $@ $^ $(LIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common -flto -Wl,-O1 -o $@ $^ $(LIBS)
 
 lspcidrake: lspcidrake.c libldetect.so
-	$(CC) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -flto -Wl,-z,relro -Wl,-O1 -o $@ $^
+	$(CC) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common -flto -Wl,-z,relro -Wl,-O1 -o $@ $^
 
 $(lib_major).$(LIB_MINOR): $(lib_src)
-	$(CC) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -flto -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common -flto -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
 else
 lspcidrake.static: lspcidrake.c libldetect.a
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
