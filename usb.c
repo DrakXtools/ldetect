@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 #include "libldetect.h"
 #include "common.h"
 #include "names.h"
@@ -51,12 +52,9 @@ struct pciusb_entries usb_probe(void) {
 	names_init("/usr/share/usb.ids");
 	if (!(f = fopen(proc_usb_path ? proc_usb_path : proc_usb_path_default, "r"))) {
 		if (proc_usb_path) {
-		        char *err_msg;
-			asprintf(&err_msg, "unable to open \"%s\"\n"
-				    "You may have passed a wrong argument to the \"-u\" option.\n"
-				    "fopen() sets errno to", proc_usb_path);
-			perror(err_msg);
-			free(err_msg);
+			fprintf(stderr, "unable to open \"%s\"\n: %s"
+				    "You may have passed a wrong argument to the \"-u\" option.\n",
+				    strerror(errno), proc_usb_path);
 		}
 		r.entries = NULL;
 		goto exit;
