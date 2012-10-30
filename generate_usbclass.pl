@@ -55,8 +55,7 @@ print '
 static const int nb_classes = sizeof(classes) / sizeof(*classes);
 
 static void lookup(const char **p, int *a_class, int kind, int nb_nodes, struct node *nodes) {
-  int i;
-  for (i = 0; i < nb_nodes; i++)
+  for (int i = 0; i < nb_nodes; i++)
     if (nodes[i].id == a_class[kind]) {
       p[kind] = nodes[i].name;
       return lookup(p, a_class, kind + 1, nodes[i].nb_subnodes, nodes[i].subnodes);
