@@ -1,5 +1,6 @@
 Version 0.13.0 - 18 August 2012, by Per Øyvind Karlsen
 
+- fix retrieving info about USB devices with kernel-3.5+ (mga#7248)
 - switch to C11 with GNU extensions
 - refactorize api
   o struct dmi_entry & struct hid_entry
