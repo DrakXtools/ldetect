@@ -283,7 +283,7 @@ static int new_vendor(const char *name, uint16_t vendorid)
 	for (v = vendors[h]; v; v = v->next)
 		if (v->vendorid == vendorid)
 			return -1;
-	v = malloc(sizeof(struct vendor) + strlen(name));
+	v = (struct vendor*)malloc(sizeof(struct vendor) + strlen(name));
 	if (!v)
 		return -1;
 	strcpy(v->name, name);
@@ -301,7 +301,7 @@ static int new_product(const char *name, uint16_t vendorid, uint16_t productid)
 	for (p = products[h]; p; p = p->next)
 		if (p->vendorid == vendorid && p->productid == productid)
 			return -1;
-	p = malloc(sizeof(struct product) + strlen(name));
+	p = (struct product*)malloc(sizeof(struct product) + strlen(name));
 	if (!p)
 		return -1;
 	strcpy(p->name, name);
@@ -320,7 +320,7 @@ static int new_class_type(const char *name, uint8_t classid)
 	for (c = class_types[h]; c; c = c->next)
 		if (c->classid == classid)
 			return -1;
-	c = malloc(sizeof(struct class_type) + strlen(name));
+	c = (struct class_type*)malloc(sizeof(struct class_type) + strlen(name));
 	if (!c)
 		return -1;
 	strcpy(c->name, name);
@@ -338,7 +338,7 @@ static int new_subclass_type(const char *name, uint8_t classid, uint8_t subclass
 	for (s = subclass_types[h]; s; s = s->next)
 		if (s->classid == classid && s->subclassid == subclassid)
 			return -1;
-	s = malloc(sizeof(struct subclass_type) + strlen(name));
+	s = (struct subclass_type*)malloc(sizeof(struct subclass_type) + strlen(name));
 	if (!s)
 		return -1;
 	strcpy(s->name, name);
@@ -357,7 +357,7 @@ static int new_protocol(const char *name, uint8_t classid, uint8_t subclassid, u
 	for (p = protocols[h]; p; p = p->next)
 		if (p->classid == classid && p->subclassid == subclassid && p->protocolid == protocolid)
 			return -1;
-	p = malloc(sizeof(struct protocol) + strlen(name));
+	p = (struct protocol*)malloc(sizeof(struct protocol) + strlen(name));
 	if (!p)
 		return -1;
 	strcpy(p->name, name);
@@ -376,7 +376,7 @@ static int new_audioterminal(const char *name, uint16_t termt)
 	for (at = audioterminals[h]; at; at = at->next)
 		if (at->termt == termt)
 			return -1;
-	at = malloc(sizeof(struct audioterminal) + strlen(name));
+	at = (struct audioterminal*)malloc(sizeof(struct audioterminal) + strlen(name));
 	if (!at)
 		return -1;
 	strcpy(at->name, name);
@@ -394,7 +394,7 @@ static int new_videoterminal(const char *name, uint16_t termt)
 	for (vt = videoterminals[h]; vt; vt = vt->next)
 		if (vt->termt == termt)
 			return -1;
-	vt = malloc(sizeof(struct videoterminal) + strlen(name));
+	vt = (struct videoterminal*)malloc(sizeof(struct videoterminal) + strlen(name));
 	if (!vt)
 		return -1;
 	strcpy(vt->name, name);
@@ -413,7 +413,7 @@ static int new_genericstrtable(struct genericstrtable *t[HASHSZ],
 	for (g = t[h]; g; g = g->next)
 		if (g->num == idx)
 			return -1;
-	g = malloc(sizeof(struct genericstrtable) + strlen(name));
+	g = (struct genericstrtable*)malloc(sizeof(struct genericstrtable) + strlen(name));
 	if (!g)
 		return -1;
 	strcpy(g->name, name);
@@ -934,7 +934,7 @@ static void parse(usb_file f)
 
 /* ---------------------------------------------------------------------- */
 
-int names_init(char *n)
+int names_init(const char *n)
 {
 	usb_file f;
 

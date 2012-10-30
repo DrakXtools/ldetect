@@ -18,7 +18,7 @@ static void build_text(struct pciusb_entry *e, char *vendor_text, char *product_
 		if(!vendor_text) {
 			const char *vendorname = names_vendor(e->vendor);
 			if(vendorname) {
-				vendor_text = malloc(strlen(vendorname)+2);
+				vendor_text = (char*)malloc(strlen(vendorname)+2);
 				sprintf(vendor_text, "%s|", vendorname);
 			} else 
 				vendor_text = strdup("Unknown|");
@@ -28,7 +28,7 @@ static void build_text(struct pciusb_entry *e, char *vendor_text, char *product_
 			if(productname)
 				product_text = productname ? strdup(productname) : strdup("Unknown");
 		}
-		vendor_text = realloc(vendor_text, strlen(vendor_text)+strlen(product_text)+1);
+		vendor_text = (char*)realloc(vendor_text, strlen(vendor_text)+strlen(product_text)+1);
 		e->text = vendor_text;
 		strcat(e->text, product_text);
 		free(product_text);
@@ -56,7 +56,7 @@ struct pciusb_entries usb_probe(void) {
 		goto exit;
 	}
 
-	r.entries = malloc(sizeof(struct pciusb_entry) * MAX_DEVICES);
+	r.entries = (struct pciusb_entry*)malloc(sizeof(struct pciusb_entry) * MAX_DEVICES);
 	/* for further information on the format parsed by this state machine,
 	 * read /usr/share/doc/kernel-doc-X.Y.Z/usb/proc_usb_info.txt */  
 	for(line = 1; fgets(buf, sizeof(buf) - 1, f) && r.nb < MAX_DEVICES; line++) {
@@ -125,7 +125,7 @@ struct pciusb_entries usb_probe(void) {
 	fclose(f);
 
 	/* shrink to real size */
-	r.entries = realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
+	r.entries = (struct pciusb_entry*)realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
 
 	pciusb_find_modules(&r, "usbtable", DO_NOT_LOAD, 0);
 

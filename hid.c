@@ -15,7 +15,7 @@
 
 
 #define HID_BUS_NAME "hid"
-const char *sysfs_hid_path = "/sys/bus/"HID_BUS_NAME"/devices";
+const char *sysfs_hid_path = "/sys/bus/hid/devices";
 #if 0
 #define DEBUG(args...) printf(args)
 #else 
@@ -46,8 +46,8 @@ static const char *resolve_modalias(const struct module_alias *aliasdb,
 
 static char *get_field_value(const char *fields, const char *field_name)
 {
-	char *modalias;
-	char *end;
+	const char *modalias;
+	const char *end;
 
 	modalias = strstr(fields, field_name);
 	if (modalias == NULL)
@@ -74,7 +74,7 @@ static void add_entry(dmi_hid_entries_t *entry_list, char *name, char *module)
     
 	dmi_hid_entry_t *new_entries;
 
-	new_entries = realloc(entry_list->entries, (entry_list->nb+1)*sizeof(*(entry_list->entries)));
+	new_entries = (dmi_hid_entry_t*)realloc(entry_list->entries, (entry_list->nb+1)*sizeof(*(entry_list->entries)));
 	if (new_entries != NULL) {
 		new_entries[entry_list->nb].module = module;
 		new_entries[entry_list->nb].text = name;
@@ -126,7 +126,7 @@ static void parse_device(struct kmod_ctx *ctx, dmi_hid_entries_t *entries, const
 dmi_hid_entries_t hid_probe(void)
 {
 	DIR *dir;
-	dmi_hid_entries_t entry_list = { .nb = 0, .entries = NULL };
+	dmi_hid_entries_t entry_list = { 0, {NULL} };
 	struct kmod_ctx *ctx = modalias_init();
 
 	dir = opendir(sysfs_hid_path);

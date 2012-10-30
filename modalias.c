@@ -86,7 +86,7 @@ struct kmod_ctx* modalias_init(void) {
 }
 
 char *modalias_resolve_module(struct kmod_ctx *ctx, const char *modalias) {
-	struct kmod_list *l, *list = NULL;
+	struct kmod_list *l = NULL, *list = NULL, *filtered = NULL;
 	char *str = NULL;
 	int err = kmod_module_new_from_lookup(ctx, modalias, &list);
 	if (err < 0)
@@ -97,7 +97,6 @@ char *modalias_resolve_module(struct kmod_ctx *ctx, const char *modalias) {
 		goto exit;
 
 	// filter through blacklist
-	struct kmod_list *filtered = NULL;
 	err =  kmod_module_apply_filter(ctx, KMOD_FILTER_BLACKLIST, list, &filtered);
 	kmod_module_unref_list(list);
 	if (err <0)

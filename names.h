@@ -48,7 +48,7 @@ const char *names_countrycode(unsigned int countrycode);
 int get_vendor_string(char *buf, size_t size, uint16_t vid);
 int get_product_string(char *buf, size_t size, uint16_t vid, uint16_t pid);
 
-int names_init(char *n);
+int names_init(const char *n);
 void names_exit(void);
 
 /* ---------------------------------------------------------------------- */

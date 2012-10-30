@@ -7,10 +7,6 @@
 
 #define EXPORTED __attribute__((externally_visible))
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /******************************************************************************/
 /* pciusb *********************************************************************/
 /******************************************************************************/
@@ -112,10 +108,6 @@ extern const char *dmidecode_file EXPORTED;
 
 struct entries_s hid_probe(void) EXPORTED;
 extern const char *sysfs_hid_path EXPORTED;
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 #pragma GCC visibility pop

@@ -28,8 +28,9 @@ void modalias_cleanup(struct kmod_ctx *ctx) NON_EXPORTED;
 #define MAX_DEVICES 100
 #define BUF_SIZE 512
 
+typedef enum { ZLIB, GZIP } gztype_t;
 typedef struct {
-	enum { ZLIB, GZIP } gztype;
+	gztype_t gztype;
 	union {
 		struct {
 			FILE *f;

@@ -97,14 +97,14 @@ static criteria_t criteria_from_dmidecode(void) {
 	FILE *f;
 	char buf[BUF_SIZE];
 
-	criteria_t r = { .nb = 0, .criteria = NULL };
+	criteria_t r = { 0, {NULL} };
 
 	if (!(f = dmidecode_file ? fopen(dmidecode_file, "r") : popen("dmidecode", "r"))) {
 		perror("dmidecode");
 		return r;
 	}
 
-	r.criteria = malloc(sizeof(*r.criteria) * MAX_DEVICES);
+	r.criteria = (criterion_t*)malloc(sizeof(*r.criteria) * MAX_DEVICES);
 
 	const struct category *category = NULL;
 
@@ -142,7 +142,7 @@ static criteria_t criteria_from_dmidecode(void) {
 		r.nb = 0;
 		return r;
 	}
-	r.criteria = realloc(r.criteria, sizeof(*r.criteria) * r.nb);
+	r.criteria = (criterion_t*)realloc(r.criteria, sizeof(*r.criteria) * r.nb);
 
 	return r;
 }
@@ -163,7 +163,7 @@ static dmi_hid_entries_t entries_matching_criteria(criteria_t criteria) {
 
 #define die(err) do { fprintf(stderr, "%s %d: " err "\n", "dmitable", line); exit(1); } while (0)
 
-	r.entries = malloc(sizeof(*r.entries) * MAX_DEVICES);
+	r.entries = (dmi_hid_entry_t*)malloc(sizeof(*r.entries) * MAX_DEVICES);
 
 #define foreach_indent(min, action) do { for (int i = min; i < MAX_INDENT; i++) { action; } } while (0)
 	
@@ -238,7 +238,7 @@ static dmi_hid_entries_t entries_matching_criteria(criteria_t criteria) {
 	foreach_indent(0, ifree(constraints[i]));
 	fh_close(&f);
 
-	r.entries = realloc(r.entries, sizeof(*r.entries) * r.nb);
+	r.entries = (dmi_hid_entry_t*) realloc(r.entries, sizeof(*r.entries) * r.nb);
 	return r;
 }
 

@@ -11,7 +11,7 @@
 
 char *table_name_to_file(const char *name) {
 
-	char *share_path = getenv("SHARE_PATH");
+	const char *share_path = getenv("SHARE_PATH");
 	char *fname;
 	if (!share_path || !*share_path) share_path = "/usr/share";
 

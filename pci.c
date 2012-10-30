@@ -5,7 +5,13 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <pci/pci.h>
+#ifdef __cplusplus
+}
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -34,7 +40,7 @@ static void __attribute__((noreturn)) error_and_die(char *msg, ...)
 static struct pci_access *pacc;
 char* get_pci_description(int vendor_id, int device_id) {
         char vendorbuf[128], devbuf[128];
-        char *buf = malloc(256);
+        char *buf = (char*)malloc(256);
 
         if (!pacc) {
            pacc = pci_alloc();
@@ -75,7 +81,7 @@ struct pciusb_entries pci_probe(void) {
 	pci_scan_bus(pacc);
 
 	r.nb = 0;
-	r.entries = malloc(sizeof(struct pciusb_entry) * MAX_DEVICES);
+	r.entries = (struct pciusb_entry*)malloc(sizeof(struct pciusb_entry) * MAX_DEVICES);
 
 	for (struct pci_dev *dev = pacc->devices; dev && r.nb < MAX_DEVICES; dev = dev->next, r.nb++) {
 
@@ -126,7 +132,7 @@ struct pciusb_entries pci_probe(void) {
 	}
 
 	/* shrink to real size */
-	r.entries = realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
+	r.entries = (struct pciusb_entry*)realloc(r.entries,  sizeof(struct pciusb_entry) * r.nb);
 
 	pci_cleanup(pacc);
 

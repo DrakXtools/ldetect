@@ -6,9 +6,9 @@ print q(/* This is auto-generated from </usr/share/usb.ids>, don't modify! */
 #include "libldetect.h"
 
 struct node {
-  int id;
+  uint64_t id;
   const char *name;
-  int nb_subnodes;
+  uint64_t nb_subnodes;
   struct node *subnodes;
 };
 
@@ -52,10 +52,10 @@ dump_it(\@l, "classes", '');
 
 print '
 
-static const int nb_classes = sizeof(classes) / sizeof(*classes);
+static const uint64_t nb_classes = sizeof(classes) / sizeof(*classes);
 
-static void lookup(const char **p, int *a_class, int kind, int nb_nodes, struct node *nodes) {
-  for (int i = 0; i < nb_nodes; i++)
+static void lookup(const char **p, uint64_t *a_class, int kind, uint64_t nb_nodes, struct node *nodes) {
+  for (uint64_t i = 0; i < nb_nodes; i++)
     if (nodes[i].id == a_class[kind]) {
       p[kind] = nodes[i].name;
       lookup(p, a_class, kind + 1, nodes[i].nb_subnodes, nodes[i].subnodes);
@@ -63,12 +63,16 @@ static void lookup(const char **p, int *a_class, int kind, int nb_nodes, struct 
     }
 }
 
-struct usb_class_text usb_class2text(unsigned long class_id) {
+struct usb_class_text usb_class2text(uint64_t class_id) {
   const char *p[3] = { NULL, NULL, NULL };
-  int a_class[3] = { (class_id >> 16) & 0xff, (class_id >> 8) & 0xff, class_id & 0xff };
+  uint64_t a_class[3] = { (class_id >> 16) & 0xff, (class_id >> 8) & 0xff, class_id & 0xff };
   if (a_class[0] != 0xff) lookup(p, a_class, 0, nb_classes, classes);
   {
+#ifdef __cplusplus
+    return { p[0], p[1], p[2] };
+#else
     return (struct usb_class_text) { p[0], p[1], p[2] };
+#endif
   }
 }
 
