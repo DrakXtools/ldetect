@@ -16,7 +16,7 @@ const char *proc_usb_path = NULL;
 static void build_text(struct pciusb_entry *e, char *vendor_text, char *product_text) {
 	if(e) {
 		if(!vendor_text) {
-			char const* vendorname;
+			const char *vendorname;
 			vendorname = names_vendor(e->vendor);
 			if(vendorname) {
 				vendor_text = malloc(strlen(vendorname)+2);
@@ -25,7 +25,7 @@ static void build_text(struct pciusb_entry *e, char *vendor_text, char *product_
 				vendor_text = strdup("Unknown|");
 		}
 		if(!product_text) {
-			char const* productname;
+			const char *productname;
 			productname = names_product(e->vendor, e->device);
 			if(productname) {
 				product_text = strdup(productname);
