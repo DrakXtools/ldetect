@@ -30,8 +30,8 @@
 
 const char *names_vendor(uint16_t vendorid);
 const char *names_product(uint16_t vendorid, uint16_t productid);
-const char *names_class(uint8_t classid);
-const char *names_subclass(uint8_t classid, uint8_t subclassid);
+const char *names_class_type(uint8_t classid);
+const char *names_subclass_type(uint8_t classid, uint8_t subclassid);
 const char *names_protocol(uint8_t classid, uint8_t subclassid,
 				  uint8_t protocolid);
 const char *names_audioterminal(uint16_t termt);

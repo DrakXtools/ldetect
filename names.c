@@ -64,14 +64,14 @@ struct product {
 	char name[1];
 };
 
-struct class {
-	struct class *next;
+struct class_type {
+	struct class_type *next;
 	uint8_t classid;
 	char name[1];
 };
 
-struct subclass {
-	struct subclass *next;
+struct subclass_type {
+	struct subclass_type *next;
 	uint8_t classid, subclassid;
 	char name[1];
 };
@@ -120,8 +120,8 @@ static unsigned int hashnum(unsigned int num)
 
 static struct vendor *vendors[HASHSZ] = { NULL, };
 static struct product *products[HASHSZ] = { NULL, };
-static struct class *classes[HASHSZ] = { NULL, };
-static struct subclass *subclasses[HASHSZ] = { NULL, };
+static struct class_type *class_types[HASHSZ] = { NULL, };
+static struct subclass_type *subclass_types[HASHSZ] = { NULL, };
 static struct protocol *protocols[HASHSZ] = { NULL, };
 static struct audioterminal *audioterminals[HASHSZ] = { NULL, };
 static struct videoterminal *videoterminals[HASHSZ] = { NULL, };
@@ -202,9 +202,9 @@ const char *names_product(uint16_t vendorid, uint16_t productid)
 	return NULL;
 }
 
-const char *names_class(uint8_t classid)
+const char *names_class_type(uint8_t classid)
 {
-	for (struct class *c = classes[hashnum(classid)];
+	for (struct class_type *c = class_types[hashnum(classid)];
 			c; c = c->next)
 		if (c->classid == classid)
 			return c->name;
@@ -213,7 +213,7 @@ const char *names_class(uint8_t classid)
 
 const char *names_subclass(uint8_t classid, uint8_t subclassid)
 {
-	for (struct subclass *s = subclasses[hashnum((classid << 8) | subclassid)];
+	for (struct subclass_type *s = subclass_types[hashnum((classid << 8) | subclassid)];
 			s; s = s->next)
 		if (s->classid == classid && s->subclassid == subclassid)
 			return s->name;
@@ -312,40 +312,40 @@ static int new_product(const char *name, uint16_t vendorid, uint16_t productid)
 	return 0;
 }
 
-static int new_class(const char *name, uint8_t classid)
+static int new_class_type(const char *name, uint8_t classid)
 {
 	unsigned int h = hashnum(classid);
-	struct class *c;
+	struct class_type *c;
 
-	for (c = classes[h]; c; c = c->next)
+	for (c = class_types[h]; c; c = c->next)
 		if (c->classid == classid)
 			return -1;
-	c = malloc(sizeof(struct class) + strlen(name));
+	c = malloc(sizeof(struct class_type) + strlen(name));
 	if (!c)
 		return -1;
 	strcpy(c->name, name);
 	c->classid = classid;
-	c->next = classes[h];
-	classes[h] = c;
+	c->next = class_types[h];
+	class_types[h] = c;
 	return 0;
 }
 
-static int new_subclass(const char *name, uint8_t classid, uint8_t subclassid)
+static int new_subclass_type(const char *name, uint8_t classid, uint8_t subclassid)
 {
 	unsigned int h = hashnum((classid << 8) | subclassid);
-	struct subclass *s;
+	struct subclass_type *s;
 
-	for (s = subclasses[h]; s; s = s->next)
+	for (s = subclass_types[h]; s; s = s->next)
 		if (s->classid == classid && s->subclassid == subclassid)
 			return -1;
-	s = malloc(sizeof(struct subclass) + strlen(name));
+	s = malloc(sizeof(struct subclass_type) + strlen(name));
 	if (!s)
 		return -1;
 	strcpy(s->name, name);
 	s->classid = classid;
 	s->subclassid = subclassid;
-	s->next = subclasses[h];
-	subclasses[h] = s;
+	s->next = subclass_types[h];
+	subclass_types[h] = s;
 	return 0;
 }
 
@@ -494,13 +494,13 @@ static void free_product(void)
 	}
 }
 
-static void free_class(void)
+static void free_class_type(void)
 {
-	struct class *cur, *tmp;
+	struct class_type *cur, *tmp;
 
 	for (int i = 0; i < HASHSZ; i++) {
-		cur = classes[i];
-		classes[i] = NULL;
+		cur = class_types[i];
+		class_types[i] = NULL;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;
@@ -509,13 +509,13 @@ static void free_class(void)
 	}
 }
 
-static void free_subclass(void)
+static void free_subclass_type(void)
 {
-	struct subclass *cur, *tmp;
+	struct subclass_type *cur, *tmp;
 
 	for (int i = 0; i < HASHSZ; i++) {
-		cur = subclasses[i];
-		subclasses[i] = NULL;
+		cur = subclass_types[i];
+		subclass_types[i] = NULL;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;
@@ -604,8 +604,8 @@ static void parse(usb_file f)
 	char buf[512], *cp;
 	unsigned int linectr = 0;
 	int lastvendor = -1;
-	int lastclass = -1;
-	int lastsubclass = -1;
+	int lastclass_type = -1;
+	int lastsubclass_type = -1;
 	int lasthut = -1;
 	int lastlang = -1;
 	unsigned int u;
@@ -704,12 +704,12 @@ static void parse(usb_file f)
 			if (new_langid(cp, u))
 				fprintf(stderr, "Duplicate LANGID spec at line %u language-id %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u LANGID %02x %s\n", linectr, u, cp));
-			lasthut = lastclass = lastvendor = lastsubclass = -1;
+			lasthut = lastclass_type = lastvendor = lastsubclass_type = -1;
 			lastlang = u;
 			continue;
 		}
 		if (buf[0] == 'C' && /*isspace(buf[1])*/ buf[1] == ' ') {
-			/* class spec */
+			/* class_type spec */
 			cp = buf+2;
 			while (isspace(*cp))
 				cp++;
@@ -724,11 +724,11 @@ static void parse(usb_file f)
 				fprintf(stderr, "Invalid class spec at line %u\n", linectr);
 				continue;
 			}
-			if (new_class(cp, u))
+			if (new_class_type(cp, u))
 				fprintf(stderr, "Duplicate class spec at line %u class %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u class %02x %s\n", linectr, u, cp));
-			lasthut = lastlang = lastvendor = lastsubclass = -1;
-			lastclass = u;
+			lasthut = lastlang = lastvendor = lastsubclass_type = -1;
+			lastclass_type = u;
 			continue;
 		}
 		if (buf[0] == 'A' && buf[1] == 'T' && isspace(buf[2])) {
@@ -807,7 +807,7 @@ static void parse(usb_file f)
 				fprintf(stderr, "Duplicate vendor spec at line %u vendor %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u vendor %04x %s\n", linectr, u, cp));
 			lastvendor = u;
-			lasthut = lastlang = lastclass = lastsubclass = -1;
+			lasthut = lastlang = lastclass_type = lastsubclass_type = -1;
 			continue;
 		}
 		if (buf[0] == '\t' && isxdigit(buf[1])) {
@@ -825,11 +825,11 @@ static void parse(usb_file f)
 				DBG(printf("line %5u product %04x:%04x %s\n", linectr, lastvendor, u, cp));
 				continue;
 			}
-			if (lastclass != -1) {
-				if (new_subclass(cp, lastclass, u))
-					fprintf(stderr, "Duplicate subclass spec at line %u class %02x:%02x %s\n", linectr, lastclass, u, cp);
-				DBG(printf("line %5u subclass %02x:%02x %s\n", linectr, lastclass, u, cp));
-				lastsubclass = u;
+			if (lastclass_type != -1) {
+				if (new_subclass_type(cp, lastclass_type, u))
+					fprintf(stderr, "Duplicate subclass spec at line %u class %02x:%02x %s\n", linectr, lastclass_type, u, cp);
+				DBG(printf("line %5u subclass %02x:%02x %s\n", linectr, lastclass_type, u, cp));
+				lastsubclass_type = u;
 				continue;
 			}
 			if (lasthut != -1) {
@@ -854,10 +854,10 @@ static void parse(usb_file f)
 				fprintf(stderr, "Invalid protocol spec at line %u\n", linectr);
 				continue;
 			}
-			if (lastclass != -1 && lastsubclass != -1) {
-				if (new_protocol(cp, lastclass, lastsubclass, u))
-					fprintf(stderr, "Duplicate protocol spec at line %u class %02x:%02x:%02x %s\n", linectr, lastclass, lastsubclass, u, cp);
-				DBG(printf("line %5u protocol %02x:%02x:%02x %s\n", linectr, lastclass, lastsubclass, u, cp));
+			if (lastclass_type != -1 && lastsubclass_type != -1) {
+				if (new_protocol(cp, lastclass_type, lastsubclass_type, u))
+					fprintf(stderr, "Duplicate protocol spec at line %u class %02x:%02x:%02x %s\n", linectr, lastclass_type, lastsubclass_type, u, cp);
+				DBG(printf("line %5u protocol %02x:%02x:%02x %s\n", linectr, lastclass_types, lastsubclass_type, u, cp));
 				continue;
 			}
 			fprintf(stderr, "Protocol spec without prior Class and Subclass spec at line %u\n", linectr);
@@ -901,7 +901,7 @@ static void parse(usb_file f)
 			}
 			if (new_huts(cp, u))
 				fprintf(stderr, "Duplicate HUT type spec at line %u terminal type %04x %s\n", linectr, u, cp);
-			lastlang = lastclass = lastvendor = lastsubclass = -1;
+			lastlang = lastclass_type = lastvendor = lastsubclass_type = -1;
 			lasthut = u;
 			DBG(printf("line %5u HUT type %02x %s\n", linectr, u, cp));
 			continue;
@@ -951,8 +951,8 @@ void names_exit(void)
 {
 	free_vendor();
 	free_product();
-	free_class();
-	free_subclass();
+	free_class_type();
+	free_subclass_type();
 	free_protocol();
 	free_audioterminal();
 	free_videoterminal();
