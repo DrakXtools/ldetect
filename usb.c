@@ -76,7 +76,7 @@ struct pciusb_entries usb_probe(void) {
 			e = &r.entries[r.nb++];
 			pciusb_initialize(e);
 
-			if (sscanf(buf, "T:  Bus=%02hd Lev=%*02d Prnt=%*04d Port=%02hd Cnt=%*02d Dev#=%3hd Spd=%*3s MxCh=%*2d", &pci_bus, &usb_port, &pci_device) == 3) {
+			if (sscanf(buf, "T:  Bus=%02hu Lev=%*02d Prnt=%*04d Port=%02hu Cnt=%*02d Dev#=%3hu Spd=%*3s MxCh=%*2d", &pci_bus, &usb_port, &pci_device) == 3) {
 				e->pci_bus = pci_bus;
 				e->pci_device = pci_device;
 				e->usb_port = usb_port;
@@ -93,7 +93,7 @@ struct pciusb_entries usb_probe(void) {
 		}
 		case 'I': if (e->class_id == 0 || e->module == NULL) {
 			char driver[50];
-			int class_id, sub, prot = 0;
+			unsigned int class_id, sub, prot = 0;
 			if (sscanf(buf, "I:* If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=%s", &class_id, &sub, &prot, driver) >= 3) {
 				unsigned long cid = (class_id * 0x100 + sub) * 0x100 + prot;
 				if (e->class_id == 0)
