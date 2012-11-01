@@ -14,7 +14,7 @@
 #include <libkmod.h>
 #include "common.h"
 
-static void set_modules_from_modalias_file(struct kmod_ctx *ctx, struct pciusb_entry *e, char *modalias_path) {
+static void set_modules_from_modalias_file(struct kmod_ctx *ctx, pciusb_entry &e, char *modalias_path) {
 	FILE *file;
 	file = fopen(modalias_path, "r");
 	if (file) {
@@ -30,8 +30,7 @@ static void set_modules_from_modalias_file(struct kmod_ctx *ctx, struct pciusb_e
 		if (size)
 			modalias[size-1] = 0;
 
-		ifree(e->module);
-		e->module = modalias_resolve_module(ctx, modalias);
+		e.module = modalias_resolve_module(ctx, modalias);
 		free(modalias);
 	} else {
 		fprintf(stderr, "Unable to read modalias from %s\n", modalias_path);
@@ -39,23 +38,23 @@ static void set_modules_from_modalias_file(struct kmod_ctx *ctx, struct pciusb_e
 	}
 }
 
-static void find_pci_modules_through_aliases(struct kmod_ctx *ctx, struct pciusb_entry *e) {
+static void find_pci_modules_through_aliases(struct kmod_ctx *ctx, pciusb_entry &e) {
 	char *modalias_path;
 	asprintf(&modalias_path,
 		 "/sys/bus/pci/devices/%04x:%02x:%02x.%x/modalias",
-		 e->pci_domain, e->pci_bus, e->pci_device, e->pci_function);
+		 e.pci_domain, e.pci_bus, e.pci_device, e.pci_function);
 	set_modules_from_modalias_file(ctx, e, modalias_path);
 	free(modalias_path);
 }
 
-static void find_usb_modules_through_aliases(struct kmod_ctx *ctx, struct pciusb_entry *e) {
+static void find_usb_modules_through_aliases(struct kmod_ctx *ctx, pciusb_entry &e) {
 	char *usb_prefix, *sysfs_path;
 	DIR *dir;
 	struct dirent *dent;
 
-	asprintf(&usb_prefix, "%d-", e->pci_bus);
+	asprintf(&usb_prefix, "%d-", e.pci_bus);
 	/* USB port is indexed from 0 in procfs, from 1 in sysfs */
-	asprintf(&sysfs_path, "/sys/bus/usb/devices/%d-%d", e->pci_bus, e->usb_port + 1);
+	asprintf(&sysfs_path, "/sys/bus/usb/devices/%d-%d", e.pci_bus, e.usb_port + 1);
 
 	dir = opendir(sysfs_path);
 	if (!dir) {
@@ -70,7 +69,7 @@ static void find_usb_modules_through_aliases(struct kmod_ctx *ctx, struct pciusb
 			free(modalias_path);
 			/* maybe we would need a "other_modules" field in pciusb_entry 
 			   to list modules from all USB interfaces */
-			if (e->module)
+			if (!e.module.empty())
 				break;
 		}
 	}
@@ -80,7 +79,7 @@ end:
 	free(usb_prefix);
 }
  
-static void find_modules_through_aliases_one(struct kmod_ctx *ctx, const char *bus, struct pciusb_entry *e) {
+static void find_modules_through_aliases_one(struct kmod_ctx *ctx, const char *bus, pciusb_entry &e) {
 	if (!strcmp("pci", bus)) {
 		find_pci_modules_through_aliases(ctx, e);
 	} else if (!strcmp("usb", bus)) {
@@ -88,14 +87,14 @@ static void find_modules_through_aliases_one(struct kmod_ctx *ctx, const char *b
 	}
 }
 
-static void find_modules_through_aliases(const char *bus, struct pciusb_entries *entries) {
+static void find_modules_through_aliases(const char *bus, std::vector<pciusb_entry> &entries) {
 	struct kmod_ctx *ctx = modalias_init();
 
-	for (unsigned int i = 0; i < entries->nb; i++) {
-		struct pciusb_entry *e = &entries->entries[i];
+	for (unsigned int i = 0; i < entries.size(); i++) {
+		pciusb_entry &e = entries[i];
 
 		// No special case found in pcitable ? Then lookup modalias for PCI devices
-		if (e->module && strcmp(e->module, "unknown"))
+		if (!e.module.empty() && e.module != "unknown")
 			continue;
 		find_modules_through_aliases_one(ctx, bus, e);
 	}
@@ -103,7 +102,7 @@ static void find_modules_through_aliases(const char *bus, struct pciusb_entries 
 	modalias_cleanup(ctx);
 }
 
-int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable, const descr_lookup descr_lookup, int is_pci) {
+int pciusb_find_modules(std::vector<pciusb_entry> &entries, const char *fpciusbtable, const descr_lookup descr_lookup, int is_pci) {
 	fh f;
 	char buf[2048];
 
@@ -125,14 +124,14 @@ int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable
 				continue; // skip bad line
 			}
 		}
-		for (unsigned int i = 0; i < entries->nb; i++) {
-			struct pciusb_entry *e = &entries->entries[i];
-			if (e->already_found)
+		for (unsigned int i = 0; i < entries.size(); i++) {
+			pciusb_entry &e = entries[i];
+			if (e.already_found)
 				continue;	// skip since already found with sub ids
-			if (vendor != e->vendor ||  device != e->device)
+			if (vendor != e.vendor ||  device != e.device)
 				continue; // main ids differ
 
-			if (nb == 4 && !(subvendor == e->subvendor && subdevice == e->subdevice))
+			if (nb == 4 && !(subvendor == e.subvendor && subdevice == e.subdevice))
 				continue; // subids differ
 
 			if (!p) { // only calc text & module if not already done
@@ -142,52 +141,23 @@ int pciusb_find_modules(struct pciusb_entries *entries, const char *fpciusbtable
                          q = strchr(p, '\0') - 1;
 			}
 			if (strncmp(p, "unknown", q-p-1)) {
-				ifree(e->module);
-				e->module = strndup(p,q-p-1);
+				e.module.assign(p,q-p-1);
 			}
 			/* special case for buggy 0x0 usb entry */
-			if (descr_lookup == LOAD && strlen(q) > 1 && 2 < strlen(q+2) && vendor != 0 && device != 0 && e->class_id != 0x90000d) { /* Hub class */
-				ifree(e->text); /* usb.c set it so that we display something when usbtable doesn't refer that hw*/
-				e->text = strndup(q+2, strlen(q)-4);
+			if (descr_lookup == LOAD && strlen(q) > 1 && 2 < strlen(q+2) && vendor != 0 && device != 0 && e.class_id != 0x90000d) { /* Hub class */
+				//ifree(e->text); /* usb.c set it so that we display something when usbtable doesn't refer that hw*/
+				e.text.assign(q+2, strlen(q)-4);
 			}
 			/* if subids read on pcitable line, we know that subids matches :
 			   (see "subids differ" test above) */
 			if (nb == 4)
-				e->already_found = 1;
+				e.already_found = true;
 		}
 	}
 	fh_close(&f);
 
-	/* If no special case in pcitable, then lookup modalias for devices */
-	const char *bus = is_pci ? "pci" : "usb";
-	find_modules_through_aliases(bus, entries);
+	find_modules_through_aliases(is_pci ? "pci" : "usb", entries);
 
 	return 1;
 }
 
-void pciusb_initialize(struct pciusb_entry *e) {
-	e->vendor = 0xffff;
-	e->device = 0xffff;
-	e->subvendor = 0xffff;
-	e->subdevice = 0xffff;
-	e->class_id = 0;
-	e->pci_bus = 0xff;
-	e->pci_device = 0xff;
-	e->pci_function = 0xff;
-	e->pci_revision = 0;
-	e->usb_port = 0xffff;
-	e->module = NULL;
-	e->text   = NULL;
-	e->class_type  = NULL;
-	e->already_found = 0;
-	e->is_pciexpress = 0;
-}
-
-void pciusb_free(struct pciusb_entries entries) {
-	for (unsigned int i = 0; i < entries.nb; i++) {
-		ifree(entries.entries[i].module);
-		ifree(entries.entries[i].text);
-		ifree(entries.entries[i].class_type);
-	}
-	free(entries.entries);
-}

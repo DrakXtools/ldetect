@@ -85,9 +85,9 @@ struct kmod_ctx* modalias_init(void) {
 	return ctx;
 }
 
-char *modalias_resolve_module(struct kmod_ctx *ctx, const char *modalias) {
+std::string modalias_resolve_module(struct kmod_ctx *ctx, const char *modalias) {
 	struct kmod_list *l = NULL, *list = NULL, *filtered = NULL;
-	char *str = NULL;
+	std::string str;
 	int err = kmod_module_new_from_lookup(ctx, modalias, &list);
 	if (err < 0)
 		goto exit;
@@ -107,8 +107,8 @@ char *modalias_resolve_module(struct kmod_ctx *ctx, const char *modalias) {
 		struct kmod_module *mod = kmod_module_get_module(l);
 		//if (str) // keep last one
 		//	free(str);
-		if (!str) // keep first one
-			str = strdup(kmod_module_get_name(mod));
+		if (str.empty()) // keep first one
+			str = kmod_module_get_name(mod);
 		kmod_module_unref(mod);
 		if (err < 0)
 			break;

@@ -1,6 +1,6 @@
-Version 0.13.0 - 30 October 2012, by Per Øyvind Karlsen
+Version 0.13.0 -  1 November 2012, by Per Øyvind Karlsen
 
-- make C++ compatible 
+- rewrite in C++ (turning the existing code into good C++ certainly remains though)
 - make ldetect 3x faster
 - fix retrieving info about USB devices with kernel-3.5+ (mga#7248)
 - switch to C11 with GNU extensions

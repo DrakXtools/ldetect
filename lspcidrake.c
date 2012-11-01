@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <cassert>
 #include <string.h>
 #include <unistd.h>
 #include <getopt.h>
@@ -9,27 +10,27 @@
 
 static int verboze = 0;
 
-static void printit(struct pciusb_entries entries, void print_class(unsigned long )) {
-	for (unsigned int i = 0; i < entries.nb; i++) {
-		struct pciusb_entry *e = &entries.entries[i];
-		printf("%-16s: ", e->module ? e->module : "unknown");
-		if (e->text)
-			printf("%s", e->text);
-		else	printf("unknown (%04x/%04x/%04x/%04x)", e->vendor, e->device, e->subvendor, e->subdevice);
-		if (e->class_id) {
-			print_class(e->class_id);
+static void printit(std::vector<pciusb_entry> *entries, void print_class(unsigned long )) {
+	for (unsigned int i = 0; i < entries->size(); i++) {
+		pciusb_entry &e = (*entries)[i];
+		printf("%-16s: ", e.module.empty() ? "unknown": e.module.c_str());
+		if (!e.text.empty())
+			printf("%s", e.text.c_str());
+		else	printf("unknown (%04x/%04x/%04x/%04x)", e.vendor, e.device, e.subvendor, e.subdevice);
+		if (e.class_id) {
+			print_class(e.class_id);
 		}
-		if (verboze && e->text) {
-			printf(" (vendor:%04x device:%04x", e->vendor, e->device);
-			if (e->subvendor != 0xffff || e->subdevice != 0xffff)
-				printf(" subv:%04x subd:%04x", e->subvendor, e->subdevice);
+		if (verboze && !e.text.empty()) {
+			printf(" (vendor:%04x device:%04x", e.vendor, e.device);
+			if (e.subvendor != 0xffff || e.subdevice != 0xffff)
+				printf(" subv:%04x subd:%04x", e.subvendor, e.subdevice);
 			printf(")");
 		}
-		if (e->pci_revision)    
-                     printf(" (rev: %02x)", e->pci_revision);
+		if (e.pci_revision)
+                     printf(" (rev: %02x)", e.pci_revision);
 		printf("\n");
 	}
-	pciusb_free(entries);
+	delete entries;
 }
 
 static void print_pci_class(unsigned long class_id) {
@@ -49,13 +50,12 @@ static void print_usb_class(unsigned long class_id) {
   }
 }
 
-static void print_dmi_hid_entries(dmi_hid_entries_t entries, int dmi) {
-	for (unsigned int i = 0; i < entries.nb; i++)
-		printf("%-16s: %s\n", entries.entries[i].module,
-		dmi ? entries.entries[i].constraints : entries.entries[i].text);
-	/* the inline bool above is certainly a bit silly as the two
-	 * different variables are really the same, only differently named.. :p
-	 */
+static void print_dmi_hid_entries(std::vector<entry> *entries) {
+	for (std::vector<entry>::const_iterator entry = entries->begin();
+			entry < entries->end();
+			++entry)
+		printf("%-16s: %s\n", entry->name.c_str(), entry->val.c_str());
+	delete entries;
 }
 
 static void usage(void)
@@ -108,15 +108,15 @@ int main(int argc, char **argv) {
 	if (!fake || proc_usb_path) printit(usb_probe(), print_usb_class);
 	
 	if ((!fake && geteuid() == 0) || dmidecode_file) {
-	    dmi_hid_entries_t dmi_entries = dmi_probe();
-	    print_dmi_hid_entries(dmi_entries, 1);
-	    free_entries(dmi_entries);
+		std::vector<entry> *dmi_entries = dmi_probe();
+		if(dmi_entries)
+			print_dmi_hid_entries(dmi_entries);
 	}
 
 	if (!fake || sysfs_hid_path) {
-	    dmi_hid_entries_t hid_entries = hid_probe();
-	    print_dmi_hid_entries(hid_entries, 0);
-	    free_entries(hid_entries);
+		std::vector<entry> *hid_entries = hid_probe();
+		if (hid_entries)
+			print_dmi_hid_entries(hid_entries);
 	}
 
 	return 0;

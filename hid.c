@@ -69,25 +69,12 @@ static char *parse_name(char *fields)
 	return get_field_value(fields, "HID_NAME=");
 }
 
-static void add_entry(dmi_hid_entries_t *entry_list, char *name, char *module)
-{
-    
-	dmi_hid_entry_t *new_entries;
 
-	new_entries = (dmi_hid_entry_t*)realloc(entry_list->entries, (entry_list->nb+1)*sizeof(*(entry_list->entries)));
-	if (new_entries != NULL) {
-		new_entries[entry_list->nb].module = module;
-		new_entries[entry_list->nb].text = name;
-		entry_list->entries = new_entries;
-		entry_list->nb++;
-	}
-}
 
-static void parse_device(struct kmod_ctx *ctx, dmi_hid_entries_t *entries, const char *dev)
+static void parse_device(struct kmod_ctx *ctx, std::vector<entry> &entries, const char *dev)
 {
 	char keyfile[SYSFS_PATH_MAX];
 	char *modalias;
-	char *modname;
 	char *device_name;
 	struct sysfs_attribute *sysfs_attr;
 
@@ -115,29 +102,33 @@ static void parse_device(struct kmod_ctx *ctx, dmi_hid_entries_t *entries, const
 	else 
 		device_name = strdup("HID Device");
 
-	modname = modalias_resolve_module(ctx, modalias);
+	std::string modname = modalias_resolve_module(ctx, modalias);
 	free(modalias);
-	DEBUG("%s: module name is [%s]\n", HID_BUS_NAME, modname);
-	if (modname != NULL) 
-		add_entry(entries, device_name, modname);
+	DEBUG("%s: module name is [%s]\n", HID_BUS_NAME, modname.c_str());
+	if (!modname.empty()) 
+		entries.push_back(entry(modname,device_name));
 }
 
 
-dmi_hid_entries_t hid_probe(void)
+std::vector<entry>* hid_probe(void)
 {
-	DIR *dir;
-	dmi_hid_entries_t entry_list = { 0, {NULL} };
+	std::vector<entry> *entry_list = NULL;
 	struct kmod_ctx *ctx = modalias_init();
-
-	dir = opendir(sysfs_hid_path);
-	if (dir == NULL)
+	DIR *dir = opendir(sysfs_hid_path);
+	if (dir == NULL) {
+		fprintf(stderr, "Unable to open \"%s\": %s\n"
+				    "Won't scan for hid devices\n",
+				    sysfs_hid_path, strerror(errno));
 		goto end_probe;
+	}
+
+	entry_list = new std::vector<entry>(0);
 
 	for (struct dirent *dent = readdir(dir); dent != NULL; dent = readdir(dir)) {
 		if (dent->d_name[0] == '.')
 			continue;
 		DEBUG("%s: device found %s\n", HID_BUS_NAME, dent->d_name);
-		parse_device(ctx, &entry_list, dent->d_name);
+		parse_device(ctx, *entry_list, dent->d_name);
 	}
 
 end_probe:

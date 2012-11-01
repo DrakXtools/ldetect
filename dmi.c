@@ -85,26 +85,26 @@ static int lookup_field(const struct category *category, const char *field_name)
 	return 0;
 }
 
-static char *lookup_criteria(criteria_t criteria, const char *field) {
-	for (unsigned int i = 0; i < criteria.nb; i++)
-		if (streq(criteria.criteria[i].name, field))
-			return criteria.criteria[i].val;
+static const char* lookup_criteria(const std::vector<entry> &criteria, const char *field) {
+	for (unsigned int i = 0; i < criteria.size(); i++)
+		if (streq(criteria[i].name.c_str(), field))
+			return criteria[i].val.c_str();
 	return NULL;
 }
 
 /*********************************************************************************/
-static criteria_t criteria_from_dmidecode(void) {
+static std::vector<entry>* criteria_from_dmidecode(void) {
 	FILE *f;
 	char buf[BUF_SIZE];
 
-	criteria_t r = { 0, {NULL} };
+	std::vector<entry> *criteria = NULL;
 
 	if (!(f = dmidecode_file ? fopen(dmidecode_file, "r") : popen("dmidecode", "r"))) {
 		perror("dmidecode");
-		return r;
+		return criteria;
 	}
 
-	r.criteria = (criterion_t*)malloc(sizeof(*r.criteria) * MAX_DEVICES);
+	criteria = new std::vector<entry>(0);
 
 	const struct category *category = NULL;
 
@@ -131,26 +131,25 @@ static criteria_t criteria_from_dmidecode(void) {
 			char *s = buf + tab_level + 1;
 			char *val = get_after_colon(s);
 			if (val && lookup_field(category, s)) {
-				criterion_t *criterion = &r.criteria[r.nb++];
-				asprintf(&criterion->name, "%s/%s", category->cat_name, s);
+				std::string name = category->cat_name;
+				name += "/", name += s;
 				remove_ending_spaces(val);
-				criterion->val = strdup(skip_leading_spaces(val));
+				criteria->push_back(entry(name, skip_leading_spaces(val)));
 			}
 		}
 	}
 	if (dmidecode_file ? fclose(f) != 0 : pclose(f) == -1) {
-		r.nb = 0;
-		return r;
+		criteria->clear();
+		return criteria;
 	}
-	r.criteria = (criterion_t*)realloc(r.criteria, sizeof(*r.criteria) * r.nb);
 
-	return r;
+	return criteria;
 }
 
-static dmi_hid_entries_t entries_matching_criteria(criteria_t criteria) {
+static std::vector<entry>* entries_matching_criteria(const std::vector<entry> &criteria) {
 	fh f;
 	char buf[2048];
-	dmi_hid_entries_t r;
+	std::vector<entry> *entries;
 	#define MAX_INDENT 20
 	int valid[MAX_INDENT];
 	char *constraints[MAX_INDENT];
@@ -158,12 +157,11 @@ static dmi_hid_entries_t entries_matching_criteria(criteria_t criteria) {
 	enum state { in_constraints, in_implies } state = in_implies;
 	int was_a_blank_line = 1;
 
-	r.nb = 0;
 	f = fh_open("dmitable");
 
 #define die(err) do { fprintf(stderr, "%s %d: " err "\n", "dmitable", line); exit(1); } while (0)
 
-	r.entries = (dmi_hid_entry_t*)malloc(sizeof(*r.entries) * MAX_DEVICES);
+	entries = new std::vector<entry>(0);
 
 #define foreach_indent(min, action) do { for (int i = min; i < MAX_INDENT; i++) { action; } } while (0)
 	
@@ -188,22 +186,19 @@ static dmi_hid_entries_t entries_matching_criteria(criteria_t criteria) {
 				was_a_blank_line = 0;
 				
 				if (valid[refine]) {
-					dmi_hid_entry_t *entry = &r.entries[r.nb++];
-
 					s += strlen("=> ");
 					char *val = get_after_colon(s);
 					if (!val) die("invalid value");
-					asprintf(&entry->module, "%s:%s", s, val);
+					std::string module(s);
+					module += ":", module += val;
 
-					char tmp[BUF_SIZE];
-					tmp[0] = '\0';
-
+					std::string constraint;
 					for (int i = 0; i <= refine; i++)
 						if (constraints[i]) {
-							if (i) strncat(tmp, "|", BUF_SIZE);
-							strncat(tmp, constraints[i], BUF_SIZE);
+							if (i) constraint += "|";
+							constraint += constraints[i];
 						}
-					entry->constraints = strdup(tmp);
+					entries->push_back(entry(module, constraint));
 				}
 			} else {
 				if (state == in_constraints && refine == previous_refine) die("to refine, indent");
@@ -218,7 +213,7 @@ static dmi_hid_entries_t entries_matching_criteria(criteria_t criteria) {
 					if (!wanted_val) die("bad format");
 
 					char *wanted_val_orig = strdup(wanted_val);
-					char *val = lookup_criteria(criteria, s);
+					const char *val = lookup_criteria(criteria, s);
 
 					int ok = wanted_val && val && (
 						remove_suffix_in_place(wanted_val, ".*") ?
@@ -238,14 +233,13 @@ static dmi_hid_entries_t entries_matching_criteria(criteria_t criteria) {
 	foreach_indent(0, ifree(constraints[i]));
 	fh_close(&f);
 
-	r.entries = (dmi_hid_entry_t*) realloc(r.entries, sizeof(*r.entries) * r.nb);
-	return r;
+	return entries;
 }
 
-dmi_hid_entries_t dmi_probe(void) {
-	criteria_t criteria = criteria_from_dmidecode();
-	dmi_hid_entries_t entries = entries_matching_criteria(criteria);
-	free_entries(criteria);
+std::vector<entry>* dmi_probe(void) {
+	std::vector<entry>* criteria = criteria_from_dmidecode();
+	std::vector<entry>* entries = entries_matching_criteria(*criteria);
+	delete criteria;
 
 	return entries;
 }
