@@ -1,9 +1,8 @@
-lib_src = common.c modalias.c pciusb.c pci.c usb.c pciclass.c usbclass.c dmi.c hid.c names.c
-lib_objs = $(subst .c,.o,$(lib_src))
+lib_src = common.cpp modalias.cpp pciusb.cpp pci.cpp usb.cpp pciclass.cpp usbclass.cpp dmi.cpp hid.cpp names.cpp
+lib_objs = $(subst .cpp,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
-CC=g++
-CFLAGS += -std=gnu++11 -Wall -Wextra -pedantic -Os -fPIC -fvisibility=hidden -g -Weffc++
+CXXFLAGS += -std=gnu++11 -Wall -Wextra -pedantic -Os -fPIC -fvisibility=hidden -g 
 CPPFLAGS += $(shell getconf LFS_CFLAGS) $(shell pkg-config --cflags libkmod libpci)
 LIBS += $(shell pkg-config --libs libkmod libpci) -lsysfs
 ifneq ($(ZLIB),0)
@@ -30,22 +29,22 @@ binaries = lspcidrake
 build: $(binaries) $(libraries)
 
 ifneq (0, $(WHOLE_PROGRAM))
-lspcidrake.static: lspcidrake.c $(lib_src)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common -flto -Wl,-O1 -o $@ $^ $(LIBS)
+lspcidrake.static: lspcidrake.cpp $(lib_src)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common -flto -Wl,-O1 -o $@ $^ $(LIBS)
 
-lspcidrake: lspcidrake.c libldetect.so
-	$(CC) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common -flto -Wl,-z,relro -Wl,-O1 -o $@ $^
+lspcidrake: lspcidrake.cpp libldetect.so
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common -flto -Wl,-z,relro -Wl,-O1 -o $@ $^
 
 $(lib_major).$(LIB_MINOR): $(lib_src)
-	$(CC) $(CFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common -flto -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common -flto -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
 else
-lspcidrake.static: lspcidrake.c libldetect.a
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+lspcidrake.static: lspcidrake.cpp libldetect.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
-lspcidrake: lspcidrake.c libldetect.so
+lspcidrake: lspcidrake.cpp libldetect.so
 
 $(lib_major).$(LIB_MINOR): $(lib_objs)
-	$(CC) $(LDFLAGS) -shared -Wl,-z,relro -flto -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
+	$(CXX) $(LDFLAGS) -shared -Wl,-z,relro -flto -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
 endif
 $(lib_major): $(lib_major).$(LIB_MINOR)
 	ln -sf $< $@
@@ -56,16 +55,16 @@ libldetect.a: $(lib_objs)
 	ar -cru $@ $^
 	ranlib $@
 
-common.o:	common.c common.h
-pciusb.o:	pciusb.c libldetect.h common.h
-pci.o:		pci.c libldetect.h common.h
-usb.o:		usb.c libldetect.h common.h names.h
-dmi.o:		dmi.c libldetect.h common.h
-hid.o:		hid.c libldetect.h common.h
-names.o:	names.c names.h
+common.o:	common.cpp common.h
+pciusb.o:	pciusb.cpp libldetect.h common.h
+pci.o:		pci.cpp libldetect.h common.h
+usb.o:		usb.cpp libldetect.h common.h names.h
+dmi.o:		dmi.cpp libldetect.h common.h
+hid.o:		hid.cpp libldetect.h common.h
+names.o:	names.cpp names.h
 
 clean:
-	rm -f *~ *.o pciclass.c usbclass.c $(binaries) $(libraries)
+	rm -f *~ *.o pciclass.cpp usbclass.cpp $(binaries) $(libraries)
 
 install: build
 	install -d $(bindir) $(libdir) $(includedir)
@@ -103,11 +102,11 @@ run: lspcidrake
 	LD_LIBRARY_PATH=$(PWD)  ./lspcidrake
 endif
 
-$(ldetect_srcdir)/pciclass.c: $(ldetect_srcdir)/generate_pciclass.pl /usr/include/pci/pci.h /usr/include/pci/header.h
+$(ldetect_srcdir)/pciclass.cpp: $(ldetect_srcdir)/generate_pciclass.pl /usr/include/pci/pci.h /usr/include/pci/header.h
 	rm -f $@
 	perl $(ldetect_srcdir)/generate_pciclass.pl $^ > $@
 
-$(ldetect_srcdir)/usbclass.c: $(ldetect_srcdir)/generate_usbclass.pl /usr/share/usb.ids 
+$(ldetect_srcdir)/usbclass.cpp: $(ldetect_srcdir)/generate_usbclass.pl /usr/share/usb.ids 
 	rm -f $@
 	perl $(ldetect_srcdir)/generate_usbclass.pl $^ > $@
 
