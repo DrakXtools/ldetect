@@ -9,16 +9,17 @@
 static const char proc_usb_path_default[] = "/sys/kernel/debug/usb/devices";
 const char *proc_usb_path = NULL;
 
-static void build_text(pciusb_entry *e, const char *vendor_text, const char *product_text) {
+static void build_text(pciusb_entry *e, std::string &vendor_text, std::string &product_text) {
 	if (e) {
-		if(!vendor_text)
+		if(vendor_text.empty())
 			vendor_text = names_vendor(e->vendor);
-		if(!product_text)
+		if(product_text.empty())
 			product_text = names_product(e->vendor, e->device);
-		e->text = std::move(std::string(vendor_text ? vendor_text : "Unknown").append("|").append(product_text ? product_text : "Unknown"));
+		e->text = std::move(std::string(vendor_text.empty() ? "Unknown" : vendor_text).append("|").append(product_text.empty() ? "Unknown": product_text));
+		vendor_text.clear();
+		product_text.clear();
 	}
 }
-
 
 std::vector<pciusb_entry>* usb_probe(void) {
 	FILE *f;
@@ -26,7 +27,7 @@ std::vector<pciusb_entry>* usb_probe(void) {
 	int line;
 	std::vector<pciusb_entry> *entries;
 	pciusb_entry *e = NULL;
-	const char *vendor_text = NULL, *product_text = NULL;
+	std::string vendor_text, product_text;
 
 	names_init("/usr/share/usb.ids");
 	if (!(f = fopen(proc_usb_path ? proc_usb_path : proc_usb_path_default, "r"))) {
@@ -47,8 +48,6 @@ std::vector<pciusb_entry>* usb_probe(void) {
 		switch (buf[0]) {
 		case 'T': {
 			build_text(e, vendor_text, product_text);
-			vendor_text = NULL;
-			product_text = NULL;
 			entries->push_back(pciusb_entry());
 			e = &entries->back();
 
@@ -96,10 +95,10 @@ std::vector<pciusb_entry>* usb_probe(void) {
 			size_t length = strlen(buf) - 1;
 			if (sscanf(buf, "S:  Manufacturer=%n%c", &offset, &dummy) == 1) {
 				buf[length] = '\0'; /* removing '\n' */
-				vendor_text = strdup(buf + offset);
+				vendor_text.assign(buf, offset, length);
 			} else if (sscanf(buf, "S:  Product=%n%c", &offset, &dummy) == 1) {
-				buf[length] = 0; /* removing '\n' */
-				product_text = strdup(buf + offset);
+				buf[length] = '\0'; /* removing '\n' */
+				product_text.assign(buf, offset, length);
 			}
 		}
 		}
