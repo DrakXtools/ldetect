@@ -70,11 +70,7 @@ struct usb_class_text usb_class2text(uint64_t class_id) {
   uint64_t a_class[3] = { (class_id >> 16) & 0xff, (class_id >> 8) & 0xff, class_id & 0xff };
   if (a_class[0] != 0xff) lookup(p, a_class, 0, nb_classes, classes);
   {
-#ifdef __cplusplus
     return { p[0], p[1], p[2] };
-#else
-    return (struct usb_class_text) { p[0], p[1], p[2] };
-#endif
   }
 }
 
