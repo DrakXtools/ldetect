@@ -4,6 +4,7 @@ print q(/* This auto-generated from <pci.h>, don't modify! */
 
 #include "libldetect.h"
 
+namespace ldetect {
 static struct {
   unsigned short id;
   const char *name;
@@ -26,4 +27,5 @@ const char *pci_class2text(unsigned long class_id) {
 }
 #pragma GCC visibility pop
 
+}
 ';

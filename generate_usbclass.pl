@@ -5,6 +5,8 @@ print q(/* This is auto-generated from </usr/share/usb.ids>, don't modify! */
 #include <stdlib.h>
 #include "libldetect.h"
 
+namespace ldetect {
+
 struct node {
   uint64_t id;
   const char *name;
@@ -76,4 +78,5 @@ struct usb_class_text usb_class2text(uint64_t class_id) {
   }
 }
 
+}
 ';
