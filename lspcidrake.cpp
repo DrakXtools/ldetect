@@ -8,6 +8,8 @@
 #include "lspcidrake.h"
 #endif
 
+namespace ldetect {
+
 static int verboze = 0;
 
 static void printit(std::vector<pciusb_entry> *entries, void print_class(unsigned long )) {
@@ -71,6 +73,9 @@ static void usage(void)
 #ifdef DRAKX_ONE_BINARY
 int lspcidrake_main(int argc, char **argv) {
 #else
+}
+
+using namespace ldetect;
 int main(int argc, char **argv) {
 #endif
 
@@ -121,3 +126,7 @@ int main(int argc, char **argv) {
 
 	return 0;
 }
+#ifdef DRAKX_ONE_BINARY
+}
+#endif
+

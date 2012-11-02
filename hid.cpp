@@ -14,8 +14,8 @@
 #include "libldetect.h"
 #include "common.h"
 
+namespace ldetect {
 
-#define HID_BUS_NAME "hid"
 const char *sysfs_hid_path = "/sys/bus/hid/devices";
 #if 0
 #define DEBUG(args...) printf(args)
@@ -140,3 +140,4 @@ end_probe:
 	return entry_list;
 }
 
+}

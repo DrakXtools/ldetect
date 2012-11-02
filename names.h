@@ -28,6 +28,8 @@
 
 /* ---------------------------------------------------------------------- */
 
+namespace ldetect {
+
 const char *names_vendor(uint16_t vendorid);
 const char *names_product(uint16_t vendorid, uint16_t productid);
 const char *names_class_type(uint8_t classid);
@@ -50,6 +52,8 @@ int get_product_string(char *buf, size_t size, uint16_t vid, uint16_t pid);
 
 int names_init(const char *n);
 void names_exit(void);
+
+}
 
 /* ---------------------------------------------------------------------- */
 #endif /* _NAMES_H */

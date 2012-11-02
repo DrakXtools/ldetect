@@ -14,6 +14,8 @@
 #include <dirent.h>
 #include "common.h"
 
+namespace ldetect {
+
 static char *aliasdefault = NULL;
 static char * version = NULL;
 
@@ -125,4 +127,6 @@ void modalias_cleanup(struct kmod_ctx *ctx) {
     ifree(version);
     free(dkms_file);
     kmod_unref(ctx);
+}
+
 }

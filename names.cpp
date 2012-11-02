@@ -49,6 +49,7 @@
 
 #include "names.h"
 
+namespace ldetect {
 
 /* ---------------------------------------------------------------------- */
 
@@ -957,4 +958,6 @@ void names_exit(void)
 	free_audioterminal();
 	free_videoterminal();
 	free_genericstrtable();
+}
+
 }

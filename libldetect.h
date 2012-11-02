@@ -9,6 +9,8 @@
 #pragma GCC visibility push(default) 
 #define EXPORTED __attribute__((externally_visible))
 
+namespace ldetect {
+
 class entry {
 	public:
 		entry(std::string name = "", std::string val = "") : name(name), val(val) {};
@@ -91,5 +93,7 @@ extern const char *dmidecode_file EXPORTED;
 
 std::vector <entry>* hid_probe(void) EXPORTED;
 extern const char *sysfs_hid_path EXPORTED;
+
+}
 
 #endif

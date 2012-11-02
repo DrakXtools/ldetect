@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include "common.h"
 
+namespace ldetect {
+
 const char *dmidecode_file = NULL;
 
 
@@ -244,3 +246,4 @@ std::vector<entry>* dmi_probe(void) {
 	return entries;
 }
 
+}

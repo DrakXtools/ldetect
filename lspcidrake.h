@@ -14,6 +14,9 @@
 #ifndef _LSPCIDRAKE_H_
 #define _LSPCIDRAKE_H_
 
+namespace ldetect {
+
 int lspcidrake_main(int argc, char *argv[]);
 
+}
 #endif

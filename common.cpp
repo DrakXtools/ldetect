@@ -9,6 +9,8 @@
 #include <sys/wait.h>
 #include "common.h"
 
+namespace ldetect {
+
 char *table_name_to_file(const char *name) {
 
 	const char *share_path = getenv("SHARE_PATH");
@@ -117,3 +119,4 @@ int fh_close(fh *f) {
         return ret;
 }
 
+}

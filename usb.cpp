@@ -6,6 +6,8 @@
 #include "common.h"
 #include "names.h"
 
+namespace ldetect {
+
 static const char proc_usb_path_default[] = "/sys/kernel/debug/usb/devices";
 const char *proc_usb_path = NULL;
 
@@ -124,3 +126,4 @@ exit:
 	return entries;
 }
 
+}

@@ -18,6 +18,8 @@ extern "C" {
 /* /proc files're 256 bytes but we only need first 64 bytes*/
 #define CONFIG_SPACE_SIZE 64
 
+namespace ldetect {
+
 static const char proc_pci_path_default[] = "/proc/bus/pci/devices";
 const char* proc_pci_path = NULL;
 
@@ -123,4 +125,6 @@ std::vector<pciusb_entry>* pci_probe(void) {
 
 	/* should not happen */
 	exit(1);
+}
+
 }

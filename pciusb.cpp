@@ -14,6 +14,8 @@
 #include <libkmod.h>
 #include "common.h"
 
+namespace ldetect {
+
 static void set_modules_from_modalias_file(struct kmod_ctx *ctx, pciusb_entry &e, char *modalias_path) {
 	FILE *file;
 	file = fopen(modalias_path, "r");
@@ -161,3 +163,4 @@ int pciusb_find_modules(std::vector<pciusb_entry> &entries, const char *fpciusbt
 	return 1;
 }
 
+}

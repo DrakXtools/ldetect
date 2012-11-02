@@ -12,6 +12,8 @@
 
 #define GZIP_BIN "/bin/gzip"
 
+namespace ldetect {
+
 char *table_name_to_file(const char *name);
 
 typedef enum {
@@ -49,5 +51,6 @@ fh fh_open(const char *name) NON_EXPORTED;
 char* fh_gets(char *line, int size, fh *f) NON_EXPORTED;
 int fh_close(fh *f) NON_EXPORTED;
 #pragma GCC visibility pop
+}
 
 #endif
