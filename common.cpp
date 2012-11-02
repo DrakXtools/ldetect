@@ -48,7 +48,7 @@ fh fh_open(const char *name) {
                                 ret.u.gzip_fh.f = fdopen(fdno[0], "r");
                                 close(fdno[1]);
                         } else {
-                                char* cmd[5];
+                                const char* cmd[5];
                                 int ip = 0;
                                 char *ld_loader = getenv("LD_LOADER");
 
@@ -63,7 +63,7 @@ fh fh_open(const char *name) {
                                 dup2(fdno[1], STDOUT_FILENO);
                                 close(fdno[0]);
                                 close(fdno[1]);
-                                execvp(cmd[0], cmd);
+                                execvp(cmd[0], (char* const*)cmd);
                                 perror("pciusb"); 
                                 exit(2);
                         }

@@ -64,7 +64,7 @@ std::vector<pciusb_entry>* pci_probe(void) {
 	pacc = pci_alloc();
 
 	if (proc_pci_path)
-             pci_set_param(pacc, "proc.path", const_cast<char*>(proc_pci_path));
+             pci_set_param(pacc, const_cast<char*>("proc.path"), const_cast<char*>(proc_pci_path));
 
 
 	pci_init(pacc);
