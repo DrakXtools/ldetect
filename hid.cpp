@@ -9,8 +9,8 @@
 #include <string.h>
 #include <cerrno>
 #include <libkmod.h>
+#include <sysfs/libsysfs.h>
 
-#include "libsysfs.h"
 #include "libldetect.h"
 #include "common.h"
 
