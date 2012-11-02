@@ -8,17 +8,18 @@ print q(/* This auto-generated from <pci.h>, don't modify! */
 
 namespace ldetect {
 
-static const std::map<uint16_t,const char*> pciClasses {
+static const std::string undefined("NOT_DEFINED");
+static const std::map<uint16_t,const std::string> pciClasses {
 );
 
-/^#define\s+PCI_CLASS_(\w+)\s+(0x\w{4})/ and print qq(    { $2, "$1" },\n) while <>;
+/^#define\s+PCI_CLASS_(\w+)\s+(0x\w{4})/ and print qq(    { $2, std::string("$1") },\n) while <>;
 
 print '};
 
 #pragma GCC visibility push(default) 
-const char *pci_class2text(uint16_t classId) {
-    std::map<uint16_t, const char*>::const_iterator it = pciClasses.find(classId);
-    return it == pciClasses.end() ? "NOT_DEFINED" : it->second;
+const std::string& pci_class2text(uint16_t classId) {
+    std::map<uint16_t, const std::string>::const_iterator it = pciClasses.find(classId);
+    return it == pciClasses.end() ? undefined : it->second;
 }
 #pragma GCC visibility pop
 

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <iostream>
 #include <cassert>
 #include <string.h>
 #include <unistd.h>
@@ -36,9 +37,9 @@ static void printit(std::vector<pciusb_entry> *entries, void print_class(unsigne
 }
 
 static void print_pci_class(unsigned long class_id) {
-  const char *s = pci_class2text(class_id);
-  if (strcmp(s, "NOT_DEFINED") != 0) 
-     printf(" [%s]", s);
+    const std::string &s = pci_class2text(class_id);
+    if (s != "NOT_DEFINED")
+	std::cout << " [" << s << "]" << std::endl;
 }
 
 static void print_usb_class(unsigned long class_id) {

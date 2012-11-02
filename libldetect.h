@@ -57,7 +57,7 @@ class pciusb_entry {
 /* pci ************************************************************************/
 /******************************************************************************/
 std::vector<pciusb_entry> *pci_probe(void) EXPORTED;
-const char *pci_class2text(uint16_t class_id) EXPORTED;
+const std::string& pci_class2text(uint16_t class_id) EXPORTED;
 extern const char *proc_pci_path EXPORTED;
 const std::string& get_pci_description(uint16_t vendor_id, uint16_t device_id) EXPORTED;
 
