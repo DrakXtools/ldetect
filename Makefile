@@ -102,9 +102,9 @@ run: lspcidrake
 	LD_LIBRARY_PATH=$(PWD)  ./lspcidrake
 endif
 
-$(ldetect_srcdir)/pciclass.cpp: $(ldetect_srcdir)/generate_pciclass.pl /usr/include/pci/pci.h /usr/include/pci/header.h
+$(ldetect_srcdir)/pciclass.cpp: $(ldetect_srcdir)/generate_pciclass.py /usr/include/pci/pci.h /usr/include/pci/header.h
 	rm -f $@
-	perl $(ldetect_srcdir)/generate_pciclass.pl $^ > $@
+	python $(ldetect_srcdir)/generate_pciclass.py $@ $^
 
 $(ldetect_srcdir)/usbclass.cpp: $(ldetect_srcdir)/generate_usbclass.pl /usr/share/usb.ids 
 	rm -f $@
