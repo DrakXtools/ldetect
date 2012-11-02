@@ -8,9 +8,9 @@ print q(/* This is auto-generated from </usr/share/usb.ids>, don't modify! */
 namespace ldetect {
 
 struct node {
-  uint64_t id;
+  uint32_t id;
   const char *name;
-  uint64_t nb_subnodes;
+  uint32_t nb_subnodes;
   struct node *subnodes;
 };
 
@@ -54,10 +54,10 @@ dump_it(\@l, "classes", '');
 
 print '
 
-static const uint64_t nb_classes = sizeof(classes) / sizeof(*classes);
+static const uint32_t nb_classes = sizeof(classes) / sizeof(*classes);
 
-static void lookup(const char **p, uint64_t *a_class, int kind, uint64_t nb_nodes, struct node *nodes) {
-  for (uint64_t i = 0; i < nb_nodes; i++)
+static void lookup(const char **p, uint32_t *a_class, int kind, uint32_t nb_nodes, struct node *nodes) {
+  for (uint32_t i = 0; i < nb_nodes; i++)
     if (nodes[i].id == a_class[kind]) {
       p[kind] = nodes[i].name;
       lookup(p, a_class, kind + 1, nodes[i].nb_subnodes, nodes[i].subnodes);
@@ -65,9 +65,9 @@ static void lookup(const char **p, uint64_t *a_class, int kind, uint64_t nb_node
     }
 }
 
-struct usb_class_text usb_class2text(uint64_t class_id) {
+struct usb_class_text usb_class2text(uint32_t class_id) {
   const char *p[3] = { NULL, NULL, NULL };
-  uint64_t a_class[3] = { (class_id >> 16) & 0xff, (class_id >> 8) & 0xff, class_id & 0xff };
+  uint32_t a_class[3] = { (class_id >> 16) & 0xff, (class_id >> 8) & 0xff, class_id & 0xff };
   if (a_class[0] != 0xff) lookup(p, a_class, 0, nb_classes, classes);
   {
     return { p[0], p[1], p[2] };

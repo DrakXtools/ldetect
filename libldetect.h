@@ -72,7 +72,7 @@ struct usb_class_text {
   const char *usb_prot_text;
 };
 
-struct usb_class_text usb_class2text(unsigned long class_id) EXPORTED;
+struct usb_class_text usb_class2text(uint32_t class_id) EXPORTED;
 
 extern const char *proc_usb_path EXPORTED;
 

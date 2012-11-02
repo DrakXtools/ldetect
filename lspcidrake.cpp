@@ -13,7 +13,7 @@ namespace ldetect {
 
 static int verboze = 0;
 
-static void printit(std::vector<pciusb_entry> *entries, void print_class(unsigned long )) {
+static void printit(std::vector<pciusb_entry> *entries, void print_class(uint32_t)) {
 	for (unsigned int i = 0; i < entries->size(); i++) {
 		pciusb_entry &e = (*entries)[i];
 		printf("%-16s: ", e.module.empty() ? "unknown": e.module.c_str());
@@ -36,13 +36,13 @@ static void printit(std::vector<pciusb_entry> *entries, void print_class(unsigne
 	delete entries;
 }
 
-static void print_pci_class(unsigned long class_id) {
+static void print_pci_class(uint32_t class_id) {
     const std::string &s = pci_class2text(class_id);
     if (s != "NOT_DEFINED")
 	std::cout << " [" << s << "]" << std::endl;
 }
 
-static void print_usb_class(unsigned long class_id) {
+static void print_usb_class(uint32_t class_id) {
   struct usb_class_text s = usb_class2text(class_id);
   if (s.usb_class_text) {
     printf(" [");
