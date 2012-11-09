@@ -38,7 +38,7 @@ struct pciusb_entry {
 
 		uint16_t subvendor; /* 0xffff if not probe_type'd or no subid */
 		uint16_t subdevice; /* 0xffff if not probe_type'd or no subid */
-		unsigned long class_id; /* 0 if not probe_type'd ; big because of USB backend */
+		uint32_t class_id; /* 0 if not probe_type'd ; big because of USB backend */
 
 		uint16_t pci_domain; /* PCI domain id (16 bits wide in libpci) */
 		uint8_t pci_bus; /* PCI bus id 8 bits wide */
@@ -46,7 +46,7 @@ struct pciusb_entry {
 		uint8_t pci_function; /* PCI function id 3 bits wide */
 		uint8_t pci_revision; /* PCI revision 8 bits wide */
 
-		unsigned short usb_port; /* USB port */
+		uint16_t short usb_port; /* USB port */
 		bool is_pciexpress:1; /* is it PCI express */
 		bool already_found:1;
 };
