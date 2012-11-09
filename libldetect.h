@@ -11,8 +11,7 @@
 
 namespace ldetect {
 
-class entry {
-	public:
+struct entry {
 		entry(std::string name = "", std::string val = "") : name(name), val(val) {};
 		std::string name;
 		std::string val;
@@ -23,8 +22,7 @@ class entry {
 /******************************************************************************/
 /* pciusb *********************************************************************/
 /******************************************************************************/
-class pciusb_entry {
-	public:
+struct pciusb_entry {
 		pciusb_entry(std::string module = "", std::string text= "", std::string class_type = "") :
 			module(module), text(text), class_type(class_type),
 			vendor(0xffff), device(0xffff),	subvendor(0xffff), subdevice(0xffff), class_id(0),
