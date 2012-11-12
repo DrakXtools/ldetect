@@ -46,7 +46,7 @@ struct pciusb_entry {
 		uint8_t pci_function; /* PCI function id 3 bits wide */
 		uint8_t pci_revision; /* PCI revision 8 bits wide */
 
-		uint16_t short usb_port; /* USB port */
+		uint16_t usb_port; /* USB port */
 		bool is_pciexpress:1; /* is it PCI express */
 		bool already_found:1;
 };
