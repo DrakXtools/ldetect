@@ -2,8 +2,8 @@
 
 print q(/* This is auto-generated from </usr/share/usb.ids>, don't modify! */
 
-#include <stdlib.h>
-#include "libldetect.h"
+#include <cstdlib>
+#include "usb.h"
 
 namespace ldetect {
 

@@ -1,6 +1,8 @@
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
+#include <iomanip>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,6 +22,14 @@ char *table_name_to_file(const char *name) {
 	asprintf(&fname, "%s/ldetect-lst/%s", share_path, name);
 
 	return fname;
+}
+
+std::string hexFmt(uint32_t value, uint8_t w, bool prefix) {
+    std::ostringstream oss(std::ostringstream::out);
+    if (prefix)
+    	oss << "0x";
+    oss << std::setw(w) << std::setfill('0') << std::hex << value;
+    return oss.str();
 }
 
 fh fh_open(const char *name) {

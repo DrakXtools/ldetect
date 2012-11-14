@@ -6,10 +6,12 @@
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
+#include <vector>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "common.h"
+#include "libldetect.h"
 
 namespace ldetect {
 

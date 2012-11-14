@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <getopt.h>
 #include "libldetect.h"
+#include "pci.h"
+#include "usb.h"
 #ifdef DRAKX_ONE_BINARY
 #include "lspcidrake.h"
 #endif
@@ -12,46 +14,6 @@
 namespace ldetect {
 
 static int verboze = 0;
-
-static void printit(std::vector<pciusb_entry> *entries, void print_class(uint32_t)) {
-	for (unsigned int i = 0; i < entries->size(); i++) {
-		pciusb_entry &e = (*entries)[i];
-		printf("%-16s: ", e.module.empty() ? "unknown": e.module.c_str());
-		if (!e.text.empty())
-			printf("%s", e.text.c_str());
-		else	printf("unknown (%04x/%04x/%04x/%04x)", e.vendor, e.device, e.subvendor, e.subdevice);
-		if (e.class_id) {
-			print_class(e.class_id);
-		}
-		if (verboze && !e.text.empty()) {
-			printf(" (vendor:%04x device:%04x", e.vendor, e.device);
-			if (e.subvendor != 0xffff || e.subdevice != 0xffff)
-				printf(" subv:%04x subd:%04x", e.subvendor, e.subdevice);
-			printf(")");
-		}
-		if (e.pci_revision)
-                     printf(" (rev: %02x)", e.pci_revision);
-		printf("\n");
-	}
-	delete entries;
-}
-
-static void print_pci_class(uint32_t class_id) {
-    const std::string &s = pci_class2text(class_id);
-    if (s != "NOT_DEFINED")
-	std::cout << " [" << s << "]" << std::endl;
-}
-
-static void print_usb_class(uint32_t class_id) {
-  struct usb_class_text s = usb_class2text(class_id);
-  if (s.usb_class_text) {
-    printf(" [");
-    printf("%s", s.usb_class_text);
-    if (s.usb_sub_text) printf("|%s", s.usb_sub_text);
-    if (s.usb_prot_text) printf("|%s", s.usb_prot_text);
-    printf("]");
-  }
-}
 
 static void print_dmi_hid_entries(std::vector<entry> *entries) {
 	for (std::vector<entry>::const_iterator entry = entries->begin();
@@ -72,22 +34,24 @@ static void usage(void)
 }
 
 #ifdef DRAKX_ONE_BINARY
-int lspcidrake_main(int argc, char **argv) {
+int lspcidrake_main(int argc, char *argv[]) {
 #else
 }
 
 using namespace ldetect;
-int main(int argc, char **argv) {
+int main(int argc, char *argv[]) {
 #endif
 
 	int opt, fake = 0;
-	struct option options[] = { { "verbose", 0, NULL, 'v' },
-				    { "pci-file", 1, NULL, 'p' },
-				    { "usb-file", 1, NULL, 'u' },
-				    { "dmidecode", 0, NULL, 'd' },
-				    { NULL, 0, NULL, 0 } };
+	const char *proc_pci_path = nullptr,
+	      *proc_usb_path = nullptr;
+	struct option options[] = { { "verbose", 0, nullptr, 'v' },
+				    { "pci-file", 1, nullptr, 'p' },
+				    { "usb-file", 1, nullptr, 'u' },
+				    { "dmidecode", 0, nullptr, 'd' },
+				    { nullptr, 0, nullptr, 0 } };
 
-	while ((opt = getopt_long(argc, argv, "vp:u:d", options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "vp:u:d", options, nullptr)) != -1) {
 		switch (opt) {
 			case 'v':
 				verboze = 1;
@@ -110,9 +74,28 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	if (!fake || proc_pci_path) printit(pci_probe(), print_pci_class);
-	if (!fake || proc_usb_path) printit(usb_probe(), print_usb_class);
-	
+	ldetect::pci p = proc_pci_path ? ldetect::pci(proc_pci_path) : ldetect::pci();
+	p.probe();
+	if (!fake) {
+	    for (unsigned int i = 0; i < p.size(); i++) {
+		const pciEntry &e = p[i];
+		std::cout << e;
+		if (verboze)
+		    std::cout << e.verbose();
+		std::cout << e.rev() << std::endl;
+	    }
+	}
+
+	ldetect::usb u = proc_usb_path ? ldetect::usb(proc_usb_path) : ldetect::usb();
+	u.probe();
+	if (!fake) {
+	    for (unsigned int i = 0; i < u.size(); i++) {
+		const usbEntry &e = u[i];
+		std::cout << e << std::endl;
+
+	    }
+	}
+
 	if ((!fake && geteuid() == 0) || dmidecode_file) {
 		std::vector<entry> *dmi_entries = dmi_probe();
 		if(dmi_entries)

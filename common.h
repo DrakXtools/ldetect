@@ -1,10 +1,15 @@
 #ifndef LIBLDETECT_COMMON
 #define LIBLDETECT_COMMON
 
-#include "libldetect.h"
+#include <string>
+#include <sstream>
+#include <iomanip>
+
 #ifdef HAVE_LIBZ
 #include <zlib.h>
 #endif
+
+#include "libldetect.h"
 
 #define NON_EXPORTED __attribute__((visibility("hidden")))
 
@@ -16,15 +21,13 @@ namespace ldetect {
 
 char *table_name_to_file(const char *name);
 
-typedef enum {
-     LOAD,
-     DO_NOT_LOAD,
-} descr_lookup;
+std::string hexFmt(uint32_t value, uint8_t w = 4, bool prefix = true);
 
-int pciusb_find_modules(std::vector<pciusb_entry> &entries, const char *fpciusbtable, const descr_lookup, int is_pci) NON_EXPORTED;
 struct kmod_ctx* modalias_init(void) NON_EXPORTED;
-std::string modalias_resolve_module(struct kmod_ctx *ctx, const char *modalias) NON_EXPORTED;
-void modalias_cleanup(struct kmod_ctx *ctx) NON_EXPORTED;
+#pragma GCC visibility push(default)
+std::string modalias_resolve_module(struct kmod_ctx *ctx, const char *modalias) EXPORTED;
+void modalias_cleanup(struct kmod_ctx *ctx) EXPORTED;
+#pragma GCC visibility pop
 
 #define MAX_DEVICES 100
 #define BUF_SIZE 512
@@ -50,7 +53,8 @@ typedef struct {
 fh fh_open(const char *name) NON_EXPORTED;
 char* fh_gets(char *line, int size, fh *f) NON_EXPORTED;
 int fh_close(fh *f) NON_EXPORTED;
-#pragma GCC visibility pop
 }
+
+#pragma GCC visibility pop
 
 #endif

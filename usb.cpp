@@ -2,16 +2,37 @@
 #include <cstring>
 #include <cerrno>
 #include <vector>
-#include "libldetect.h"
+#include <libkmod.h>
+
 #include "common.h"
 #include "names.h"
 
+#include "usb.h"
+#include "libldetect.h"
+
 namespace ldetect {
 
-static const char proc_usb_path_default[] = "/sys/kernel/debug/usb/devices";
-const char *proc_usb_path = NULL;
+std::ostream& operator<<(std::ostream& os, const usbEntry& e) {
+    os << static_cast<const pciusbEntry&>(e);
+    struct usb_class_text s = usb_class2text(e.class_id);
+    if (s.usb_class_text) {
+	os << " [" << s.usb_class_text;
+	if (s.usb_sub_text) os << "|" << s.usb_sub_text;
+	if (s.usb_prot_text) os << "|" << s.usb_prot_text;
+	os << "]";
+    }
+    return os;
+}
 
-static void build_text(pciusb_entry *e, std::string &vendor_text, std::string &product_text) {
+usb::usb(std::string proc_usb_path) : _proc_usb_path(proc_usb_path) {
+    names_init("/usr/share/usb.ids");
+}
+
+usb::~usb() {
+    names_exit();
+}
+
+static void build_text(pciusbEntry *e, std::string &vendor_text, std::string &product_text) {
 	if (e) {
 		if(vendor_text.empty())
 			vendor_text = names_vendor(e->vendor);
@@ -28,44 +49,33 @@ static void build_text(pciusb_entry *e, std::string &vendor_text, std::string &p
 		product_text.clear();
 	}
 }
-
-std::vector<pciusb_entry>* usb_probe(void) {
+void usb::probe(void) {
 	FILE *f;
 	char buf[BUF_SIZE];
 	int line;
-	std::vector<pciusb_entry> *entries;
-	pciusb_entry *e = NULL;
+	usbEntry *e = NULL;
 	std::string vendor_text, product_text;
 
-	names_init("/usr/share/usb.ids");
-	if (!(f = fopen(proc_usb_path ? proc_usb_path : proc_usb_path_default, "r"))) {
-		if (proc_usb_path) {
-			fprintf(stderr, "Unable to open \"%s\": %s\n"
-				    "You may have passed a wrong argument to the \"-u\" option.\n",
-				    strerror(errno), proc_usb_path);
-		}
-		entries = NULL;
-		goto exit;
-	}
-
-	entries = new std::vector<pciusb_entry>(0);
+	if (!(f = fopen(_proc_usb_path.c_str(), "r")))
+	    std::cerr << "Unable to open \"" << strerror(errno) << "\": " << _proc_usb_path << std::endl <<
+		    "You may have passed a wrong argument to the \"-u\" option." << std::endl;
 
 	/* for further information on the format parsed by this state machine,
 	 * read /usr/share/doc/kernel-doc-X.Y.Z/usb/proc_usb_info.txt */  
-	for(line = 1; fgets(buf, sizeof(buf) - 1, f) && entries->size() < MAX_DEVICES; line++) {
+	for(line = 1; fgets(buf, sizeof(buf) - 1, f) && _entries.size() < MAX_DEVICES; line++) {
 		switch (buf[0]) {
 		case 'T': {
 			build_text(e, vendor_text, product_text);
-			entries->push_back(pciusb_entry());
-			e = &entries->back();
+			_entries.push_back(usbEntry());
+			e = &_entries.back();
 
-			if (!sscanf(buf, "T:  Bus=%02hhu Lev=%*02d Prnt=%*04d Port=%02hu Cnt=%*02d Dev#=%3hhu Spd=%*3s MxCh=%*2d", &e->pci_bus, &e->usb_port, &e->pci_device) == 3)
-				fprintf(stderr, "%s %d: unknown ``T'' line\n", proc_usb_path, line);
+			if (!sscanf(buf, "T:  Bus=%02hhu Lev=%*02d Prnt=%*04d Port=%02hu Cnt=%*02d Dev#=%3hhu Spd=%*3s MxCh=%*2d", &e->bus, &e->usb_port, &e->pciusb_device) == 3)
+				fprintf(stderr, "%s %d: unknown ``T'' line\n", _proc_usb_path.c_str(), line);
 			break;
 		}
 		case 'P': {
 			if (!sscanf(buf, "P:  Vendor=%hx ProdID=%hx", &e->vendor, &e->device) == 2)
-				fprintf(stderr, "%s %d: unknown ``P'' line\n", proc_usb_path, line);
+				fprintf(stderr, "%s %d: unknown ``P'' line\n", _proc_usb_path.c_str(), line);
 			break;
 		}
 		case 'I': if (e->class_id == 0 || e->module.empty()) {
@@ -84,6 +94,8 @@ std::vector<pciusb_entry>* usb_probe(void) {
 					while (((pos = driver.find_first_of('-',pos))!= std::string::npos)) {
 						driver[pos++] = '_';
 					}
+					// lame..
+					driver.resize(driver.find_first_of('\0', 0));
 #ifdef __UCLIBCXX_MAJOR___
 					e->module = std::move(driver);
 #else
@@ -92,12 +104,12 @@ std::vector<pciusb_entry>* usb_probe(void) {
 				}
 				/* see linux/sound/usb/usbaudio.c::usb_audio_ids */
 				if (e->class_id == (0x1*0x100+ 0x01)) /* USB_AUDIO_CLASS*0x100 + USB_SUBCLASS_AUDIO_CONTROL*/
-					e->module = "snd_usb_audio";
+					e->module += "snd_usb_audio";
 
 			} else if (sscanf(buf, "I:  If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=%s",
 				    &class_id, &sub, &prot, const_cast<char*>(driver.data())) >= 3) {
 				/* Ignore interfaces not active */
-			} else fprintf(stderr, "%s %d: unknown ``I'' line\n", proc_usb_path, line);
+			} else fprintf(stderr, "%s %d: unknown ``I'' line\n", _proc_usb_path.c_str(), line);
 			break;
 		}
 		case 'S': {
@@ -115,15 +127,42 @@ std::vector<pciusb_entry>* usb_probe(void) {
 		}
 	}
 
-	build_text(&entries->back(), vendor_text, product_text);
+	build_text(&_entries.back(), vendor_text, product_text);
 
 	fclose(f);
 
-	pciusb_find_modules(*entries, "usbtable", DO_NOT_LOAD, 0);
+	findModules("usbtable", false);
 
-exit:
-	names_exit();
-	return entries;
+}
+
+void usb::find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e) {
+    DIR *dir;
+    struct dirent *dent;
+
+    std::ostringstream usb_prefix(std::ostringstream::out);
+    usb_prefix << e.bus << "-";
+    /* USB port is indexed from 0 in procfs, from 1 in sysfs */
+    std::ostringstream sysfs_path(std::ostringstream::out);
+    sysfs_path << "/sys/bus/usb/devices/" << e.bus << "-" << e.usb_port + 1;
+
+    dir = opendir(sysfs_path.str().c_str());
+    if (!dir)
+	return;
+
+    while ((dent = readdir(dir)) != NULL) {
+	if ((dent->d_type == DT_DIR) &&
+		!strncmp(usb_prefix.str().c_str(), dent->d_name, usb_prefix.str().size())) {
+	    std::ostringstream modalias_path(std::ostringstream::out);
+	    modalias_path << "/" << dent->d_name << "/modalias";
+
+	    set_modules_from_modalias_file(ctx, e, modalias_path.str());
+	    /* maybe we would need a "other_modules" field in pciusb_entry 
+	       to list modules from all USB interfaces */
+	    if (!e.module.empty())
+		break;
+	}
+    }
+    closedir(dir);
 }
 
 }
