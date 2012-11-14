@@ -73,7 +73,7 @@ namespace ldetect {
 		return !_entries.empty();
 	    }
 
-	    virtual bool operator! () const throw() {
+	    bool operator! () const throw() {
 		return _entries.empty();
 	    }
 
