@@ -19,7 +19,7 @@
 
 namespace ldetect {
 
-char *table_name_to_file(const char *name);
+std::string table_name_to_file(std::string name);
 
 std::string hexFmt(uint32_t value, uint8_t w = 4, bool prefix = true);
 
@@ -50,7 +50,7 @@ typedef struct {
 #define ifree(p) do { if (p) { free(p); p = nullptr; } } while (0)
 #define alloc_v(v) calloc(1, sizeof(v[0]));
 
-fh fh_open(const char *name) NON_EXPORTED;
+fh fh_open(std::string name) NON_EXPORTED;
 char* fh_gets(char *line, int size, fh *f) NON_EXPORTED;
 int fh_close(fh *f) NON_EXPORTED;
 }

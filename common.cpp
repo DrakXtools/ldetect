@@ -2,6 +2,7 @@
 #define _GNU_SOURCE
 #endif
 #include <iomanip>
+#include <iostream>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,13 +14,11 @@
 
 namespace ldetect {
 
-char *table_name_to_file(const char *name) {
+std::string table_name_to_file(std::string name) {
 
 	const char *share_path = getenv("SHARE_PATH");
-	char *fname;
-	if (!share_path || !*share_path) share_path = "/usr/share";
-
-	asprintf(&fname, "%s/ldetect-lst/%s", share_path, name);
+	std::string fname(share_path ? share_path : "/usr/share");
+	fname.append("/ldetect-lst/").append(name);
 
 	return fname;
 }
@@ -32,23 +31,22 @@ std::string hexFmt(uint32_t value, uint8_t w, bool prefix) {
     return oss.str();
 }
 
-fh fh_open(const char *name) {
+fh fh_open(std::string name) {
 	fh ret;
-	char *fname = table_name_to_file(name);
+	std::string fname = table_name_to_file(name);
 
-	if (access(fname, R_OK) == 0) {
+	if (access(fname.c_str(), R_OK) == 0) {
 		/* prefer gzip type when not compressed, more direct than zlib access */
 		ret.gztype = GZIP;
-		ret.u.gzip_fh.f = fopen(fname, "r");
+		ret.u.gzip_fh.f = fopen(fname.c_str(), "r");
 		ret.u.gzip_fh.pid = 0;
 	} else {
-		char *fname_gz;
-                asprintf(&fname_gz, "%s.gz", fname);
+	    std::string fname_gz(fname + ".gz");
                 if (access(GZIP_BIN, R_OK) == 0) {
                         int fdno[2];
                         ret.gztype = GZIP;
-                        if (access(fname_gz, R_OK) != 0) {
-                                fprintf(stderr, "Missing %s (should be %s)\n", name, fname);
+                        if (access(fname_gz.c_str(), R_OK) != 0) {
+			    std::cerr << "Missing " << name << " (should be " << fname_gz << std::endl;
                                 exit(1);
                         }
                         if (pipe(fdno)) {
@@ -69,7 +67,7 @@ fh fh_open(const char *name) {
 
                                 cmd[ip++] = GZIP_BIN;
                                 cmd[ip++] = "-cd";
-                                cmd[ip++] = fname_gz;
+                                cmd[ip++] = fname_gz.c_str();
                                 cmd[ip++] = nullptr;
 
                                 dup2(fdno[1], STDOUT_FILENO);
@@ -83,17 +81,15 @@ fh fh_open(const char *name) {
 #ifdef HAVE_LIBZ
 		else {
                         ret.gztype = ZLIB;
-                        ret.u.zlib_fh = gzopen(fname_gz, "r");
+                        ret.u.zlib_fh = gzopen(fname_gz.c_str(), "r");
                         if (!ret.u.zlib_fh) {
                                 perror("pciusb");
                                 exit(3);
                         }
                 }
 #endif
-		free(fname_gz);
 	}
 
-	free(fname);
 	return ret;
 }
 

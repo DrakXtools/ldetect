@@ -86,7 +86,7 @@ namespace ldetect {
 	protected:
 	    std::vector<T> _entries;
 
-	    int findModules(const char *fpciusbtable, bool descr_lookup) {
+	    int findModules(std::string fpciusbtable, bool descr_lookup) {
 		fh f;
 		char buf[2048];
 
@@ -104,7 +104,7 @@ namespace ldetect {
 		    if (nb != 4) {
 			nb = sscanf(buf, "0x%hx\t0x%hx\t%n", &vendor, &device, &offset);
 			if (nb != 2) {
-			    fprintf(stderr, "%s %d: bad line\n", fpciusbtable, line);
+			    std::cerr << fpciusbtable << " " << line << ": bad line" << std::endl;
 			    continue; // skip bad line
 			}
 		    }
