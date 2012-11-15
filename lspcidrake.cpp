@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <getopt.h>
 #include "libldetect.h"
+#include "hid.h"
 #include "pci.h"
 #include "usb.h"
 #ifdef DRAKX_ONE_BINARY
@@ -102,10 +103,14 @@ int main(int argc, char *argv[]) {
 			print_dmi_hid_entries(dmi_entries);
 	}
 
-	if (!fake || sysfs_hid_path) {
-		std::vector<entry> *hid_entries = hid_probe();
-		if (hid_entries)
-			print_dmi_hid_entries(hid_entries);
+	ldetect::hid h;
+	h.probe();
+	if (!fake) {
+	    for (unsigned int i = 0; i < u.size(); i++) {
+		const usbEntry &e = u[i];
+		std::cout << e << std::endl;
+
+	    }
 	}
 
 	return 0;

@@ -88,7 +88,6 @@ std::ostream& operator<<(std::ostream& os, const pciEntry& e) {
     }
 
     return os;
-
 }
 
 pci::pci(std::string proc_pci_path) : _pacc(pci_alloc()) {

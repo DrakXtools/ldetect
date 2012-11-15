@@ -13,38 +13,13 @@
 
 #include "libldetect.h"
 #include "common.h"
+#include "hid.h"
 
 namespace ldetect {
 
-const char *sysfs_hid_path = "/sys/bus/hid/devices";
-#if 0
-#define DEBUG(args...) printf(args)
-#else 
-#define DEBUG(args...)
-#endif
-
-#if 0
-struct module_alias {
-    const char      *modalias;
-    const char      *module;
-};
-
-static struct module_alias aliasdb[] = { {NULL, NULL} };
-static const char *resolve_modalias(const struct module_alias *aliasdb,
-				    const char *alias_name)
-{
-    const struct module_alias *alias = aliasdb;
-
-    while (alias->modalias != NULL) {
-	if (fnmatch(alias->modalias, alias_name, 0) == 0) 
-	    return alias->module;
-
-	alias++;
-    }
-    return NULL;
-}
-#endif
-
+/* need to rewrite these functions in c++, but lack any hid devices to get
+ * any input for testing from
+ */
 static char *get_field_value(const char *fields, const char *field_name)
 {
 	const char *modalias;
@@ -71,17 +46,32 @@ static char *parse_name(char *fields)
 }
 
 
-
-static void parse_device(struct kmod_ctx *ctx, std::vector<entry> &entries, const char *dev)
+void hid::probe(void)
 {
-	char keyfile[SYSFS_PATH_MAX];
+    DIR *dir = opendir(sysfs_hid_path);
+    if (dir == nullptr) {
+	std::cerr << "Unable to open \"" << _sysfs_hid_path << "\": " << strerror(errno) << std::endl <<
+		"Won't scan for hid devices" << std::endl;
+	return;
+    }
+    struct kmod_ctx *ctx = modalias_init();
+
+    for (struct dirent *dent = readdir(dir); dent != nullptr; dent = readdir(dir))
+	if (dent->d_name[0] != '.')
+	    parse_device(ctx, dent->d_name);
+
+    modalias_cleanup(ctx);
+    closedir(dir);
+}
+
+void hid::parse_device(struct kmod_ctx *ctx, const char *dev)
+{
 	char *modalias;
-	char *device_name;
 	struct sysfs_attribute *sysfs_attr;
 
-	snprintf(keyfile, sizeof(keyfile)-1, "%s/%s/uevent",
-			sysfs_hid_path, dev);
-	sysfs_attr = sysfs_open_attribute(keyfile);
+	std::string keyfile(_sysfs_hid_path + "/");
+	keyfile.append(dev).append("/").append("uevent");
+	sysfs_attr = sysfs_open_attribute(keyfile.c_str());
 	if (!sysfs_attr)
 		return;
 	if (sysfs_read_attribute(sysfs_attr) != 0 || !sysfs_attr->value) {
@@ -89,55 +79,23 @@ static void parse_device(struct kmod_ctx *ctx, std::vector<entry> &entries, cons
 		return;
 	}
 
-	DEBUG("%s: read %s\n", HID_BUS_NAME, sysfs_attr->value);
-
 	modalias = parse_modalias(sysfs_attr->value);
-	if (modalias == NULL)
+	if (modalias == nullptr)
 		return;
-	DEBUG("%s: modalias is [%s]\n", HID_BUS_NAME, modalias);
 
-	device_name = parse_name(sysfs_attr->value);
+	char *device_name = parse_name(sysfs_attr->value);
 	sysfs_close_attribute(sysfs_attr);
-	if (device_name != NULL) 
-		DEBUG("%s: device name is [%s]\n", HID_BUS_NAME, device_name);
-	else 
-		device_name = strdup("HID Device");
 
 	std::string modname = modalias_resolve_module(ctx, modalias);
 	free(modalias);
-	DEBUG("%s: module name is [%s]\n", HID_BUS_NAME, modname.c_str());
 	if (!modname.empty()) 
-		entries.push_back(entry(modname,device_name));
+		_entries.push_back(hidEntry(modname, device_name ? device_name : "HID Device"));
+	if (device_name)
+	    free(device_name);
 }
 
-
-std::vector<entry>* hid_probe(void)
-{
-	std::vector<entry> *entry_list = NULL;
-	struct kmod_ctx *ctx = modalias_init();
-	DIR *dir = opendir(sysfs_hid_path);
-	if (dir == NULL) {
-		fprintf(stderr, "Unable to open \"%s\": %s\n"
-				    "Won't scan for hid devices\n",
-				    sysfs_hid_path, strerror(errno));
-		goto end_probe;
-	}
-
-	entry_list = new std::vector<entry>(0);
-
-	for (struct dirent *dent = readdir(dir); dent != NULL; dent = readdir(dir)) {
-		if (dent->d_name[0] == '.')
-			continue;
-		DEBUG("%s: device found %s\n", HID_BUS_NAME, dent->d_name);
-		parse_device(ctx, *entry_list, dent->d_name);
-	}
-
-end_probe:
-	modalias_cleanup(ctx);
-	if (dir)
-		closedir(dir);
-
-	return entry_list;
+std::ostream& operator<<(std::ostream& os, const hidEntry& e) {
+    return os << std::setw(16) << std::left << e.module << ":" << e.text;
 }
 
 }
