@@ -42,7 +42,7 @@ static void build_text(pciusbEntry *e, std::string &vendor_text, std::string &pr
 #ifndef __UCLIBCXX_MAJOR__
 		e->text = std::move(std::string(vendor_text.empty() ? "Unknown" : vendor_text).append("|").append(product_text.empty() ? "Unknown": product_text));
 #else
-		std::swap(e->text,std::string(vendor_text.empty() ? "Unknown" : vendor_text).append("|").append(product_text.empty() ? "Unknown": product_text));
+		e->text.swap(std::string(vendor_text.empty() ? "Unknown" : vendor_text).append("|").append(product_text.empty() ? "Unknown": product_text));
 #endif
 
 		vendor_text.clear();
@@ -99,7 +99,7 @@ void usb::probe(void) {
 #ifdef __UCLIBCXX_MAJOR___
 					e->module = std::move(driver);
 #else
-					std::swap(e->module,driver);
+					e->module.swap(driver);
 #endif
 				}
 				/* see linux/sound/usb/usbaudio.c::usb_audio_ids */
