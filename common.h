@@ -26,7 +26,6 @@ std::string hexFmt(uint32_t value, uint8_t w = 4, bool prefix = true);
 struct kmod_ctx* modalias_init(void) NON_EXPORTED;
 #pragma GCC visibility push(default)
 std::string modalias_resolve_module(struct kmod_ctx *ctx, const char *modalias) EXPORTED;
-void modalias_cleanup(struct kmod_ctx *ctx) EXPORTED;
 #pragma GCC visibility pop
 
 #define MAX_DEVICES 100

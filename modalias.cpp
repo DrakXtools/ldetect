@@ -104,8 +104,4 @@ exit:
 	return str;
 }
 
-void modalias_cleanup(struct kmod_ctx *ctx) {
-    kmod_unref(ctx);
-}
-
 }

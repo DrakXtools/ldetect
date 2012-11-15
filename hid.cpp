@@ -60,7 +60,7 @@ void hid::probe(void)
 	if (dent->d_name[0] != '.')
 	    parse_device(ctx, dent->d_name);
 
-    modalias_cleanup(ctx);
+    kmod_unref(ctx);
     closedir(dir);
 }
 

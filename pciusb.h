@@ -140,7 +140,7 @@ namespace ldetect {
 		}
 		fh_close(&f);
 
-		struct kmod_ctx *ctx = modalias_init();
+		::kmod_ctx *ctx = modalias_init();
 
 		for (unsigned int i = 0; i < _entries.size(); i++) {
 		    T &e = _entries[i];
@@ -151,7 +151,7 @@ namespace ldetect {
 		    find_modules_through_aliases(ctx, e);
 		}
 
-		modalias_cleanup(ctx);
+		kmod_unref(ctx);
 
 		return 1;
 	    }
