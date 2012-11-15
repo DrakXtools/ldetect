@@ -173,7 +173,7 @@ static std::vector<entry>* entries_matching_criteria(const std::vector<entry> &c
 
 	int previous_refine = 0;
 
-	for (int line = 1; fh_gets(buf, sizeof(buf) - 1, &f); line++) {
+	for (int line = 1; fh_gets(buf, sizeof(buf) - 1, f); line++) {
 		char *s = skip_leading_spaces(buf);
 		if (*s == '#') continue; // skip comments
 
@@ -235,7 +235,7 @@ static std::vector<entry>* entries_matching_criteria(const std::vector<entry> &c
 		}
 	}
 	foreach_indent(0, ifree(constraints[i]));
-	fh_close(&f);
+	fh_close(f);
 
 	return entries;
 }

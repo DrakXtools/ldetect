@@ -31,27 +31,24 @@ std::string modalias_resolve_module(struct kmod_ctx *ctx, const char *modalias) 
 #define MAX_DEVICES 100
 #define BUF_SIZE 512
 
-typedef enum { ZLIB, GZIP } gztype_t;
-typedef struct {
-	gztype_t gztype;
-	union {
-		struct {
-			FILE *f;
-			pid_t pid;
-		} gzip_fh;
+struct fh {
+    fh() : compressed(false), f(NULL) {}
+    bool compressed;
+    union {
+	FILE *f;
 #ifdef HAVE_LIBZ
-		gzFile zlib_fh;
+	gzFile zlib_fh;
 #endif
-	} u;
-} fh;
+    };
+};
 
 #define psizeof(a) (sizeof(a) / sizeof(a[0]))
 #define ifree(p) do { if (p) { free(p); p = nullptr; } } while (0)
 #define alloc_v(v) calloc(1, sizeof(v[0]));
 
 fh fh_open(std::string name) NON_EXPORTED;
-char* fh_gets(char *line, int size, fh *f) NON_EXPORTED;
-int fh_close(fh *f) NON_EXPORTED;
+char* fh_gets(char *line, int size, fh &f) NON_EXPORTED;
+int fh_close(fh &f) NON_EXPORTED;
 }
 
 #pragma GCC visibility pop

@@ -16,11 +16,11 @@ namespace ldetect {
 
 std::string table_name_to_file(std::string name) {
 
-	const char *share_path = getenv("SHARE_PATH");
-	std::string fname(share_path ? share_path : "/usr/share");
-	fname.append("/ldetect-lst/").append(name);
+    const char *share_path = getenv("SHARE_PATH");
+    std::string fname(share_path ? share_path : "/usr/share");
+    fname.append("/ldetect-lst/").append(name);
 
-	return fname;
+    return fname;
 }
 
 std::string hexFmt(uint32_t value, uint8_t w, bool prefix) {
@@ -32,61 +32,50 @@ std::string hexFmt(uint32_t value, uint8_t w, bool prefix) {
 }
 
 fh fh_open(std::string name) {
-	fh ret;
-	std::string fname = table_name_to_file(name);
+    fh ret;
+    std::string fname = table_name_to_file(name);
 
-	if (access(fname.c_str(), R_OK) == 0) {
-		/* prefer gzip type when not compressed, more direct than zlib access */
-		ret.gztype = GZIP;
-		ret.u.gzip_fh.f = fopen(fname.c_str(), "r");
-		ret.u.gzip_fh.pid = 0;
+    if (access(fname.c_str(), R_OK) == 0) {
+	/* prefer gzip type when not compressed, more direct than zlib access */
+	ret.compressed = false;
+	ret.f = fopen(fname.c_str(), "r");
+    }
+#ifdef HAVE_LIBZ
+    else {
+	std::string fname_gz(fname + ".gz");
+	if (access(fname_gz.c_str(), R_OK) != 0) {
+	    std::cerr << "Missing " << name << " (should be " << fname_gz << ")" << std::endl;
+	    exit(1);
 	}
-#ifdef HAVE_LIBZ
-		else {
-		    std::string fname_gz(fname + ".gz");
+	else
+	    ret.compressed = true;
 
-                        ret.gztype = ZLIB;
-                        ret.u.zlib_fh = gzopen(fname_gz.c_str(), "r");
-                        if (!ret.u.zlib_fh) {
-                                perror("pciusb");
-                                exit(3);
-                        }
-                }
+
+	ret.zlib_fh = gzopen(fname_gz.c_str(), "r");
+	if (!ret.zlib_fh) {
+	    perror("pciusb");
+	    exit(3);
+	}
+    }
 #endif
 
-	return ret;
+    return ret;
 }
 
-char* fh_gets(char *line, int size, fh *f) {
-        char *ret = nullptr;
-        switch (f->gztype) {
-        case ZLIB:
+char* fh_gets(char *line, int size, fh &f) {
 #ifdef HAVE_LIBZ
-                ret = gzgets(f->u.zlib_fh, line, size);
-                break;
+    if (f.compressed)
+	return gzgets(f.zlib_fh, line, size);
 #endif
-        case GZIP:
-                ret = fgets(line, size, f->u.gzip_fh.f);
-                break;
-        }
-        return ret;
+    return fgets(line, size, f.f);
 }
 
-int fh_close(fh *f) {
-        int ret = EOF;
-        switch (f->gztype) {
-        case ZLIB:
+int fh_close(fh &f) {
 #ifdef HAVE_LIBZ
-                ret = gzclose(f->u.zlib_fh);
-                break;
+    if (f.compressed)
+	return gzclose(f.zlib_fh);
 #endif
-        case GZIP:
-                ret = fclose(f->u.gzip_fh.f);
-                if (f->u.gzip_fh.pid > 0)
-                        waitpid(f->u.gzip_fh.pid, nullptr, 0);
-                break;
-        }
-        return ret;
+    return fclose(f.f);
 }
 
 }

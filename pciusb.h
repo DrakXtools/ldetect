@@ -92,7 +92,7 @@ namespace ldetect {
 
 		f = fh_open(fpciusbtable);
 
-		for (int line = 1; fh_gets(buf, sizeof(buf) - 1, &f); line++) {
+		for (int line = 1; fh_gets(buf, sizeof(buf) - 1, f); line++) {
 		    unsigned short vendor, device, subvendor, subdevice;
 		    char *p = nullptr, *q = nullptr;
 		    int offset;
@@ -138,7 +138,7 @@ namespace ldetect {
 			    e.already_found = true;
 		    }
 		}
-		fh_close(&f);
+		fh_close(f);
 
 		::kmod_ctx *ctx = modalias_init();
 
