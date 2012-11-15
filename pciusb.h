@@ -38,6 +38,7 @@ namespace ldetect {
 		subvendor(0xffff), subdevice(0xffff), class_id(0),
 		bus(0xff), pciusb_device(0xff),
 		already_found(false) {};
+	    virtual ~pciusbEntry() {}
 
 	    std::string module;
 	    std::string text;
@@ -64,6 +65,7 @@ namespace ldetect {
     class pciusb {
 	public:
 	    pciusb() : _entries() {}
+	    virtual ~pciusb() {}
 
 	    const T& operator[] (uint16_t i) const {
 		return _entries[i];
