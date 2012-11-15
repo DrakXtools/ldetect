@@ -63,9 +63,9 @@ pciEntry::pciEntry(pci_dev *dev, pci_access *pacc) : pciusbEntry(),
 
 std::string pciEntry::verbose() const {
     std::ostringstream oss(std::ostringstream::out);
-    oss << " (vendor:" << hexFmt(vendor) << " device:" << hexFmt(device);
+    oss << " (vendor:" << hexFmt(vendor, 4, false) << " device:" << hexFmt(device, 4, false);
     if (subvendor != 0xffff || subdevice != 0xffff)
-	oss << " subv:" << hexFmt(subvendor) << " subd:" << hexFmt(subdevice);
+	oss << " subv:" << hexFmt(subvendor, 4, false) << " subd:" << hexFmt(subdevice, 4, false);
     oss << ")";
 
     return oss.str();
