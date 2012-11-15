@@ -96,6 +96,21 @@ pci::pci(std::string proc_pci_path) : _pacc(pci_alloc()) {
     pci_set_param(_pacc, const_cast<char*>("proc.path"), const_cast<char*>(proc_pci_path.c_str()));
 }
 
+pci::pci(const pci &p) : _pacc(nullptr) {
+    *this = p;
+    pci_init(_pacc);
+    _pacc->numeric_ids = 0;
+    pci_set_param(_pacc, const_cast<char*>("proc.path"), pci_get_param(p._pacc, const_cast<char*>("proc.path")));
+}
+
+pci& pci::operator=(const pci &p) {
+    *this = p;
+    pci_init(_pacc);
+    _pacc->numeric_ids = 0;
+    pci_set_param(_pacc, const_cast<char*>("proc.path"), pci_get_param(p._pacc, const_cast<char*>("proc.path")));
+    return *this;
+}
+
 pci::~pci() {
     pci_cleanup(_pacc);
 }
