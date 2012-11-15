@@ -40,46 +40,11 @@ fh fh_open(std::string name) {
 		ret.gztype = GZIP;
 		ret.u.gzip_fh.f = fopen(fname.c_str(), "r");
 		ret.u.gzip_fh.pid = 0;
-	} else {
-	    std::string fname_gz(fname + ".gz");
-                if (access(GZIP_BIN, R_OK) == 0) {
-                        int fdno[2];
-                        ret.gztype = GZIP;
-                        if (access(fname_gz.c_str(), R_OK) != 0) {
-			    std::cerr << "Missing " << name << " (should be " << fname_gz << std::endl;
-                                exit(1);
-                        }
-                        if (pipe(fdno)) {
-                                perror("pciusb");
-                                exit(1);
-                        }
-
-                        if ((ret.u.gzip_fh.pid = fork()) != 0) {
-                                ret.u.gzip_fh.f = fdopen(fdno[0], "r");
-                                close(fdno[1]);
-                        } else {
-                                const char* cmd[5];
-                                int ip = 0;
-                                char *ld_loader = getenv("LD_LOADER");
-
-                                if (ld_loader && *ld_loader)
-                                        cmd[ip++] = ld_loader;
-
-                                cmd[ip++] = GZIP_BIN;
-                                cmd[ip++] = "-cd";
-                                cmd[ip++] = fname_gz.c_str();
-                                cmd[ip++] = nullptr;
-
-                                dup2(fdno[1], STDOUT_FILENO);
-                                close(fdno[0]);
-                                close(fdno[1]);
-                                execvp(cmd[0], (char* const*)cmd);
-                                perror("pciusb"); 
-                                exit(2);
-                        }
-		}
+	}
 #ifdef HAVE_LIBZ
 		else {
+		    std::string fname_gz(fname + ".gz");
+
                         ret.gztype = ZLIB;
                         ret.u.zlib_fh = gzopen(fname_gz.c_str(), "r");
                         if (!ret.u.zlib_fh) {
@@ -88,7 +53,6 @@ fh fh_open(std::string name) {
                         }
                 }
 #endif
-	}
 
 	return ret;
 }
