@@ -106,9 +106,8 @@ int main(int argc, char *argv[]) {
 	ldetect::hid h;
 	h.probe();
 	if (!fake) {
-	    for (unsigned int i = 0; i < u.size(); i++) {
-		const usbEntry &e = u[i];
-		std::cout << e << std::endl;
+	    for (unsigned int i = 0; i < h.size(); i++) {
+		std::cout << h[i] << std::endl;
 
 	    }
 	}
