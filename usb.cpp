@@ -48,7 +48,7 @@ void usb::probe(void) {
 	FILE *f;
 	char buf[BUF_SIZE];
 	int line;
-	usbEntry *e = NULL;
+	usbEntry *e = nullptr;
 	std::string vendor_text, product_text;
 
 	if (!(f = fopen(_proc_usb_path.c_str(), "r")))
@@ -140,7 +140,7 @@ void usb::find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e) {
     if (!dir)
 	return;
 
-    while ((dent = readdir(dir)) != NULL) {
+    while ((dent = readdir(dir)) != nullptr) {
 	if ((dent->d_type == DT_DIR) &&
 		!strncmp(usb_prefix.str().c_str(), dent->d_name, usb_prefix.str().size())) {
 	    std::ostringstream modalias_path(std::ostringstream::out);

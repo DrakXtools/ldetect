@@ -94,7 +94,7 @@ namespace ldetect {
 
 		for (int line = 1; fh_gets(buf, sizeof(buf) - 1, &f); line++) {
 		    unsigned short vendor, device, subvendor, subdevice;
-		    char *p = NULL, *q = NULL;
+		    char *p = nullptr, *q = nullptr;
 		    int offset;
 		    int nb;
 		    if (buf[0]=='#')
@@ -160,7 +160,7 @@ namespace ldetect {
 		FILE *file;
 		file = fopen(modalias_path.c_str(), "r");
 		if (file) {
-		    char *modalias = NULL;
+		    char *modalias = nullptr;
 		    size_t n, size;
 		    if (-1 == getline(&modalias, &n, file)) {
 			std::cerr << "Unable to read modalias from " << modalias_path << std::endl;;

@@ -16,11 +16,11 @@
 
 namespace ldetect {
 
-static char *aliasdefault = NULL;
-static char * version = NULL;
+static char *aliasdefault = nullptr;
+static char * version = nullptr;
 
 static void get_version(void) {
-	if (version != NULL)
+	if (version != nullptr)
 		return;
 	struct utsname buf;
 	uname(&buf);
@@ -72,7 +72,7 @@ struct kmod_ctx* modalias_init(void) {
 		"/lib/module-init-tools/ldetect-lst-modules.alias",
 		aliasdefault,
 		dkms_file,
-		NULL,
+		nullptr,
 	};
 
 	/* Init libkmod */
@@ -81,21 +81,21 @@ struct kmod_ctx* modalias_init(void) {
 		fputs("Error: kmod_new() failed!\n", stderr);
 		free(dkms_file);
 		kmod_unref(ctx);
-		ctx = NULL;
+		ctx = nullptr;
 	}
 	kmod_load_resources(ctx);
 	return ctx;
 }
 
 std::string modalias_resolve_module(struct kmod_ctx *ctx, const char *modalias) {
-	struct kmod_list *l = NULL, *list = NULL, *filtered = NULL;
+	struct kmod_list *l = nullptr, *list = nullptr, *filtered = nullptr;
 	std::string str;
 	int err = kmod_module_new_from_lookup(ctx, modalias, &list);
 	if (err < 0)
 		goto exit;
 
 	// No module found...
-	if (list == NULL)
+	if (list == nullptr)
 		goto exit;
 
 	// filter through blacklist

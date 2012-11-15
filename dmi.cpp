@@ -15,7 +15,7 @@
 
 namespace ldetect {
 
-const char *dmidecode_file = NULL;
+const char *dmidecode_file = nullptr;
 
 
 static const char *cat_BIOS[] = { "Vendor", "Version" };
@@ -72,14 +72,14 @@ static char *get_after_colon(char *s) {
 	if (p) {
 		*p = '\0';
 		return p + (p[1] == ' ' ? 2 : 1);
-	} else return NULL;
+	} else return nullptr;
 }
 
 static const struct category *lookup_category(const char *cat_name) {
 	for (int i = 0; i < nb_categories; i++)
 		if (streq(categories[i].cat_name, cat_name))
 			return &categories[i];
-	return NULL;
+	return nullptr;
 }
 
 static int lookup_field(const struct category *category, const char *field_name) {
@@ -93,7 +93,7 @@ static const char* lookup_criteria(const std::vector<entry> &criteria, const cha
 	for (unsigned int i = 0; i < criteria.size(); i++)
 		if (streq(criteria[i].name.c_str(), field))
 			return criteria[i].val.c_str();
-	return NULL;
+	return nullptr;
 }
 
 /*********************************************************************************/
@@ -101,7 +101,7 @@ static std::vector<entry>* criteria_from_dmidecode(void) {
 	FILE *f;
 	char buf[BUF_SIZE];
 
-	std::vector<entry> *criteria = NULL;
+	std::vector<entry> *criteria = nullptr;
 
 	if (!(f = dmidecode_file ? fopen(dmidecode_file, "r") : popen("dmidecode", "r"))) {
 		perror("dmidecode");
@@ -110,7 +110,7 @@ static std::vector<entry>* criteria_from_dmidecode(void) {
 
 	criteria = new std::vector<entry>(0);
 
-	const struct category *category = NULL;
+	const struct category *category = nullptr;
 
 	/* dmidecode output is less indented as of 2.7 */
 	int tab_level = 1;
@@ -169,7 +169,7 @@ static std::vector<entry>* entries_matching_criteria(const std::vector<entry> &c
 
 #define foreach_indent(min, action) do { for (int i = min; i < MAX_INDENT; i++) { action; } } while (0)
 	
-	foreach_indent(0, valid[i] = 1; constraints[i] = NULL);
+	foreach_indent(0, valid[i] = 1; constraints[i] = nullptr);
 
 	int previous_refine = 0;
 

@@ -119,21 +119,21 @@ static unsigned int hashnum(unsigned int num)
 
 /* ---------------------------------------------------------------------- */
 
-static struct vendor *vendors[HASHSZ] = { NULL, };
-static struct product *products[HASHSZ] = { NULL, };
-static struct class_type *class_types[HASHSZ] = { NULL, };
-static struct subclass_type *subclass_types[HASHSZ] = { NULL, };
-static struct protocol *protocols[HASHSZ] = { NULL, };
-static struct audioterminal *audioterminals[HASHSZ] = { NULL, };
-static struct videoterminal *videoterminals[HASHSZ] = { NULL, };
-static struct genericstrtable *hiddescriptors[HASHSZ] = { NULL, };
-static struct genericstrtable *reports[HASHSZ] = { NULL, };
-static struct genericstrtable *huts[HASHSZ] = { NULL, };
-static struct genericstrtable *biass[HASHSZ] = { NULL, };
-static struct genericstrtable *physdess[HASHSZ] = { NULL, };
-static struct genericstrtable *hutus[HASHSZ] = { NULL, };
-static struct genericstrtable *langids[HASHSZ] = { NULL, };
-static struct genericstrtable *countrycodes[HASHSZ] = { NULL, };
+static struct vendor *vendors[HASHSZ] = { nullptr, };
+static struct product *products[HASHSZ] = { nullptr, };
+static struct class_type *class_types[HASHSZ] = { nullptr, };
+static struct subclass_type *subclass_types[HASHSZ] = { nullptr, };
+static struct protocol *protocols[HASHSZ] = { nullptr, };
+static struct audioterminal *audioterminals[HASHSZ] = { nullptr, };
+static struct videoterminal *videoterminals[HASHSZ] = { nullptr, };
+static struct genericstrtable *hiddescriptors[HASHSZ] = { nullptr, };
+static struct genericstrtable *reports[HASHSZ] = { nullptr, };
+static struct genericstrtable *huts[HASHSZ] = { nullptr, };
+static struct genericstrtable *biass[HASHSZ] = { nullptr, };
+static struct genericstrtable *physdess[HASHSZ] = { nullptr, };
+static struct genericstrtable *hutus[HASHSZ] = { nullptr, };
+static struct genericstrtable *langids[HASHSZ] = { nullptr, };
+static struct genericstrtable *countrycodes[HASHSZ] = { nullptr, };
 
 /* ---------------------------------------------------------------------- */
 
@@ -143,7 +143,7 @@ static const char *names_genericstrtable(struct genericstrtable *t[HASHSZ],
 	for (struct genericstrtable *h = t[hashnum(idx)]; h; h = h->next)
 		if (h->num == idx)
 			return h->name;
-	return NULL;
+	return nullptr;
 }
 
 const char *names_hid(uint8_t hidd)
@@ -191,7 +191,7 @@ const char *names_vendor(uint16_t vendorid)
 	for (struct vendor *v = vendors[hashnum(vendorid)]; v; v = v->next)
 		if (v->vendorid == vendorid)
 			return v->name;
-	return NULL;
+	return nullptr;
 }
 
 const char *names_product(uint16_t vendorid, uint16_t productid)
@@ -200,7 +200,7 @@ const char *names_product(uint16_t vendorid, uint16_t productid)
 			p; p = p->next)
 		if (p->vendorid == vendorid && p->productid == productid)
 			return p->name;
-	return NULL;
+	return nullptr;
 }
 
 const char *names_class_type(uint8_t classid)
@@ -209,7 +209,7 @@ const char *names_class_type(uint8_t classid)
 			c; c = c->next)
 		if (c->classid == classid)
 			return c->name;
-	return NULL;
+	return nullptr;
 }
 
 const char *names_subclass(uint8_t classid, uint8_t subclassid)
@@ -218,7 +218,7 @@ const char *names_subclass(uint8_t classid, uint8_t subclassid)
 			s; s = s->next)
 		if (s->classid == classid && s->subclassid == subclassid)
 			return s->name;
-	return NULL;
+	return nullptr;
 }
 
 const char *names_protocol(uint8_t classid, uint8_t subclassid, uint8_t protocolid)
@@ -227,7 +227,7 @@ const char *names_protocol(uint8_t classid, uint8_t subclassid, uint8_t protocol
 			p; p = p->next)
 		if (p->classid == classid && p->subclassid == subclassid && p->protocolid == protocolid)
 			return p->name;
-	return NULL;
+	return nullptr;
 }
 
 const char *names_audioterminal(uint16_t termt)
@@ -236,7 +236,7 @@ const char *names_audioterminal(uint16_t termt)
 			at; at = at->next)
 		if (at->termt == termt)
 			return at->name;
-	return NULL;
+	return nullptr;
 }
 
 const char *names_videoterminal(uint16_t termt)
@@ -245,7 +245,7 @@ const char *names_videoterminal(uint16_t termt)
 			vt; vt = vt->next)
 		if (vt->termt == termt)
 			return vt->name;
-	return NULL;
+	return nullptr;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -471,7 +471,7 @@ static void free_vendor(void)
 
 	for (int i = 0; i < HASHSZ; i++) {
 		cur = vendors[i];
-		vendors[i] = NULL;
+		vendors[i] = nullptr;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;
@@ -486,7 +486,7 @@ static void free_product(void)
 
 	for (int i = 0; i < HASHSZ; i++) {
 		cur = products[i];
-		products[i] = NULL;
+		products[i] = nullptr;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;
@@ -501,7 +501,7 @@ static void free_class_type(void)
 
 	for (int i = 0; i < HASHSZ; i++) {
 		cur = class_types[i];
-		class_types[i] = NULL;
+		class_types[i] = nullptr;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;
@@ -516,7 +516,7 @@ static void free_subclass_type(void)
 
 	for (int i = 0; i < HASHSZ; i++) {
 		cur = subclass_types[i];
-		subclass_types[i] = NULL;
+		subclass_types[i] = nullptr;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;
@@ -531,7 +531,7 @@ static void free_protocol(void)
 
 	for (int i = 0; i < HASHSZ; i++) {
 		cur = protocols[i];
-		protocols[i] = NULL;
+		protocols[i] = nullptr;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;
@@ -546,7 +546,7 @@ static void free_audioterminal(void)
 
 	for (int i = 0; i < HASHSZ; i++) {
 		cur = audioterminals[i];
-		audioterminals[i] = NULL;
+		audioterminals[i] = nullptr;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;
@@ -562,7 +562,7 @@ static void free_videoterminal(void)
 
 	for (int i = 0; i < HASHSZ; i++) {
 		cur = videoterminals[i];
-		videoterminals[i] = NULL;
+		videoterminals[i] = nullptr;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;
@@ -577,7 +577,7 @@ static void _free_genericstrtable(struct genericstrtable *t[HASHSZ])
 
 	for (int i = 0; i < HASHSZ; i++) {
 		cur = t[i];
-		t[i] = NULL;
+		t[i] = nullptr;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;

@@ -70,7 +70,7 @@ fh fh_open(const char *name) {
                                 cmd[ip++] = GZIP_BIN;
                                 cmd[ip++] = "-cd";
                                 cmd[ip++] = fname_gz;
-                                cmd[ip++] = NULL;
+                                cmd[ip++] = nullptr;
 
                                 dup2(fdno[1], STDOUT_FILENO);
                                 close(fdno[0]);
@@ -98,7 +98,7 @@ fh fh_open(const char *name) {
 }
 
 char* fh_gets(char *line, int size, fh *f) {
-        char *ret = NULL;
+        char *ret = nullptr;
         switch (f->gztype) {
         case ZLIB:
 #ifdef HAVE_LIBZ
@@ -123,7 +123,7 @@ int fh_close(fh *f) {
         case GZIP:
                 ret = fclose(f->u.gzip_fh.f);
                 if (f->u.gzip_fh.pid > 0)
-                        waitpid(f->u.gzip_fh.pid, NULL, 0);
+                        waitpid(f->u.gzip_fh.pid, nullptr, 0);
                 break;
         }
         return ret;

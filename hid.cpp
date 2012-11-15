@@ -26,10 +26,10 @@ static char *get_field_value(const char *fields, const char *field_name)
 	const char *end;
 
 	modalias = strstr(fields, field_name);
-	if (modalias == NULL)
-		return NULL;
+	if (modalias == nullptr)
+		return nullptr;
 	end = strchr(modalias, '\n');
-	if (end == NULL)
+	if (end == nullptr)
 		end = modalias + strlen(modalias);
 
 	return strndup(modalias+strlen(field_name), end - (modalias+strlen(field_name)));
