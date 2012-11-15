@@ -9,7 +9,7 @@
 
 #include "libldetect.h"
 
-#include "pciusb.h"
+#pragma GCC visibility push(default)
 
 struct kmod_ctx;
 struct syfs_attribute;
