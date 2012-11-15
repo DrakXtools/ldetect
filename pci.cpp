@@ -93,7 +93,6 @@ std::ostream& operator<<(std::ostream& os, const pciEntry& e) {
 pci::pci(std::string proc_pci_path) : _pacc(pci_alloc()) {
     pci_init(_pacc);
     _pacc->numeric_ids = 0;
-    pci_init(_pacc);
     pci_set_param(_pacc, const_cast<char*>("proc.path"), const_cast<char*>(proc_pci_path.c_str()));
 }
 
