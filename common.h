@@ -15,8 +15,6 @@
 
 #pragma GCC visibility push(hidden) 
 
-#define GZIP_BIN "/bin/gzip"
-
 namespace ldetect {
 
 std::string table_name_to_file(std::string name);
