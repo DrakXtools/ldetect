@@ -79,7 +79,7 @@ install: build
 	install libldetect.h $(includedir)
 
 dist: dis
-dis ../$(NAME)-$(VERSION).tar.bz2: tar
+dis ../$(NAME)-$(VERSION).tar.xz: tar
 
 tar:
 	@if [ -e ".svn" ]; then \
@@ -90,7 +90,7 @@ tar:
 		echo "Unknown SCM (not SVN nor GIT)";\
 		exit 1; \
 	fi;
-	$(info $(NAME)-$(VERSION).tar.bz2 is ready)
+	$(info $(NAME)-$(VERSION).tar.xz is ready)
 
 dist-svn:
 	svn export -q -rBASE . $(NAME)-$(VERSION)
