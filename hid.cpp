@@ -48,7 +48,7 @@ static char *parse_name(char *fields)
 
 void hid::probe(void)
 {
-    DIR *dir = opendir(sysfs_hid_path);
+    DIR *dir = opendir(_sysfs_hid_path.c_str());
     if (dir == nullptr) {
 	std::cerr << "Unable to open \"" << _sysfs_hid_path << "\": " << strerror(errno) << std::endl <<
 		"Won't scan for hid devices" << std::endl;

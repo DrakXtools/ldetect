@@ -33,9 +33,6 @@ extern const char *dmidecode_file EXPORTED;
 /* hid ************************************************************************/
 /******************************************************************************/
 
-std::vector <entry>* hid_probe(void) EXPORTED;
-extern const char *sysfs_hid_path EXPORTED;
-
 }
 
 #endif
