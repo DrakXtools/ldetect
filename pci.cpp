@@ -65,7 +65,7 @@ std::string pciEntry::verbose() const {
     std::ostringstream oss(std::ostringstream::out);
     oss << " (vendor:" << hexFmt(vendor) << " device:" << hexFmt(device);
     if (subvendor != 0xffff || subdevice != 0xffff)
-	oss << " subv:" << hexFmt(subvendor) << "subd:" << hexFmt(subdevice);
+	oss << " subv:" << hexFmt(subvendor) << " subd:" << hexFmt(subdevice);
     oss << ")";
 
     return oss.str();
