@@ -28,8 +28,6 @@ namespace ldetect {
 #endif
 
 	    uint16_t pci_domain; /* PCI domain id (16 bits wide in libpci) */
-	    uint8_t pci_bus; /* PCI bus id 8 bits wide */
-	    uint8_t pci_device; /* PCI device id 5 bits wide */
 	    uint8_t pci_function; /* PCI function id 3 bits wide */
 	    uint8_t pci_revision; /* PCI revision 8 bits wide */
 
