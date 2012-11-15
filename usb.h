@@ -20,9 +20,12 @@ struct kmod_ctx;
 namespace ldetect {
 
     struct usb_class_text {
-	const char *usb_class_text;
-	const char *usb_sub_text;
-	const char *usb_prot_text;
+	usb_class_text(std::string class_text="", std::string sub_text="", std::string prot_text="") EXPORTED :
+	    class_text(class_text), sub_text(sub_text), prot_text(prot_text) {}
+
+	std::string class_text;
+	std::string sub_text;
+	std::string prot_text;
     };
 
     struct usb_class_text usb_class2text(uint32_t class_id) EXPORTED;

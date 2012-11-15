@@ -15,10 +15,10 @@ namespace ldetect {
 std::ostream& operator<<(std::ostream& os, const usbEntry& e) {
     os << static_cast<const pciusbEntry&>(e);
     struct usb_class_text s = usb_class2text(e.class_id);
-    if (s.usb_class_text) {
-	os << " [" << s.usb_class_text;
-	if (s.usb_sub_text) os << "|" << s.usb_sub_text;
-	if (s.usb_prot_text) os << "|" << s.usb_prot_text;
+    if (!s.class_text.empty()) {
+	os << " [" << s.class_text;
+	if (!s.sub_text.empty()) os << "|" << s.sub_text;
+	if (!s.prot_text.empty()) os << "|" << s.prot_text;
 	os << "]";
     }
     return os;
