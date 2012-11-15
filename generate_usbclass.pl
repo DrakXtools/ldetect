@@ -75,11 +75,7 @@ struct usb_class_text usb_class2text(uint32_t class_id) {
     uint32_t a_class[3] = { (class_id >> 16) & 0xff, (class_id >> 8) & 0xff, class_id & 0xff };
     usb_class_text p;
     if (a_class[0] != 0xff) lookup(p, a_class, 0, nb_classes, classes);
-#ifndef __UCLIBCXX_MAJOR__
-	return std::move(p);
-#else
 	return p;
-#endif
 }
 
 }
