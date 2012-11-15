@@ -57,6 +57,13 @@ fh fh_open(std::string name) {
 	    exit(3);
 	}
     }
+#else
+    else {
+	std::cerr << "Missing " << name << " (should be " << fname << ")" << std::endl;
+	exit(1);
+    }
+
+
 #endif
 
     return ret;
