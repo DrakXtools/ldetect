@@ -216,7 +216,6 @@ static std::vector<entry>* entries_matching_criteria(const std::vector<entry> &c
 					char *wanted_val = get_after_colon(s);
 					if (!wanted_val) die("bad format");
 
-					char *wanted_val_orig = strdup(wanted_val);
 					const char *val = lookup_criteria(criteria, s);
 
 					int ok = wanted_val && val && (
@@ -226,9 +225,7 @@ static std::vector<entry>* entries_matching_criteria(const std::vector<entry> &c
 				
 					foreach_indent(refine, valid[i] = ok; ifree(constraints[i]));
 					if (ok) 
-						constraints[refine] = wanted_val_orig;
-					else
-						free(wanted_val_orig);
+						constraints[refine] = strdup(val);
 
 				} /* otherwise no need checking */				
 			}			

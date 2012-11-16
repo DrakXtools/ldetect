@@ -1,5 +1,6 @@
 Version 0.13.0 -  2 November 2012, by Per Øyvind Karlsen
 
+- use names from dmi rather than the patterns matched against
 - store names of pci classes in a hash map for faster lookups
 - rewrite in C++ (turning the existing code into good C++ certainly remains though)
 - make ldetect 3x faster
