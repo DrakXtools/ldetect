@@ -1,4 +1,4 @@
-lib_src = common.cpp modalias.cpp pciusb.cpp pci.cpp usb.cpp pciclass.cpp usbclass.cpp dmi.cpp hid.cpp names.cpp
+lib_src = common.cpp modalias.cpp pciusb.cpp pci.cpp usb.cpp pciclass.cpp usbclass.cpp dmi.cpp hid.cpp names.cpp gzstream.cpp 
 lib_objs = $(subst .cpp,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
