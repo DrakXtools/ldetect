@@ -1,3 +1,4 @@
+headers = common.h dmi.h gzstream.h hid.h ldetect.h libldetect.h lspcidrake.h names.h pci.h pciusb.h usb.h
 lib_src = common.cpp modalias.cpp pciusb.cpp pci.cpp usb.cpp pciclass.cpp usbclass.cpp dmi.cpp hid.cpp names.cpp gzstream.cpp 
 lib_objs = $(subst .cpp,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
@@ -32,7 +33,15 @@ includedir = $(prefix)/include
 
 binaries = lspcidrake
 
-build: $(binaries) $(libraries)
+build: $(binaries) $(libraries) .depend
+
+
+.depend: $(headers) $(lib_src) lspcidrake.cpp
+	$(CXX) $(DEFS) $(INCLUDES) $(CXXFLAGS) -M $^ > .depend
+
+ifeq (.depend,$(wildcard .depend))
+include .depend
+endif
 
 ifneq (0, $(WHOLE_PROGRAM))
 lspcidrake.static: lspcidrake.cpp $(lib_src)
@@ -70,7 +79,7 @@ hid.o:		hid.cpp libldetect.h common.h
 names.o:	names.cpp names.h
 
 clean:
-	rm -f *~ *.o pciclass.cpp usbclass.cpp $(binaries) $(libraries)
+	rm -f *~ *.o pciclass.cpp usbclass.cpp $(binaries) $(libraries) .depend
 
 install: build
 	install -d $(bindir) $(libdir) $(includedir)
