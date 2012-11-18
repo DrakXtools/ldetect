@@ -58,6 +58,7 @@ lspcidrake.static: lspcidrake.cpp libldetect.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 lspcidrake: lspcidrake.cpp libldetect.so
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 $(lib_major).$(LIB_MINOR): $(lib_objs)
 	$(CXX) $(LDFLAGS) -shared -Wl,-z,relro -flto -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
