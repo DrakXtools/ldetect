@@ -38,7 +38,7 @@ build: $(binaries) $(libraries) .depend
 
 
 .depend: $(headers) $(lib_src) lspcidrake.cpp
-	$(CXX) $(DEFS) $(INCLUDES) $(CXXFLAGS) -M $^ > .depend
+	$(CXX) $(DEFS) $(INCLUDES) $(CXXFLAGS) -M $^ -o .depend
 
 ifeq (.depend,$(wildcard .depend))
 include .depend
