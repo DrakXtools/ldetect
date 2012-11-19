@@ -30,17 +30,6 @@ std::string modalias_resolve_module(struct kmod_ctx *ctx, const char *modalias) 
 #define MAX_DEVICES 100
 #define BUF_SIZE 512
 
-struct fh {
-    fh() : compressed(false), f(NULL) {}
-    bool compressed;
-    union {
-	FILE *f;
-#ifdef HAVE_LIBZ
-	gzFile zlib_fh;
-#endif
-    };
-};
-
 #define psizeof(a) (sizeof(a) / sizeof(a[0]))
 #define ifree(p) do { if (p) { free(p); p = nullptr; } } while (0)
 #define alloc_v(v) calloc(1, sizeof(v[0]));
