@@ -3,12 +3,7 @@
 
 #include <string>
 #include <sstream>
-#include <iomanip>
 #include <memory>
-
-#ifdef HAVE_LIBZ
-#include <zlib.h>
-#endif
 
 #include "libldetect.h"
 
