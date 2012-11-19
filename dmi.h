@@ -30,7 +30,7 @@ namespace ldetect {
 	public:
 	    dmi() EXPORTED : _entries() {}
 
-	    const dmiEntry& operator[] (uint16_t i) const EXPORTED{
+	    const dmiEntry& operator[] (uint16_t i) const EXPORTED {
 		return _entries[i];
 	    }
 

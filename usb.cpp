@@ -3,6 +3,7 @@
 #include <cerrno>
 #include <vector>
 #include <libkmod.h>
+#include <dirent.h>
 
 #include "common.h"
 #include "names.h"

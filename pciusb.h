@@ -6,19 +6,9 @@
 #include <string>
 #include <ostream>
 #include <sstream>
+#include <fstream>
 #include <vector>
-
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <sys/utsname.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <dirent.h>
+#include <cstring>
 #include <libkmod.h>
 
 
@@ -86,14 +76,12 @@ namespace ldetect {
 	protected:
 	    std::vector<T> _entries;
 
-	    int findModules(std::string fpciusbtable, bool descr_lookup) {
-		fh f;
+	    int findModules(std::string &&fpciusbtable, bool descr_lookup) {
 		char buf[2048];
+		instream f = fh_open(std::move(fpciusbtable));
 
-		f = fh_open(fpciusbtable);
-
-		for (int line = 1; fh_gets(buf, sizeof(buf) - 1, f); line++) {
-		    unsigned short vendor, device, subvendor, subdevice;
+		for (int line = 1; f->getline(buf, sizeof(buf)); line++) {
+		    uint16_t vendor, device, subvendor, subdevice;
 		    char *p = nullptr, *q = nullptr;
 		    int offset;
 		    int nb;
@@ -138,7 +126,6 @@ namespace ldetect {
 			    e.already_found = true;
 		    }
 		}
-		fh_close(f);
 
 		::kmod_ctx *ctx = modalias_init();
 
@@ -157,23 +144,12 @@ namespace ldetect {
 	    }
 
 	    void set_modules_from_modalias_file(struct kmod_ctx *ctx, T &e, const std::string &modalias_path) {
-		FILE *file;
-		file = fopen(modalias_path.c_str(), "r");
-		if (file) {
-		    char *modalias = nullptr;
-		    size_t n, size;
-		    if (-1 == getline(&modalias, &n, file)) {
-			std::cerr << "Unable to read modalias from " << modalias_path << std::endl;;
-			fclose(file);
-			return;
-		    }
-		    fclose(file);
-		    size = strlen(modalias);
-		    if (size)
-			modalias[size-1] = 0;
+		std::ifstream file(modalias_path.c_str(), std::ios_base::in);
+		if (file.is_open()) {
+		    char modalias[BUF_SIZE];
+		    file.getline(modalias, sizeof(modalias));
 
 		    e.module = modalias_resolve_module(ctx, modalias);
-		    free(modalias);
 		} else {
 		    std::cerr << "Unable to read modalias from " << modalias_path << std::endl;
 		    return;

@@ -9,20 +9,19 @@ namespace ldetect {
 
 class gzstreambuf : public std::streambuf {
     public:
-	gzstreambuf(const char *name=nullptr)
-	    : file(name ? gzopen(name, "rb") : nullptr), opened(false) {
+	gzstreambuf() : file(nullptr), opened(false) {
 	    setp(buffer, buffer + (bufferSize-1));
 	    setg(buffer + 4,
 		    buffer + 4,
 		    buffer + 4);
 	}
 	gzstreambuf(const gzstreambuf &gzsb);
-	const  gzstreambuf &operator=(const gzstreambuf &gzsb) { return (*this = gzsb); }
+	const gzstreambuf &operator=(const gzstreambuf &gzsb) { return (*this = gzsb); }
 
-	bool is_open() { return opened; }
-	gzstreambuf* open(const char *name);
-	gzstreambuf* close();
-	~gzstreambuf() { close(); }
+	bool 		is_open() { return opened; }
+	gzstreambuf*	open(const char *name);
+	gzstreambuf*	close();
+	~gzstreambuf()	{ close(); }
 
 	virtual int     underflow();
 	virtual int	sync();
@@ -40,7 +39,7 @@ class gzstreambuf : public std::streambuf {
 
 class gzstreambase : virtual public std::ios {
     public:
-	gzstreambase() : buf(nullptr) { init(&buf); }
+	gzstreambase() : buf() { init(&buf); }
 	gzstreambase(const char *name);
 	~gzstreambase();
 	void open(const char *name);

@@ -21,7 +21,7 @@ static std::string aliasdefault;
 static std::string dirname("/lib/modules/");
 
 static void set_default_alias_file(void) {
-    std::string fallback_aliases = table_name_to_file("fallback-modules.alias");
+    std::string fallback_aliases(table_name_dir + "fallback-modules.alias");
     struct stat st_alias, st_fallback;
     struct utsname buf;
 
@@ -39,13 +39,10 @@ static void set_default_alias_file(void) {
 }
 
 struct kmod_ctx* modalias_init(void) {
-        struct kmod_ctx *ctx;
-
 	if (aliasdefault.empty())
 		set_default_alias_file();
 
-
-	static std::string dkms_file = table_name_to_file("dkms-modules.alias");
+	std::string dkms_file(table_name_dir + "dkms-modules.alias");
 
 	/* We only use canned aliases as last resort. */
 	const char *alias_filelist[] = {
@@ -59,7 +56,7 @@ struct kmod_ctx* modalias_init(void) {
 	};
 
 	/* Init libkmod */
-	ctx = kmod_new(dirname.c_str(), alias_filelist);
+	struct kmod_ctx *ctx = kmod_new(dirname.c_str(), alias_filelist);
 	if (!ctx) {
 		fputs("Error: kmod_new() failed!\n", stderr);
 		kmod_unref(ctx);

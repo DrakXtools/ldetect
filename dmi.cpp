@@ -15,15 +15,8 @@ namespace ldetect {
 void dmi::probe(void)
 {
     char buf[BUF_SIZE];
-    std::ifstream f("/usr/share/ldetect-lst/dmitable", std::ios_base::in | std::ios_base::binary);
 
-    igzstream gzsb;
-    std::istream *fp;
-    if(!f.is_open()) {
-    	gzsb.open("/usr/share/ldetect-lst/dmitable.gz");
-	fp = &gzsb;
-    } else
-	fp = &f;
+    instream fp = fh_open("dmitable");
 
     typedef std::map<std::string, std::string> Item;
     typedef std::map<std::string, Item> Attr;
@@ -53,10 +46,6 @@ void dmi::probe(void)
 	    }
 	}
     }
-    if (f.is_open())
-    	f.close();
-    else
-	gzsb.close();
 
     struct kmod_ctx *ctx = modalias_init();
     struct sysfs_class *sfc = sysfs_open_class("dmi");

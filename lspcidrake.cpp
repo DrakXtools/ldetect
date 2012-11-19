@@ -92,6 +92,7 @@ int main(int argc, char *argv[]) {
 	    for (auto i = 0; i < d.size(); i++)
 		std::cout << d[i] << std::endl;
 
+	return 0;
 	ldetect::hid h;
 	h.probe();
 	if (!fake)

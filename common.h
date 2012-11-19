@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <memory>
 
 #ifdef HAVE_LIBZ
 #include <zlib.h>
@@ -17,7 +18,7 @@
 
 namespace ldetect {
 
-std::string table_name_to_file(std::string name);
+extern const std::string table_name_dir NON_EXPORTED;
 
 std::string hexFmt(uint32_t value, uint8_t w = 4, bool prefix = true);
 
@@ -44,9 +45,9 @@ struct fh {
 #define ifree(p) do { if (p) { free(p); p = nullptr; } } while (0)
 #define alloc_v(v) calloc(1, sizeof(v[0]));
 
-fh fh_open(std::string name) NON_EXPORTED;
-char* fh_gets(char *line, int size, fh &f) NON_EXPORTED;
-int fh_close(fh &f) NON_EXPORTED;
+typedef std::unique_ptr<std::istream> instream;
+instream i_open(std::string &&name) NON_EXPORTED;
+instream fh_open(std::string &&name) NON_EXPORTED;
 }
 
 #pragma GCC visibility pop
