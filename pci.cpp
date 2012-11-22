@@ -5,6 +5,7 @@ extern "C" {
 #include <dirent.h>
 #include <pci/header.h>
 #include <libkmod.h>
+#include <sysfs/libsysfs.h>
 
 #include "common.h"
 #include "pci.h"
@@ -79,6 +80,13 @@ std::string pciEntry::rev() const {
     return oss.str();
 }
 
+std::string pciEntry::sysfsName() const {
+    std::ostringstream devname(std::ostringstream::out);
+    devname << hexFmt(pci_domain, 4, false) << ":" <<  hexFmt(bus, 2, false) <<
+	":" << hexFmt(pciusb_device, 2, false) << "." << hexFmt(pci_function, 0, false);
+    return devname.str();
+}
+
 std::ostream& operator<<(std::ostream& os, const pciEntry& e) {
     os << static_cast<const pciusbEntry&>(e);
     if (e.class_id) {
@@ -90,13 +98,13 @@ std::ostream& operator<<(std::ostream& os, const pciEntry& e) {
     return os;
 }
 
-pci::pci(std::string proc_pci_path) : _pacc(pci_alloc()) {
+pci::pci(std::string proc_pci_path) : pciusb("pci"), _pacc(pci_alloc()) {
     pci_init(_pacc);
     _pacc->numeric_ids = 0;
     pci_set_param(_pacc, const_cast<char*>("proc.path"), const_cast<char*>(proc_pci_path.c_str()));
 }
 
-pci::pci(const pci &p) : _pacc(nullptr) {
+pci::pci(const pci &p) : pciusb("pci"), _pacc(nullptr) {
     *this = p;
     pci_init(_pacc);
     _pacc->numeric_ids = 0;
@@ -146,10 +154,7 @@ void pci::probe(void) {
 }
 
 void pci::find_modules_through_aliases(struct kmod_ctx *ctx, pciEntry &e) {
-    std::ostringstream modalias_path(std::ostringstream::out);
-    modalias_path << "/sys/bus/pci/devices/" << hexFmt(e.pci_domain, 4, false) << ":" <<  hexFmt(e.bus, 2, false) <<
-	":" << hexFmt(e.pciusb_device, 2, false) << "." << hexFmt(e.pci_function, 0, false) << "/modalias";
-    set_modules_from_modalias_file(ctx, e, modalias_path.str());
+    set_modules_from_modalias(ctx, e);
 }
 
 }

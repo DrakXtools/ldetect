@@ -13,6 +13,17 @@
 
 namespace ldetect {
 
+std::string usbEntry::sysfsName() const {
+    std::ostringstream devname(std::ostringstream::out);
+    devname << bus << "-" << usb_port + 1;
+
+//    printf("vendor: %hu device: %hu subvendor: %hu subdevice: %hu class_id: %u bus: %hhu pciusb_device: %hhu usb_port: %hu\n", vendor,device,subvendor,subdevice,class_id,bus,pciusb_device,usb_port);
+/*    devname << hexFmt(e.pci_domain, 4, false) << ":" <<  hexFmt(e.bus, 2, false) <<
+	":" << hexFmt(e.pciusb_device, 2, false) << "." << hexFmt(e.pci_function, 0, false);*/
+    return devname.str();
+}
+
+
 std::ostream& operator<<(std::ostream& os, const usbEntry& e) {
     os << static_cast<const pciusbEntry&>(e);
     struct usb_class_text s = usb_class2text(e.class_id);
@@ -25,7 +36,7 @@ std::ostream& operator<<(std::ostream& os, const usbEntry& e) {
     return os;
 }
 
-usb::usb(std::string proc_usb_path) : _proc_usb_path(proc_usb_path) {
+usb::usb(std::string proc_usb_path) : pciusb("usb"), _proc_usb_path(proc_usb_path) {
     names_init("/usr/share/usb.ids");
 }
 
@@ -138,8 +149,10 @@ void usb::find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e) {
     sysfs_path << "/sys/bus/usb/devices/" << e.bus << "-" << e.usb_port + 1;
 
     dir = opendir(sysfs_path.str().c_str());
-    if (!dir)
+    if (!dir) {
+	std::cout << "failed: " << sysfs_path.str() << std::endl;
 	return;
+    }
 
     while ((dent = readdir(dir)) != nullptr) {
 	if ((dent->d_type == DT_DIR) &&
@@ -147,7 +160,8 @@ void usb::find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e) {
 	    std::ostringstream modalias_path(std::ostringstream::out);
 	    modalias_path << "/" << dent->d_name << "/modalias";
 
-	    set_modules_from_modalias_file(ctx, e, modalias_path.str());
+	    std::cout << "find_modules_through_aliases: " << modalias_path.str() << std::endl;
+	    //set_modules_from_modalias_file(ctx, e, modalias_path.str());
 	    /* maybe we would need a "other_modules" field in pciusb_entry 
 	       to list modules from all USB interfaces */
 	    if (!e.module.empty())

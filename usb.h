@@ -36,6 +36,8 @@ namespace ldetect {
 
 	    uint16_t usb_port; /* USB port */
 
+	    virtual std::string sysfsName() const EXPORTED;
+
 	    friend std::ostream& operator<<(std::ostream& os, const usbEntry& e) EXPORTED;
     };
 

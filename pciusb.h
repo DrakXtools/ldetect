@@ -10,8 +10,7 @@
 #include <vector>
 #include <cstring>
 #include <libkmod.h>
-
-
+#include <sysfs/libsysfs.h>
 
 #include "common.h"
 
@@ -47,6 +46,8 @@ namespace ldetect {
 	    friend std::ostream& operator<<(std::ostream& os, const pciusbEntry& e);
 
 
+	    virtual std::string sysfsName() const = 0;
+
 	//protected:
 	    bool already_found;
 };
@@ -54,8 +55,11 @@ namespace ldetect {
     template <class T>
     class pciusb {
 	public:
-	    pciusb() : _entries() {}
-	    virtual ~pciusb() {}
+	    pciusb(const char *bus_type) : _entries(), _sysfs_bus(sysfs_open_bus(bus_type)) {}
+	    virtual ~pciusb() {
+		if (_sysfs_bus != nullptr)
+		    sysfs_close_bus(_sysfs_bus);
+	    }
 
 	    const T& operator[] (uint16_t i) const {
 		return _entries[i];
@@ -75,6 +79,7 @@ namespace ldetect {
 
 	protected:
 	    std::vector<T> _entries;
+	    struct sysfs_bus *_sysfs_bus;
 
 	    int findModules(std::string &&fpciusbtable, bool descr_lookup) {
 		char buf[2048];
@@ -143,6 +148,18 @@ namespace ldetect {
 		return 1;
 	    }
 
+	    void set_modules_from_modalias(struct kmod_ctx *ctx, T &e) {
+		if (_sysfs_bus != nullptr) {
+		    struct sysfs_device *device = sysfs_get_bus_device(_sysfs_bus, e.sysfsName().c_str());
+		    if (device != nullptr) {
+			struct sysfs_attribute *attr = sysfs_get_device_attr(device, "modalias");
+			if (attr != nullptr) {
+			    e.module =  modalias_resolve_module(ctx, attr->value);
+			}
+		    } 
+		}
+	    }
+
 	    void set_modules_from_modalias_file(struct kmod_ctx *ctx, T &e, const std::string &modalias_path) {
 		std::ifstream file(modalias_path.c_str(), std::ios_base::in);
 		if (file.is_open()) {
@@ -150,11 +167,13 @@ namespace ldetect {
 		    file.getline(modalias, sizeof(modalias));
 
 		    e.module = modalias_resolve_module(ctx, modalias);
+		    std::cout << " set_modules_from_modalias_file emod: " << e.module << "  modalias: " << modalias << std::endl;
 		} else {
 		    std::cerr << "Unable to read modalias from " << modalias_path << std::endl;
 		    return;
 		}
 	    }
+
 
 	    virtual void find_modules_through_aliases(struct kmod_ctx *ctx, T &e) = 0;
 

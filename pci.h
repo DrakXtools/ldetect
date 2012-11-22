@@ -35,6 +35,8 @@ namespace ldetect {
 
 	    std::string verbose() const EXPORTED;
 	    std::string rev() const EXPORTED;
+	    virtual std::string sysfsName() const EXPORTED;
+
 	    friend std::ostream& operator<<(std::ostream& os, const pciEntry& e) EXPORTED;
     };
 
