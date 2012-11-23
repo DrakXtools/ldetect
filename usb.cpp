@@ -1,3 +1,4 @@
+#include <sstream>
 #include <cstdio>
 #include <cstring>
 #include <cerrno>
@@ -13,17 +14,7 @@
 
 namespace ldetect {
 
-std::string usbEntry::sysfsName() const {
-    std::ostringstream devname(std::ostringstream::out);
-    devname << bus << "-" << usb_port + 1;
-
-//    printf("vendor: %hu device: %hu subvendor: %hu subdevice: %hu class_id: %u bus: %hhu pciusb_device: %hhu usb_port: %hu\n", vendor,device,subvendor,subdevice,class_id,bus,pciusb_device,usb_port);
-/*    devname << hexFmt(e.pci_domain, 4, false) << ":" <<  hexFmt(e.bus, 2, false) <<
-	":" << hexFmt(e.pciusb_device, 2, false) << "." << hexFmt(e.pci_function, 0, false);*/
-    return devname.str();
-}
-
-
+// FIXME
 std::ostream& operator<<(std::ostream& os, const usbEntry& e) {
     os << static_cast<const pciusbEntry&>(e);
     struct usb_class_text s = usb_class2text(e.class_id);
@@ -44,131 +35,128 @@ usb::~usb() {
     names_exit();
 }
 
-static void build_text(pciusbEntry *e, std::string &vendor_text, std::string &product_text) {
-	if (e) {
-		if(vendor_text.empty())
-			vendor_text = names_vendor(e->vendor);
-		if(product_text.empty())
-			product_text = names_product(e->vendor, e->device);
-
-		e->text = std::string(vendor_text.empty() ? "Unknown" : vendor_text).append("|").append(product_text.empty() ? "Unknown": product_text);
-		vendor_text.clear();
-		product_text.clear();
-	}
-}
 void usb::probe(void) {
-	FILE *f;
-	char buf[BUF_SIZE];
-	int line;
-	usbEntry *e = nullptr;
-	std::string vendor_text, product_text;
+	if (_sysfs_bus != nullptr) {
+	    struct dlist *devs = sysfs_get_bus_devices(_sysfs_bus);
+	    struct sysfs_device *device = nullptr;
 
-	if (!(f = fopen(_proc_usb_path.c_str(), "r")))
-	    std::cerr << "Unable to open \"" << strerror(errno) << "\": " << _proc_usb_path << std::endl <<
-		    "You may have passed a wrong argument to the \"-u\" option." << std::endl;
+	    std::stringstream buf;
+	    dlist_for_each_data(devs, device, struct sysfs_device) {
+		if (device != nullptr) {
+		    struct sysfs_attribute *attr = sysfs_get_device_attr(device, "idVendor");
+		    if(attr == nullptr)
+			continue;
 
-	/* for further information on the format parsed by this state machine,
-	 * read /usr/share/doc/kernel-doc-X.Y.Z/usb/proc_usb_info.txt */  
-	for(line = 1; fgets(buf, sizeof(buf) - 1, f) && _entries.size() < MAX_DEVICES; line++) {
-		switch (buf[0]) {
-		case 'T': {
-			build_text(e, vendor_text, product_text);
-			_entries.push_back(usbEntry());
-			e = &_entries.back();
+		    _entries.push_back(usbEntry());
+		    usbEntry &e = _entries.back();
 
-			if (!sscanf(buf, "T:  Bus=%02hhu Lev=%*02d Prnt=%*04d Port=%02hu Cnt=%*02d Dev#=%3hhu Spd=%*3s MxCh=%*2d", &e->bus, &e->usb_port, &e->pciusb_device) == 3)
-				fprintf(stderr, "%s %d: unknown ``T'' line\n", _proc_usb_path.c_str(), line);
-			break;
-		}
-		case 'P': {
-			if (!sscanf(buf, "P:  Vendor=%hx ProdID=%hx", &e->vendor, &e->device) == 2)
-				fprintf(stderr, "%s %d: unknown ``P'' line\n", _proc_usb_path.c_str(), line);
-			break;
-		}
-		case 'I': if (e->class_id == 0 || e->module.empty()) {
-			std::string driver(64, '\0');
-			unsigned int class_id, sub, prot = 0;
-			if (sscanf(buf, "I:* If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=%s",
-				    &class_id, &sub, &prot, const_cast<char*>(driver.data())) >= 3) {
-				unsigned long cid = (class_id * 0x100 + sub) * 0x100 + prot;
-				if (e->class_id == 0)
-					e->class_id = cid;
-				if (driver.compare(0,6, "(none)")) {
-					/* Get current class if we are on the first one having used by a driver */
-					e->class_id = cid;
-					/* replace '-' characters with '_' to be compliant with modnames from modaliases */
-					size_t pos = 0;
-					while (((pos = driver.find_first_of('-',pos))!= std::string::npos)) {
-						driver[pos++] = '_';
-					}
-					// lame..
-					driver.resize(driver.find_first_of('\0', 0));
-					e->module = driver;
-				}
-				/* see linux/sound/usb/usbaudio.c::usb_audio_ids */
-				if (e->class_id == (0x1*0x100+ 0x01)) /* USB_AUDIO_CLASS*0x100 + USB_SUBCLASS_AUDIO_CONTROL*/
-					e->module += "snd_usb_audio";
+		    buf.clear();
+		    buf << attr->value;
+		    buf >> std::hex >> e.vendor;
 
-			} else if (sscanf(buf, "I:  If#=%*2d Alt=%*2d #EPs=%*2d Cls=%02x(%*5c) Sub=%02x Prot=%02x Driver=%s",
-				    &class_id, &sub, &prot, const_cast<char*>(driver.data())) >= 3) {
-				/* Ignore interfaces not active */
-			} else fprintf(stderr, "%s %d: unknown ``I'' line\n", _proc_usb_path.c_str(), line);
-			break;
+		    attr = sysfs_get_device_attr(device, "idProduct");
+		    if(attr == nullptr)
+			continue;
+		    buf.clear();
+		    buf << attr->value;
+		    buf >> std::hex >> e.device;
+
+		    attr = sysfs_get_device_attr(device, "busnum");
+		    if(attr == nullptr)
+			continue;
+		    e.bus = atoi(attr->value);
+
+		    uint32_t class_id, sub, prot = 0;
+
+		    // FIXME: busted...
+		    attr = sysfs_get_device_attr(device, "bDeviceClass");
+		    if(attr == nullptr)
+			continue;
+		    e.class_id = atoi(attr->value) * 0x100;
+		    buf.clear();
+		    buf << attr->value;
+		    buf >> std::hex >> class_id;
+
+		    attr = sysfs_get_device_attr(device, "bDeviceSubClass");
+		    if(attr == nullptr)
+			continue;
+		    e.class_id += atoi(attr->value);
+		    buf.clear();
+		    buf << attr->value;
+		    buf >> std::hex >> sub;
+
+
+		    attr = sysfs_get_device_attr(device, "bDeviceProtocol");
+		    if(attr == nullptr)
+			continue;
+		    e.class_id *= 0x100;
+		    e.class_id += atoi(attr->value);
+		    buf.clear();
+		    buf << attr->value;
+		    buf >> std::hex >> prot;
+
+		    e.class_id = (class_id * 0x100 + sub) * 0x100 + prot;
+
+		    attr = sysfs_get_device_attr(device, "devnum");
+		    if(attr == nullptr)
+			continue;
+		    e.pciusb_device = atoi(attr->value);
+
+		    e.text = names_vendor(e.vendor);
+		    if (e.text.empty()) {
+			attr = sysfs_get_device_attr(device, "product");
+			if(attr == nullptr)
+			    continue;
+			e.text = attr->value;
+		    }
+
+		    e.text += "|";
+		    const char *productName = names_product(e.vendor, e.device);
+		    if (productName == nullptr) {
+			attr = sysfs_get_device_attr(device, "product");
+			if(attr == nullptr)
+			    continue;
+			e.text += attr->value;
+		    } else
+			e.text += productName;
+
+		    attr = sysfs_get_device_attr(device, "devpath");
+		    if(attr == nullptr)
+			continue;
+		    buf.clear();
+		    buf << attr->value;
+		    buf >> e.devpath;
+
+		    attr = sysfs_get_device_attr(device, "bConfigurationValue");
+		    if(attr == nullptr)
+			continue;
+		    buf.clear();
+		    buf << attr->value;
+		    buf >> e.usb_port;
+
+		    attr = sysfs_get_device_attr(device, "bNumInterfaces");
+		    if(attr == nullptr)
+			continue;
+		    e.interfaces = atoi(attr->value);
 		}
-		case 'S': {
-			int offset;
-			char dummy;
-			size_t length = strlen(buf) - 1;
-			if (sscanf(buf, "S:  Manufacturer=%n%c", &offset, &dummy) == 1) {
-				buf[length] = '\0'; /* removing '\n' */
-				vendor_text.assign(buf, offset, length);
-			} else if (sscanf(buf, "S:  Product=%n%c", &offset, &dummy) == 1) {
-				buf[length] = '\0'; /* removing '\n' */
-				product_text.assign(buf, offset, length);
-			}
-		}
-		}
+	    }
 	}
-
-	build_text(&_entries.back(), vendor_text, product_text);
-
-	fclose(f);
 
 	findModules("usbtable", false);
 
 }
 
 void usb::find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e) {
-    DIR *dir;
-    struct dirent *dent;
-
-    std::ostringstream usb_prefix(std::ostringstream::out);
-    usb_prefix << e.bus << "-";
-    /* USB port is indexed from 0 in procfs, from 1 in sysfs */
-    std::ostringstream sysfs_path(std::ostringstream::out);
-    sysfs_path << "/sys/bus/usb/devices/" << e.bus << "-" << e.usb_port + 1;
-
-    dir = opendir(sysfs_path.str().c_str());
-    if (!dir) {
-	std::cout << "failed: " << sysfs_path.str() << std::endl;
-	return;
-    }
-
-    while ((dent = readdir(dir)) != nullptr) {
-	if ((dent->d_type == DT_DIR) &&
-		!strncmp(usb_prefix.str().c_str(), dent->d_name, usb_prefix.str().size())) {
-	    std::ostringstream modalias_path(std::ostringstream::out);
-	    modalias_path << "/" << dent->d_name << "/modalias";
-
-	    std::cout << "find_modules_through_aliases: " << modalias_path.str() << std::endl;
-	    //set_modules_from_modalias_file(ctx, e, modalias_path.str());
-	    /* maybe we would need a "other_modules" field in pciusb_entry 
-	       to list modules from all USB interfaces */
-	    if (!e.module.empty())
-		break;
+    char buf[16];
+    for (int i = 0; i < e.interfaces && e.module.empty(); i++) {
+	snprintf(buf, sizeof(buf), "%d-%s:%d.%d", e.bus, e.devpath.c_str(), e.usb_port, i);
+	struct sysfs_device *device = sysfs_get_bus_device(_sysfs_bus, buf);
+	if (device != nullptr) {
+	    struct sysfs_attribute *attr = sysfs_get_device_attr(device, "modalias");
+	    if (attr != nullptr)
+		e.module =  modalias_resolve_module(ctx, attr->value);
 	}
     }
-    closedir(dir);
 }
 
 }

@@ -34,9 +34,10 @@ namespace ldetect {
 	public:
 	    usbEntry() EXPORTED : usb_port(0xffff) {}
 
-	    uint16_t usb_port; /* USB port */
+	    std::string devpath; /* USB port */
 
-	    virtual std::string sysfsName() const EXPORTED;
+	    uint16_t usb_port; /* USB port */
+	    uint16_t interfaces;
 
 	    friend std::ostream& operator<<(std::ostream& os, const usbEntry& e) EXPORTED;
     };

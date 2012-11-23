@@ -26,7 +26,7 @@ namespace ldetect {
 
 		subvendor(0xffff), subdevice(0xffff), class_id(0),
 		bus(0xff), pciusb_device(0xff),
-		already_found(false) {};
+		modalias(), already_found(false) {};
 	    virtual ~pciusbEntry() {}
 
 	    std::string module;
@@ -43,10 +43,9 @@ namespace ldetect {
 	    uint8_t bus; /* PCI bus id 8 bits wide */
 	    uint8_t pciusb_device; /* PCI device id 5 bits wide */
 
+	    std::string modalias;
+
 	    friend std::ostream& operator<<(std::ostream& os, const pciusbEntry& e);
-
-
-	    virtual std::string sysfsName() const = 0;
 
 	//protected:
 	    bool already_found;
@@ -147,33 +146,6 @@ namespace ldetect {
 
 		return 1;
 	    }
-
-	    void set_modules_from_modalias(struct kmod_ctx *ctx, T &e) {
-		if (_sysfs_bus != nullptr) {
-		    struct sysfs_device *device = sysfs_get_bus_device(_sysfs_bus, e.sysfsName().c_str());
-		    if (device != nullptr) {
-			struct sysfs_attribute *attr = sysfs_get_device_attr(device, "modalias");
-			if (attr != nullptr) {
-			    e.module =  modalias_resolve_module(ctx, attr->value);
-			}
-		    } 
-		}
-	    }
-
-	    void set_modules_from_modalias_file(struct kmod_ctx *ctx, T &e, const std::string &modalias_path) {
-		std::ifstream file(modalias_path.c_str(), std::ios_base::in);
-		if (file.is_open()) {
-		    char modalias[BUF_SIZE];
-		    file.getline(modalias, sizeof(modalias));
-
-		    e.module = modalias_resolve_module(ctx, modalias);
-		    std::cout << " set_modules_from_modalias_file emod: " << e.module << "  modalias: " << modalias << std::endl;
-		} else {
-		    std::cerr << "Unable to read modalias from " << modalias_path << std::endl;
-		    return;
-		}
-	    }
-
 
 	    virtual void find_modules_through_aliases(struct kmod_ctx *ctx, T &e) = 0;
 

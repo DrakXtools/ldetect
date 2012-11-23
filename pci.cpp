@@ -80,13 +80,6 @@ std::string pciEntry::rev() const {
     return oss.str();
 }
 
-std::string pciEntry::sysfsName() const {
-    std::ostringstream devname(std::ostringstream::out);
-    devname << hexFmt(pci_domain, 4, false) << ":" <<  hexFmt(bus, 2, false) <<
-	":" << hexFmt(pciusb_device, 2, false) << "." << hexFmt(pci_function, 0, false);
-    return devname.str();
-}
-
 std::ostream& operator<<(std::ostream& os, const pciEntry& e) {
     os << static_cast<const pciusbEntry&>(e);
     if (e.class_id) {
@@ -154,7 +147,17 @@ void pci::probe(void) {
 }
 
 void pci::find_modules_through_aliases(struct kmod_ctx *ctx, pciEntry &e) {
-    set_modules_from_modalias(ctx, e);
+    std::ostringstream devname(std::ostringstream::out);
+    devname << hexFmt(e.pci_domain, 4, false) << ":" <<  hexFmt(e.bus, 2, false) <<
+	":" << hexFmt(e.pciusb_device, 2, false) << "." << hexFmt(e.pci_function, 0, false);
+
+    struct sysfs_device *device = sysfs_get_bus_device(_sysfs_bus, devname.str().c_str());
+    if (device != nullptr) {
+	struct sysfs_attribute *attr = sysfs_get_device_attr(device, "modalias");
+	if (attr != nullptr) {
+	    e.module =  modalias_resolve_module(ctx, attr->value);
+	}
+    } 
 }
 
 }
