@@ -1,4 +1,4 @@
-headers = common.h dmi.h gzstream.h hid.h ldetect.h libldetect.h lspcidrake.h names.h pci.h pciusb.h usb.h
+headers = common.h dmi.h gzstream.h hid.h libldetect.h lspcidrake.h names.h pci.h pciusb.h usb.h
 lib_src = common.cpp modalias.cpp pciusb.cpp pci.cpp usb.cpp pciclass.cpp usbclass.cpp dmi.cpp hid.cpp names.cpp gzstream.cpp 
 lib_objs = $(subst .cpp,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
