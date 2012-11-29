@@ -16,14 +16,17 @@ void dmi::probe(void)
 {
     char buf[BUF_SIZE];
 
-    instream fp = fh_open("dmitable");
+    struct dmiTable {
+	    std::string table;
+	    std::string name;
+	    std::string subtable;
+	    std::string attr;
+	    std::string item;
+	    std::string value;
+    };
 
-    typedef std::map<std::string, std::string> Item;
-    typedef std::map<std::string, Item> Attr;
-    typedef std::map<std::string, Attr> Subtable;
-    typedef std::map<std::string, Subtable> Name;
-    typedef std::map<std::string, Name> Table;
-    Table dmitable;
+    instream fp = fh_open("dmitable");
+    std::vector<dmiTable> dmitable;
 
     std::string attrFirst, attrSecond;
     std::string subtableFirst, subtableSecond;
@@ -42,7 +45,7 @@ void dmi::probe(void)
 		subtableFirst.assign(buf+2, sep-buf-2), subtableSecond = sep+2;
 	    else if (buf[2] == '=' && buf[3] == '>' && buf[4] == ' ' && isalpha(buf[5])) {
 		attrFirst.assign(buf+5, sep-buf-5), attrSecond = sep+2;
-		dmitable[tableFirst][tableSecond][subtableFirst][subtableSecond][attrFirst] = attrSecond;
+		dmitable.push_back({tableFirst, tableSecond, subtableFirst, subtableSecond, attrFirst, attrSecond});
 	    }
 	}
     }
@@ -55,39 +58,26 @@ void dmi::probe(void)
     dlist_for_each_data(classlist, class_device, struct sysfs_class_device) {
 	size_t pos;
 	struct sysfs_attribute *attr = nullptr;
-	for (Table::const_iterator tit = dmitable.begin();
-		tit != dmitable.end(); ++tit) {
-	    for (Name::const_iterator nit = tit->second.begin();
-		    nit != tit->second.end(); ++nit) {
-		if ((attr = sysfs_get_classdev_attr(class_device, tit->first.c_str()))) {
-		    if (((pos = nit->first.find_last_of(".*")) != std::string::npos &&
-				!nit->first.compare(0, pos-1, attr->value, pos-1)) ||
-			    nit->first == attr->value) {
 
-			std::string deviceName(attr->value, strlen(attr->value)-1);
-			for (Subtable::const_iterator sit = nit->second.begin();
-				sit != nit->second.end(); ++sit) {
-			    for (Attr::const_iterator ait = sit->second.begin();
-				    ait != sit->second.end(); ++ait) {
-				if ((attr = sysfs_get_classdev_attr(class_device, sit->first.c_str()))) {
-				    if (((pos = ait->first.find_last_of(".*")) != std::string::npos &&
-						!ait->first.compare(0, pos-1, attr->value, pos-1)) ||
-					    ait->first == attr->value) {
+	for(std::vector<dmiTable>::const_iterator it = dmitable.begin(); it != dmitable.end(); ++it) {
+	    if ((attr = sysfs_get_classdev_attr(class_device, it->table.c_str()))) {
+		if (((pos = it->name.find_last_of(".*")) != std::string::npos &&
+			    !it->name.compare(0, pos-1, attr->value, pos-1)) ||
+			it->name == attr->value) {
+		    std::string deviceName(attr->value, strlen(attr->value)-1);
+		    if ((attr = sysfs_get_classdev_attr(class_device, it->subtable.c_str()))) {
+			if (((pos = it->attr.find_last_of(".*")) != std::string::npos &&
+				    !it->attr.compare(0, pos-1, attr->value, pos-1)) ||
+				it->attr == attr->value) {
 
-					deviceName.append("|").append(attr->value, strlen(attr->value)-1);
-					for (Item::const_iterator iit = ait->second.begin();
-						iit != ait->second.end(); ++iit) {
-					    if (iit->first == "Module")
-						_entries.push_back(dmiEntry(iit->second, deviceName));
-					}
-				    }
-				}
-			    }
+			    deviceName.append("|").append(attr->value, strlen(attr->value)-1);
+			    if (it->item == "Module")
+				_entries.push_back(dmiEntry(it->value, deviceName));
 			}
 		    }
 		}
 	    }
-	}
+	} 
 
 	std::string deviceName;
 	if ((attr = sysfs_get_classdev_attr(class_device, "sys_vendor")) != nullptr) {
