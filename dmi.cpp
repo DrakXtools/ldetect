@@ -55,36 +55,31 @@ void dmi::probe(void)
 
     dlist_for_each_data(classlist, class_device, struct sysfs_class_device) {
 	size_t pos;
-	struct sysfs_attribute *attr = nullptr;
+	struct sysfs_attribute *attr1 = nullptr, *attr2 = nullptr;
+	std::string deviceName;
 
 	for(std::vector<dmiTable>::const_iterator it = dmitable.begin(); it != dmitable.end(); ++it) {
-	    if ((attr = sysfs_get_classdev_attr(class_device, it->table.c_str()))) {
-		if (((pos = it->name.find_last_of(".*")) != std::string::npos &&
-			    !it->name.compare(0, pos-1, attr->value, pos-1)) ||
-			it->name == attr->value) {
-		    std::string deviceName(attr->value, strlen(attr->value)-1);
-		    if ((attr = sysfs_get_classdev_attr(class_device, it->subtable.c_str()))) {
-			if (((pos = it->attr.find_last_of(".*")) != std::string::npos &&
-				    !it->attr.compare(0, pos-1, attr->value, pos-1)) ||
-				it->attr == attr->value) {
-
-			    deviceName.append("|").append(attr->value, strlen(attr->value)-1);
-			    if (it->item == "Module")
-				_entries.push_back(dmiEntry(it->value, deviceName));
-			}
-		    }
-		}
+	    if (((attr1 = sysfs_get_classdev_attr(class_device, it->table.c_str())) &&
+			(((pos = it->name.find_last_of(".*")) != std::string::npos &&
+			  !it->name.compare(0, pos-1, attr1->value, pos-1)) ||
+			 it->name == attr1->value)) &&
+		    ((attr2 = sysfs_get_classdev_attr(class_device, it->subtable.c_str())) &&
+		     (((pos = it->attr.find_last_of(".*")) != std::string::npos &&
+		       !it->attr.compare(0, pos-1, attr2->value, pos-1)) ||
+		      it->attr == attr2->value) &&
+		     it->item == "Module")) {
+		_entries.push_back(dmiEntry(it->value, std::string(attr1->value, strlen(attr1->value)-1)));
+		_entries.back().text.append("|").append(attr2->value, strlen(attr2->value)-1);
 	    }
-	} 
-
-	std::string deviceName;
-	if ((attr = sysfs_get_classdev_attr(class_device, "sys_vendor")) != nullptr) {
-	    deviceName.append(attr->value, strlen(attr->value)-1);
 	}
-	if ((attr = sysfs_get_classdev_attr(class_device, "product_name")) != nullptr) {
+
+	if ((attr1 = sysfs_get_classdev_attr(class_device, "sys_vendor")) != nullptr) {
+	    deviceName.append(attr1->value, strlen(attr1->value)-1);
+	}
+	if ((attr1 = sysfs_get_classdev_attr(class_device, "product_name")) != nullptr) {
 	    if (!deviceName.empty())
 		deviceName += "|";
-	    deviceName.append(attr->value, strlen(attr->value)-1);
+	    deviceName.append(attr1->value, strlen(attr1->value)-1);
 	}
 
 	struct sysfs_attribute *sysfs_attr = sysfs_get_classdev_attr(class_device, "modalias");
