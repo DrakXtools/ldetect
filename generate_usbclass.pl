@@ -9,7 +9,7 @@ namespace ldetect {
 
 struct node {
   uint32_t id;
-  const std::string name;
+  const char *name;
   uint32_t nb_subnodes;
   const struct node *subnodes;
 };
