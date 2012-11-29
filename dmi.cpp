@@ -81,17 +81,11 @@ void dmi::probe(void)
 	    deviceName.append(attr1->value, strlen(attr1->value)-1);
 	}
 
-	struct sysfs_attribute *sysfs_attr = sysfs_get_classdev_attr(class_device, "modalias");
-
-	if (!sysfs_attr || sysfs_read_attribute(sysfs_attr) != 0 || !sysfs_attr->value)
-	    continue;
-
-	std::string modalias(sysfs_attr->value);
-
-	std::string modname = modalias_resolve_module(ctx, modalias.c_str());
-	if (!modname.empty()) 
-	    _entries.push_back(dmiEntry(modname, deviceName));
-
+	if ((attr1 = sysfs_get_classdev_attr(class_device, "modalias")) && sysfs_read_attribute(attr1) == 0) {
+	    std::string modname = modalias_resolve_module(ctx, attr1->value);
+	    if (!modname.empty()) 
+		_entries.push_back(dmiEntry(modname, deviceName));
+	}
     }
 
     kmod_unref(ctx);
