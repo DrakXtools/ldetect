@@ -28,7 +28,6 @@ void dmi::probe(void)
     instream fp = fh_open("dmitable");
     std::vector<dmiTable> dmitable;
 
-    std::string attrFirst, attrSecond;
     std::string subtableFirst, subtableSecond;
     std::string tableFirst, tableSecond;
     while (!fp->eof()) {
@@ -44,8 +43,7 @@ void dmi::probe(void)
 	    if (isalpha(buf[2]))
 		subtableFirst.assign(buf+2, sep-buf-2), subtableSecond = sep+2;
 	    else if (buf[2] == '=' && buf[3] == '>' && buf[4] == ' ' && isalpha(buf[5])) {
-		attrFirst.assign(buf+5, sep-buf-5), attrSecond = sep+2;
-		dmitable.push_back({tableFirst, tableSecond, subtableFirst, subtableSecond, attrFirst, attrSecond});
+		dmitable.push_back({tableFirst, tableSecond, subtableFirst, subtableSecond, std::string(buf+5, sep-buf-5), std::string(sep+2)});
 	    }
 	}
     }
