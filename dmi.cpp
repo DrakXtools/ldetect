@@ -56,7 +56,6 @@ void dmi::probe(void)
     dlist_for_each_data(classlist, class_device, struct sysfs_class_device) {
 	size_t pos;
 	struct sysfs_attribute *attr1 = nullptr, *attr2 = nullptr;
-	std::string deviceName;
 
 	for(std::vector<dmiTable>::const_iterator it = dmitable.begin(); it != dmitable.end(); ++it) {
 	    if (((attr1 = sysfs_get_classdev_attr(class_device, it->table.c_str())) &&
@@ -72,6 +71,7 @@ void dmi::probe(void)
 	    }
 	}
 
+	std::string deviceName;
 	if ((attr1 = sysfs_get_classdev_attr(class_device, "sys_vendor")) != nullptr) {
 	    deviceName.append(attr1->value, strlen(attr1->value)-1);
 	}
