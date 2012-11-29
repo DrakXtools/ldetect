@@ -67,10 +67,8 @@ void dmi::probe(void)
 		     (((pos = it->attr.find_last_of(".*")) != std::string::npos &&
 		       !it->attr.compare(0, pos-1, attr2->value, pos-1)) ||
 		      it->attr == attr2->value) &&
-		     it->item == "Module")) {
+		     it->item == "Module"))
 		_entries.push_back(dmiEntry(it->value, std::string(attr1->value, strlen(attr1->value)-1)));
-		_entries.back().text.append("|").append(attr2->value, strlen(attr2->value)-1);
-	    }
 	}
 
 	if ((attr1 = sysfs_get_classdev_attr(class_device, "sys_vendor")) != nullptr) {
