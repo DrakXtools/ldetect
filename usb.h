@@ -32,7 +32,7 @@ namespace ldetect {
 
     class usbEntry : public pciusbEntry {
 	public:
-	    usbEntry(struct sysfs_device *device) EXPORTED;
+	    usbEntry(struct sysfs_device *sfsDevice) EXPORTED;
 
 	    std::string devpath; /* USB port */
 
