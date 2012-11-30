@@ -35,114 +35,94 @@ usb::~usb() {
     names_exit();
 }
 
+usbEntry::usbEntry(struct sysfs_device *sfsDevice) : usb_port(0xffff) {
+    std::stringstream buf;
+    struct sysfs_attribute *attr = sysfs_get_device_attr(sfsDevice, "idVendor");
+
+    buf << attr->value;
+    buf >> std::hex >> vendor;
+
+    attr = sysfs_get_device_attr(sfsDevice, "idProduct");
+    buf.clear();
+    buf << attr->value;
+    buf >> std::hex >> device;
+
+    attr = sysfs_get_device_attr(sfsDevice, "busnum");
+    bus = atoi(attr->value);
+
+    uint32_t class_id, sub, prot = 0;
+
+    // FIXME: busted...
+    attr = sysfs_get_device_attr(sfsDevice, "bDeviceClass");
+    class_id = atoi(attr->value) * 0x100;
+    buf.clear();
+    buf << attr->value;
+    buf >> std::hex >> class_id;
+
+    attr = sysfs_get_device_attr(sfsDevice, "bDeviceSubClass");
+    class_id += atoi(attr->value);
+    buf.clear();
+    buf << attr->value;
+    buf >> std::hex >> sub;
+
+
+    attr = sysfs_get_device_attr(sfsDevice, "bDeviceProtocol");
+    class_id *= 0x100;
+    class_id += atoi(attr->value);
+    buf.clear();
+    buf << attr->value;
+    buf >> std::hex >> prot;
+
+    class_id = (class_id * 0x100 + sub) * 0x100 + prot;
+
+    attr = sysfs_get_device_attr(sfsDevice, "devnum");
+    pciusb_device = atoi(attr->value);
+
+    text = names_vendor(vendor);
+    if (text.empty()) {
+	attr = sysfs_get_device_attr(sfsDevice, "product");
+	text = attr->value;
+    }
+
+    text += "|";
+    const char *productName = names_product(vendor, device);
+    if (productName == nullptr) {
+	attr = sysfs_get_device_attr(sfsDevice, "product");
+	text += attr->value;
+    } else
+	text += productName;
+
+    attr = sysfs_get_device_attr(sfsDevice, "devpath");
+    buf.clear();
+    buf << attr->value;
+    buf >> devpath;
+
+    attr = sysfs_get_device_attr(sfsDevice, "bConfigurationValue");
+    buf.clear();
+    buf << attr->value;
+    buf >> usb_port;
+
+    attr = sysfs_get_device_attr(sfsDevice, "bNumInterfaces");
+    interfaces = atoi(attr->value);
+}
+
 void usb::probe(void) {
-	if (_sysfs_bus != nullptr) {
-	    struct dlist *devs = sysfs_get_bus_devices(_sysfs_bus);
-	    struct sysfs_device *device = nullptr;
+    if (_sysfs_bus != nullptr) {
+	struct dlist *devs = sysfs_get_bus_devices(_sysfs_bus);
+	struct sysfs_device *device = nullptr;
 
-	    std::stringstream buf;
-	    dlist_for_each_data(devs, device, struct sysfs_device) {
-		if (device != nullptr) {
-		    struct sysfs_attribute *attr = sysfs_get_device_attr(device, "idVendor");
-		    if(attr == nullptr)
-			continue;
-
-		    _entries.push_back(usbEntry());
-		    usbEntry &e = _entries.back();
-
-		    buf.clear();
-		    buf << attr->value;
-		    buf >> std::hex >> e.vendor;
-
-		    attr = sysfs_get_device_attr(device, "idProduct");
-		    if(attr == nullptr)
-			continue;
-		    buf.clear();
-		    buf << attr->value;
-		    buf >> std::hex >> e.device;
-
-		    attr = sysfs_get_device_attr(device, "busnum");
-		    if(attr == nullptr)
-			continue;
-		    e.bus = atoi(attr->value);
-
-		    uint32_t class_id, sub, prot = 0;
-
-		    // FIXME: busted...
-		    attr = sysfs_get_device_attr(device, "bDeviceClass");
-		    if(attr == nullptr)
-			continue;
-		    e.class_id = atoi(attr->value) * 0x100;
-		    buf.clear();
-		    buf << attr->value;
-		    buf >> std::hex >> class_id;
-
-		    attr = sysfs_get_device_attr(device, "bDeviceSubClass");
-		    if(attr == nullptr)
-			continue;
-		    e.class_id += atoi(attr->value);
-		    buf.clear();
-		    buf << attr->value;
-		    buf >> std::hex >> sub;
-
-
-		    attr = sysfs_get_device_attr(device, "bDeviceProtocol");
-		    if(attr == nullptr)
-			continue;
-		    e.class_id *= 0x100;
-		    e.class_id += atoi(attr->value);
-		    buf.clear();
-		    buf << attr->value;
-		    buf >> std::hex >> prot;
-
-		    e.class_id = (class_id * 0x100 + sub) * 0x100 + prot;
-
-		    attr = sysfs_get_device_attr(device, "devnum");
-		    if(attr == nullptr)
-			continue;
-		    e.pciusb_device = atoi(attr->value);
-
-		    e.text = names_vendor(e.vendor);
-		    if (e.text.empty()) {
-			attr = sysfs_get_device_attr(device, "product");
-			if(attr == nullptr)
-			    continue;
-			e.text = attr->value;
-		    }
-
-		    e.text += "|";
-		    const char *productName = names_product(e.vendor, e.device);
-		    if (productName == nullptr) {
-			attr = sysfs_get_device_attr(device, "product");
-			if(attr == nullptr)
-			    continue;
-			e.text += attr->value;
-		    } else
-			e.text += productName;
-
-		    attr = sysfs_get_device_attr(device, "devpath");
-		    if(attr == nullptr)
-			continue;
-		    buf.clear();
-		    buf << attr->value;
-		    buf >> e.devpath;
-
-		    attr = sysfs_get_device_attr(device, "bConfigurationValue");
-		    if(attr == nullptr)
-			continue;
-		    buf.clear();
-		    buf << attr->value;
-		    buf >> e.usb_port;
-
-		    attr = sysfs_get_device_attr(device, "bNumInterfaces");
-		    if(attr == nullptr)
-			continue;
-		    e.interfaces = atoi(attr->value);
-		}
+	std::stringstream buf;
+	dlist_for_each_data(devs, device, struct sysfs_device) {
+	    if (device != nullptr) {
+		struct sysfs_attribute *attr = sysfs_get_device_attr(device, "idVendor");
+		if(attr == nullptr)
+		    continue;
+		_entries.push_back(device);
 	    }
 	}
+    }
 
-	findModules("usbtable", false);
+    findModules("usbtable", false);
 
 }
 
