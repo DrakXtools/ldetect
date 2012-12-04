@@ -20,7 +20,11 @@ namespace ldetect {
 
     class pciEntry : public pciusbEntry {
 	public:
-	    pciEntry(pci_dev *dev, pci_access *pacc) EXPORTED;
+	    pciEntry() : pciusbEntry(),
+			//vendor(0xffff), device(0xffff),
+			pci_domain(0), /*pci_bus(0xff), pci_device(0xff),*/
+			pci_function(0xff), pci_revision(0), is_pciexpress(false) {}
+
 
 #if 0
 	    uint16_t vendor; /* PCI vendor id */
