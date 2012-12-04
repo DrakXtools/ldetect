@@ -23,7 +23,7 @@ pciEntry::pciEntry(pci_dev *dev, pci_access *pacc) : pciusbEntry(),
     char classbuf[128] = {0}, vendorbuf[128] {0}, devbuf[128] = {0};
 
 
-    pci_setup_cache(dev, (u8*)buf, CONFIG_SPACE_SIZE);
+    pci_setup_cache(dev, buf, CONFIG_SPACE_SIZE);
     pci_read_block(dev, 0, buf, CONFIG_SPACE_SIZE);
     pci_fill_info(dev, PCI_FILL_IDENT | PCI_FILL_CLASS | PCI_FILL_CAPS);
 
