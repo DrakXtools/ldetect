@@ -10,7 +10,6 @@
 #include <vector>
 #include <cstring>
 #include <libkmod.h>
-#include <sysfs/libsysfs.h>
 
 #include "common.h"
 
@@ -53,11 +52,8 @@ namespace ldetect {
     template <class T>
     class pciusb {
 	public:
-	    pciusb(const char *bus_type) : _entries(), _sysfs_bus(sysfs_open_bus(bus_type)) {}
-	    virtual ~pciusb() {
-		if (_sysfs_bus != nullptr)
-		    sysfs_close_bus(_sysfs_bus);
-	    }
+	    pciusb() : _entries() {}
+	    virtual ~pciusb() {}
 
 	    const T& operator[] (uint16_t i) const {
 		return _entries[i];
@@ -77,7 +73,6 @@ namespace ldetect {
 
 	protected:
 	    std::vector<T> _entries;
-	    struct sysfs_bus *_sysfs_bus;
 
 	    int findModules(std::string &&fpciusbtable, bool descr_lookup) {
 		char buf[2048];

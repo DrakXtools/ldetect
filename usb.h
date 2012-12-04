@@ -1,7 +1,6 @@
 #ifndef _LDETECT_USB
 #define _LDETECT_USB
 
-#include <iostream>
 #include <iomanip>
 #include <string>
 #include <ostream>
@@ -32,7 +31,7 @@ namespace ldetect {
 
     class usbEntry : public pciusbEntry {
 	public:
-	    usbEntry(struct sysfs_device *sfsDevice) EXPORTED;
+	    usbEntry() EXPORTED : devpath(), usb_port(0xffff), interfaces(0xffff) {}
 
 	    std::string devpath; /* USB port */
 
@@ -44,7 +43,7 @@ namespace ldetect {
 
     class usb : public pciusb<usbEntry> {
 	public:
-	    usb(std::string proc_usb_path="/sys/kernel/debug/usb/devices") EXPORTED;
+	    usb() EXPORTED;
 	    ~usb() EXPORTED;
 
 	    const std::string& getDescription(uint16_t vendor_id, uint16_t device_id) EXPORTED;
@@ -52,10 +51,7 @@ namespace ldetect {
 
 	protected:
 	    void find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e);
-
 	
-	private:
-	    std::string _proc_usb_path;
     };
 
 }
