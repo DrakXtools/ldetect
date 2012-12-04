@@ -24,7 +24,7 @@ instream i_open(std::string &&name) {
 
 instream fh_open(std::string &&name) {
     std::string fname(table_name_dir + name);
-    if (access(fname.c_str(), R_OK) == 0)
+    if (access(fname.c_str(), R_OK) != 0)
 	fname += ".gz";
 
     return instream(i_open(std::move(fname)));
