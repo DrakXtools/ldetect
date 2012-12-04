@@ -90,64 +90,59 @@ static void __attribute__((noreturn)) error_and_die(char *msg, ...)
 }
 
 void pci::probe(void) {
-	_pacc->error = error_and_die;
-	pci_scan_bus(_pacc);
+    _pacc->error = error_and_die;
+    pci_scan_bus(_pacc);
 
     uint8_t buf[CONFIG_SPACE_SIZE] = {0};
     char classbuf[128] = {0}, vendorbuf[128] {0}, devbuf[128] = {0};
 
-	for (struct pci_dev *dev = _pacc->devices; dev && _entries.size() < MAX_DEVICES; dev = dev->next)
-#if 0
-	    _entries.push_back(pciEntry(dev, _pacc));
-#else
-	{
-	    _entries.push_back(pciEntry());
-	    pciEntry &e = _entries.back();
-	    memset(buf, 0, sizeof(buf));
-	    memset(classbuf, 0, sizeof(classbuf));
-	    memset(vendorbuf, 0, sizeof(vendorbuf));
-	    memset(devbuf, 0, sizeof(devbuf));
+    for (struct pci_dev *dev = _pacc->devices; dev && _entries.size() < MAX_DEVICES; dev = dev->next) {
+	_entries.push_back(pciEntry());
+	pciEntry &e = _entries.back();
+	memset(buf, 0, sizeof(buf));
+	memset(classbuf, 0, sizeof(classbuf));
+	memset(vendorbuf, 0, sizeof(vendorbuf));
+	memset(devbuf, 0, sizeof(devbuf));
 
-	    pci_setup_cache(dev, buf, CONFIG_SPACE_SIZE);
-	    pci_read_block(dev, 0, buf, CONFIG_SPACE_SIZE);
-	    pci_fill_info(dev, PCI_FILL_IDENT | PCI_FILL_CLASS | PCI_FILL_CAPS);
+	pci_setup_cache(dev, buf, CONFIG_SPACE_SIZE);
+	pci_read_block(dev, 0, buf, CONFIG_SPACE_SIZE);
+	pci_fill_info(dev, PCI_FILL_IDENT | PCI_FILL_CLASS | PCI_FILL_CAPS);
 
-	    pci_lookup_name(_pacc, vendorbuf, sizeof(vendorbuf), PCI_LOOKUP_VENDOR, dev->vendor_id, dev->device_id);
-	    pci_lookup_name(_pacc, devbuf,    sizeof(devbuf),    PCI_LOOKUP_DEVICE, dev->vendor_id, dev->device_id);
-	    e.text.append(vendorbuf).append("|").append(devbuf);
-	    e.class_type += classbuf;
-	    e.vendor =     dev->vendor_id;
-	    e.device =     dev->device_id;
-	    e.pci_domain = dev->domain;
-	    e.bus =        dev->bus;
-	    e.pciusb_device = dev->dev;
-	    e.pci_function = dev->func;
+	pci_lookup_name(_pacc, vendorbuf, sizeof(vendorbuf), PCI_LOOKUP_VENDOR, dev->vendor_id, dev->device_id);
+	pci_lookup_name(_pacc, devbuf,    sizeof(devbuf),    PCI_LOOKUP_DEVICE, dev->vendor_id, dev->device_id);
+	e.text.append(vendorbuf).append("|").append(devbuf);
+	e.class_type += classbuf;
+	e.vendor =     dev->vendor_id;
+	e.device =     dev->device_id;
+	e.pci_domain = dev->domain;
+	e.bus =        dev->bus;
+	e.pciusb_device = dev->dev;
+	e.pci_function = dev->func;
 
-	    e.class_id = dev->device_class;
-	    e.subvendor = pci_read_word(dev, PCI_SUBSYSTEM_VENDOR_ID);
-	    e.subdevice = pci_read_word(dev, PCI_SUBSYSTEM_ID);
-	    e.pci_revision = pci_read_byte(dev, PCI_REVISION_ID);
+	e.class_id = dev->device_class;
+	e.subvendor = pci_read_word(dev, PCI_SUBSYSTEM_VENDOR_ID);
+	e.subdevice = pci_read_word(dev, PCI_SUBSYSTEM_ID);
+	e.pci_revision = pci_read_byte(dev, PCI_REVISION_ID);
 
-	    if ((e.subvendor == 0 && e.subdevice == 0) ||
-		    (e.subvendor == e.vendor && e.subdevice == e.device)) {
-		e.subvendor = 0xffff;
-		e.subdevice = 0xffff;
-	    }
-
-	    if (pci_find_cap(dev,PCI_CAP_ID_EXP, PCI_CAP_NORMAL))
-		e.is_pciexpress = true;
-
-	    /* special case for realtek 8139 that has two drivers */
-	    if (e.vendor == 0x10ec && e.device == 0x8139) {
-		if (e.pci_revision < 0x20)
-		    e.module = "8139too";
-		else
-		    e.module = "8139cp";
-	    }
+	if ((e.subvendor == 0 && e.subdevice == 0) ||
+		(e.subvendor == e.vendor && e.subdevice == e.device)) {
+	    e.subvendor = 0xffff;
+	    e.subdevice = 0xffff;
 	}
-#endif
 
-	findModules("pcitable", false);
+	if (pci_find_cap(dev,PCI_CAP_ID_EXP, PCI_CAP_NORMAL))
+	    e.is_pciexpress = true;
+
+	/* special case for realtek 8139 that has two drivers */
+	if (e.vendor == 0x10ec && e.device == 0x8139) {
+	    if (e.pci_revision < 0x20)
+		e.module = "8139too";
+	    else
+		e.module = "8139cp";
+	}
+    }
+
+    findModules("pcitable", false);
 }
 
 void pci::find_modules_through_aliases(struct kmod_ctx *ctx, pciEntry &e) {
