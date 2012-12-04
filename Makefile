@@ -12,7 +12,7 @@ CXX = g++ -std=gnu++11
 CXXFLAGS += -Weffc++ 
 endif
 CPPFLAGS += $(shell getconf LFS_CFLAGS) $(shell pkg-config --cflags libkmod libpci)
-LIBS += $(shell pkg-config --libs libkmod libpci) -lsysfs
+LIBS += $(shell pkg-config --libs libkmod libpci)
 ifneq ($(ZLIB),0)
 CPPFLAGS += $(shell pkg-config --cflags zlib liblzma) -DHAVE_LIBZ
 LIBS += $(shell pkg-config --libs zlib liblzma)

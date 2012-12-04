@@ -28,8 +28,8 @@ namespace ldetect {
 
     class hid {
 	public:
-	    hid(std::string sysfs_hid_path = "/sys/bus/hid/devices") EXPORTED :
-		_entries(), _sysfs_hid_path(sysfs_hid_path) {}
+	    hid() EXPORTED :
+		_entries() {}
 
 	    const hidEntry& operator[] (uint16_t i) const EXPORTED{
 		return _entries[i];
@@ -50,10 +50,7 @@ namespace ldetect {
 	    void probe(void) EXPORTED;
 
 	private:
-	    void parse_device(struct kmod_ctx *ctx, const char *dev);
-
 	    std::vector<hidEntry> _entries;
-	    std::string _sysfs_hid_path;
     };
 }
 
