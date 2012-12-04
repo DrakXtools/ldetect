@@ -19,19 +19,15 @@
 
 /*****************************************************************************/
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cerrno>
+#include <cstdlib>
 #include <unistd.h>
-#include <stdio.h>
+#include <cstdio>
 #include <ctype.h>
 
 #ifdef HAVE_LIBZ
