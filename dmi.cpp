@@ -12,8 +12,6 @@ namespace ldetect {
 
 void dmi::probe(void)
 {
-    char buf[BUF_SIZE];
-
     struct dmiTable {
 	std::string table;
 	std::string name;
@@ -28,11 +26,13 @@ void dmi::probe(void)
 
     std::string subtableFirst, subtableSecond;
     std::string tableFirst, tableSecond;
+    std::string buff;
     while (!fp->eof()) {
-	fp->getline(buf, sizeof(buf));
+	getline(*fp, buff);
+	const char *buf = buff.c_str();
 
 	if (*buf == '#') continue; // skip comments
-	char *sep = strchr(buf, ':');
+	char *sep = strchr(const_cast<char*>(buf), ':');
 	if (!sep)
 	    continue;
 	if (isalpha(*buf))
@@ -89,6 +89,7 @@ void dmi::probe(void)
 	    getline(f, deviceName);
 	    f.close();
 	}
+
 	f.open(dmiPath + "product_name", std::fstream::in);
 	if (f.is_open()) {
 	    if (!deviceName.empty())
