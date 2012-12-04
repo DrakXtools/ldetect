@@ -26,7 +26,7 @@ namespace ldetect {
 
 		subvendor(0xffff), subdevice(0xffff), class_id(0),
 		bus(0xff), pciusb_device(0xff),
-		modalias(), already_found(false) {};
+		already_found(false) {};
 	    virtual ~pciusbEntry() {}
 
 	    std::string module;
@@ -43,7 +43,6 @@ namespace ldetect {
 	    uint8_t bus; /* PCI bus id 8 bits wide */
 	    uint8_t pciusb_device; /* PCI device id 5 bits wide */
 
-	    std::string modalias;
 
 	    friend std::ostream& operator<<(std::ostream& os, const pciusbEntry& e);
 
