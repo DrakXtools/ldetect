@@ -1,18 +1,12 @@
 #ifndef _LDETECT_DMI
 #define _LDETECT_DMI
 
-#include <iostream>
-#include <iomanip>
 #include <string>
 #include <ostream>
-#include <sstream>
 
 #include "libldetect.h"
 
 #include "pciusb.h"
-
-struct kmod_ctx;
-struct syfs_attribute;
 
 namespace ldetect {
     class dmiEntry {

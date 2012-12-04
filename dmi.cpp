@@ -1,9 +1,7 @@
-#include <iostream>
 #include <fstream>
-#include <cstdio>
-#include <map>
 #include <libkmod.h>
-#include <sysfs/libsysfs.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 #include "gzstream.h"
 #include "libldetect.h"
@@ -17,12 +15,12 @@ void dmi::probe(void)
     char buf[BUF_SIZE];
 
     struct dmiTable {
-	    std::string table;
-	    std::string name;
-	    std::string subtable;
-	    std::string attr;
-	    std::string item;
-	    std::string value;
+	std::string table;
+	std::string name;
+	std::string subtable;
+	std::string attr;
+	std::string item;
+	std::string value;
     };
 
     instream fp = fh_open("dmitable");
@@ -49,47 +47,70 @@ void dmi::probe(void)
     }
 
     struct kmod_ctx *ctx = modalias_init();
-    struct sysfs_class *sfc = sysfs_open_class("dmi");
-    struct dlist *classlist = sysfs_get_class_devices(sfc);
-    struct sysfs_class_device *class_device = nullptr;
+    DIR *dp;
+    struct dirent *dirp;
+    if((dp = opendir("/sys/class/dmi")) == nullptr)
+	return;
 
-    dlist_for_each_data(classlist, class_device, struct sysfs_class_device) {
+    std::fstream f;
+    std::string dmiPath, f1val, f2val;
+    while ((dirp = readdir(dp)) != nullptr) {
+	if (!strcmp(dirp->d_name, ".") || !strcmp(dirp->d_name, ".."))
+	    continue;
 	size_t pos;
-	struct sysfs_attribute *attr1 = nullptr, *attr2 = nullptr;
-
+	dmiPath.assign("/sys/class/dmi/").append(dirp->d_name).append("/");
 	for(std::vector<dmiTable>::const_iterator it = dmitable.begin(); it != dmitable.end(); ++it) {
-	    if (((attr1 = sysfs_get_classdev_attr(class_device, it->table.c_str())) &&
-			(((pos = it->name.find_last_of(".*")) != std::string::npos &&
-			  !it->name.compare(0, pos-1, attr1->value, pos-1)) ||
-			 it->name == attr1->value)) &&
-		    ((attr2 = sysfs_get_classdev_attr(class_device, it->subtable.c_str())) &&
-		     (((pos = it->attr.find_last_of(".*")) != std::string::npos &&
-		       !it->attr.compare(0, pos-1, attr2->value, pos-1)) ||
-		      it->attr == attr2->value) &&
-		     it->item == "Module")) {
-		_entries.push_back(dmiEntry(it->value, std::string(attr1->value, strlen(attr1->value)-1).append("|").append(attr2->value, strlen(attr2->value)-1)));
+	    f.open(dmiPath + it->table, std::fstream::in);
+
+	    if (f.is_open()) {
+		std::getline(f, f1val);
+		if (((pos = it->name.find_last_of(".*")) != std::string::npos &&
+			    !it->name.compare(0, pos-1, f1val, 0, pos-1)) ||
+			it->name == f1val) {
+		    f.close();
+		    f.open(dmiPath + it->subtable, std::fstream::in);
+
+		    if (f.is_open()) {
+			std::getline(f, f2val);
+			if ((((pos = it->attr.find_last_of(".*")) != std::string::npos &&
+					!it->attr.compare(0, pos-1, f2val, 0, pos-1)) ||
+				    it->attr == f2val) &&
+				it->item == "Module")
+			    _entries.push_back(dmiEntry(it->value, f1val + "|" + f2val));
+		    }
+		}
+		f.close();
 	    }
 	}
 
 	std::string deviceName;
-	if ((attr1 = sysfs_get_classdev_attr(class_device, "sys_vendor")) != nullptr) {
-	    deviceName.append(attr1->value, strlen(attr1->value)-1);
+	f.open(dmiPath + "sys_vendor", std::fstream::in);
+	if (f.is_open()) {
+	    getline(f, deviceName);
+	    f.close();
 	}
-	if ((attr1 = sysfs_get_classdev_attr(class_device, "product_name")) != nullptr) {
+	f.open(dmiPath + "product_name", std::fstream::in);
+	if (f.is_open()) {
 	    if (!deviceName.empty())
 		deviceName += "|";
-	    deviceName.append(attr1->value, strlen(attr1->value)-1);
+	    std::string val;
+	    getline(f, val);
+	    deviceName += val;
+	    f.close();
 	}
 
-	if ((attr1 = sysfs_get_classdev_attr(class_device, "modalias")) && sysfs_read_attribute(attr1) == 0) {
-	    std::string modname = modalias_resolve_module(ctx, attr1->value);
+	f.open(dmiPath + "modalias", std::fstream::in);
+	if (f.is_open()) {
+	    std::string modalias;
+	    getline(f, modalias);
+	    std::string modname = modalias_resolve_module(ctx, modalias.c_str());
 	    if (!modname.empty()) 
 		_entries.push_back(dmiEntry(modname, deviceName));
 	}
     }
 
+    closedir(dp);
     kmod_unref(ctx);
-    sysfs_close_class(sfc);
 }
 
 std::ostream& operator<<(std::ostream& os, const dmiEntry& e) {
