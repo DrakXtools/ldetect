@@ -52,7 +52,7 @@ void dmi::probe(void)
     if((dp = opendir("/sys/class/dmi")) == nullptr)
 	return;
 
-    std::fstream f;
+    std::ifstream f;
     std::string dmiPath, f1val, f2val;
     while ((dirp = readdir(dp)) != nullptr) {
 	if (!strcmp(dirp->d_name, ".") || !strcmp(dirp->d_name, ".."))
@@ -60,7 +60,7 @@ void dmi::probe(void)
 	size_t pos;
 	dmiPath.assign("/sys/class/dmi/").append(dirp->d_name).append("/");
 	for(std::vector<dmiTable>::const_iterator it = dmitable.begin(); it != dmitable.end(); ++it) {
-	    f.open(dmiPath + it->table, std::fstream::in);
+	    f.open(dmiPath + it->table, std::ifstream::in);
 
 	    if (f.is_open()) {
 		std::getline(f, f1val);
@@ -68,7 +68,7 @@ void dmi::probe(void)
 			    !it->name.compare(0, pos-1, f1val, 0, pos-1)) ||
 			it->name == f1val) {
 		    f.close();
-		    f.open(dmiPath + it->subtable, std::fstream::in);
+		    f.open(dmiPath + it->subtable, std::ifstream::in);
 
 		    if (f.is_open()) {
 			std::getline(f, f2val);
@@ -84,13 +84,13 @@ void dmi::probe(void)
 	}
 
 	std::string deviceName;
-	f.open(dmiPath + "sys_vendor", std::fstream::in);
+	f.open(dmiPath + "sys_vendor", std::ifstream::in);
 	if (f.is_open()) {
 	    getline(f, deviceName);
 	    f.close();
 	}
 
-	f.open(dmiPath + "product_name", std::fstream::in);
+	f.open(dmiPath + "product_name", std::ifstream::in);
 	if (f.is_open()) {
 	    if (!deviceName.empty())
 		deviceName += "|";
@@ -100,7 +100,7 @@ void dmi::probe(void)
 	    f.close();
 	}
 
-	f.open(dmiPath + "modalias", std::fstream::in);
+	f.open(dmiPath + "modalias", std::ifstream::in);
 	if (f.is_open()) {
 	    std::string modalias;
 	    getline(f, modalias);
