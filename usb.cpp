@@ -44,11 +44,10 @@ void usb::probe(void) {
 	return;
 
     std::ifstream f;
-    std::string usbPath, f1val, f2val;
+    std::string usbPath;
     while ((dirp = readdir(dp)) != nullptr) {
 	if (!strcmp(dirp->d_name, ".") || !strcmp(dirp->d_name, ".."))
 	    continue;
-	size_t pos;
 	usbPath.assign(usbDevs).append(dirp->d_name).append("/");
 	f.open(usbPath + "idVendor");
 	if (f.is_open()) {
@@ -116,46 +115,6 @@ void usb::probe(void) {
 		f >> e.interfaces;
 		f.close();
 	    }
-
-	    uint32_t class_id, sub, prot = 0;
-
-	    DIR *dp2;
-	    uint16_t i;
-	    if((dp2 = opendir(usbPath.c_str())) == nullptr)
-		continue;
-
-	    for (i = 0, dirp = readdir(dp2);
-		    i < e.interfaces && dirp != nullptr;
-		    dirp = readdir(dp2)) {
-		if (dirp->d_type != DT_DIR || !strcmp(dirp->d_name, ".") || !strcmp(dirp->d_name, ".."))
-		    continue;
-		std::string usbPath2 = std::string(usbPath).append(dirp->d_name).append("/");
-    		// FIXME: partially busted...
-		f.open(usbPath2 + "bInterfaceClass");
-		if (f.is_open()) {
-		    f >> std::hex >> class_id;
-		    f.close();
-		    i++;
-		} else
-		    continue;
-
-		f.open(usbPath2 + "bInterfaceSubClass");
-		if (f.is_open()) {
-		    f >> std::hex >> sub;
-		    f.close();
-		}
-
-		f.open(usbPath2 + "bInterfaceProtocol");
-		if (f.is_open()) {
-		    f >> std::hex >> prot;
-		    f.close();
-		}
-
-		e.class_id = (class_id * 0x100 + sub) * 0x100 + prot;
-		if (e.class_id)
-		    break;
-	    }
-	    closedir(dp2);
 	}
     }
 
@@ -164,14 +123,45 @@ void usb::probe(void) {
 }
 
 void usb::find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e) {
-    char buf[16];
+    std::ostringstream devname(std::ostringstream::out);
+    devname << static_cast<uint16_t>(e.bus) << "-" << e.devpath << ":" << e.usb_port << ".";
+
     std::ifstream f;
+    std::string path(usbDevs + devname.str());
     for (uint16_t i = 0; i < e.interfaces && e.module.empty(); i++) {
-	snprintf(buf, sizeof(buf), "%d-%s:%d.%d", e.bus, e.devpath.c_str(), e.usb_port, i);
-	f.open(std::string(usbDevs).append(buf).append("/modalias"));
-	std::string modalias;
-	getline(f, modalias);
-	e.module = modalias_resolve_module(ctx, modalias.c_str());
+	std::ostringstream numStr(std::ostringstream::out);
+	numStr << i;
+	std::string devPath(path + numStr.str());
+	f.open(devPath + "/modalias");
+	if (f.is_open()) {
+	    std::string modalias;
+	    getline(f, modalias);
+	    e.module = modalias_resolve_module(ctx, modalias.c_str());
+	}
+	f.close();
+	if (!e.class_id) {
+	    f.open(devPath + "/bInterfaceClass");
+	    if (f.is_open()) {
+		uint32_t cid, sub, prot = 0;
+
+		f >> std::hex >> cid;
+		f.close();
+
+		f.open(devPath + "/bInterfaceSubClass");
+		if (f.is_open()) {
+		    f >> std::hex >> sub;
+		    f.close();
+		}
+
+		f.open(devPath + "/bInterfaceProtocol");
+		if (f.is_open()) {
+		    f >> std::hex >> prot;
+		    f.close();
+		}
+		e.class_id = (cid * 0x100 + sub) * 0x100 + prot;
+	    }
+	    f.close();
+	}
     }
 }
 
