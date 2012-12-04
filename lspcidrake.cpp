@@ -37,11 +37,9 @@ int main(int argc, char *argv[]) {
 #endif
 
 	int opt, fake = 0;
-	const char *proc_pci_path = nullptr,
-	      *proc_usb_path = nullptr;
+	const char *proc_pci_path = nullptr;
 	struct option options[] = { { "verbose", 0, nullptr, 'v' },
 				    { "pci-file", 1, nullptr, 'p' },
-				    { "usb-file", 1, nullptr, 'u' },
 				    { "dmidecode", 0, nullptr, 'd' },
 				    { nullptr, 0, nullptr, 0 } };
 
@@ -52,10 +50,6 @@ int main(int argc, char *argv[]) {
 				break;
 			case 'p':
 				proc_pci_path = optarg;
-				fake = 1;
-				break;
-			case 'u':
-				proc_usb_path = optarg;
 				fake = 1;
 				break;
 			case 'd':
@@ -80,7 +74,7 @@ int main(int argc, char *argv[]) {
 	    }
 	}
 
-	ldetect::usb u = proc_usb_path ? ldetect::usb(proc_usb_path) : ldetect::usb();
+	ldetect::usb u;
 	u.probe();
 	if (!fake)
 	    for (unsigned int i = 0; i < u.size(); i++)
