@@ -155,7 +155,7 @@ void pci::find_modules_through_aliases(struct kmod_ctx *ctx, pciEntry &e) {
     if (f.is_open()) {
 	std::string modalias;
 	getline(f, modalias);
-	e.module = modalias_resolve_module(ctx, modalias.c_str());
+	e.module = modalias_resolve_module(ctx, modalias);
     }
 }
 

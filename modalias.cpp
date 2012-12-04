@@ -66,10 +66,10 @@ struct kmod_ctx* modalias_init(void) {
 	return ctx;
 }
 
-std::string modalias_resolve_module(struct kmod_ctx *ctx, const char *modalias) {
+std::string modalias_resolve_module(struct kmod_ctx *ctx, const std::string &modalias) {
 	struct kmod_list *l = nullptr, *list = nullptr, *filtered = nullptr;
 	std::string str;
-	int err = kmod_module_new_from_lookup(ctx, modalias, &list);
+	int err = kmod_module_new_from_lookup(ctx, modalias.c_str(), &list);
 	if (err < 0)
 		goto exit;
 

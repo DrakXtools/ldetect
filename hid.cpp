@@ -35,7 +35,7 @@ void hid::probe(void)
 	if (f.is_open()) {
 	    std::string modalias;
 	    getline(f, modalias);
-	    modname = modalias_resolve_module(ctx, modalias.c_str());
+	    modname = modalias_resolve_module(ctx, modalias);
 	    f.close();
 	}
 
