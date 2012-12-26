@@ -30,7 +30,7 @@ void hid::probe(void)
 	    continue;
 	std::string hidDev(std::string(hidDevs).append("/").append(dent->d_name));
 
-	f.open(hidDev + "/modalias");
+	f.open((hidDev + "/modalias").c_str());
 	std::string modname;
 	if (f.is_open()) {
 	    std::string modalias;
@@ -39,7 +39,7 @@ void hid::probe(void)
 	    f.close();
 	}
 
-	f.open(hidDev + "/uevent");
+	f.open((hidDev + "/uevent").c_str());
 	std::string deviceName;
 	if (f.is_open()) {
 	    std::string line;

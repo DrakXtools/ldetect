@@ -12,6 +12,12 @@
 #include "usb.h"
 #include "libldetect.h"
 
+#ifdef __UCLIBCXX_MAJOR__
+#define	hex	std::ios_base::hex
+#else
+#define	hex	std::hex
+#endif
+
 namespace ldetect {
 
 // FIXME
@@ -49,40 +55,40 @@ void usb::probe(void) {
 	if (!strcmp(dirp->d_name, ".") || !strcmp(dirp->d_name, ".."))
 	    continue;
 	usbPath.assign(usbDevs).append(dirp->d_name).append("/");
-	f.open(usbPath + "idVendor");
+	f.open((usbPath + "idVendor").c_str());
 	if (f.is_open()) {
 	    _entries.push_back(usbEntry());
 	    usbEntry &e = _entries.back();
-	    f >> std::hex >> e.vendor;
+	    f >> hex >> e.vendor;
 
 	    f.close();
-	    f.open(usbPath + "idProduct");
+	    f.open((usbPath + "idProduct").c_str());
 	    if (f.is_open()) {
-		f >> std::hex >> e.device;
+		f >> hex >> e.device;
 		f.close();
 	    }
 
-	    f.open(usbPath + "busnum");
+	    f.open((usbPath + "busnum").c_str());
 	    if (f.is_open()) {
 		// FIXME
 		uint16_t bus;
-		f >> std::hex >> bus;
+		f >> hex >> bus;
 		e.bus = bus;
 		f.close();
 	    }
 
-	    f.open(usbPath + "devnum");
+	    f.open((usbPath + "devnum").c_str());
 	    if (f.is_open()) {
 		// FIXME
 		uint16_t pciusb_device;
-		f >> std::hex >> pciusb_device;
+		f >> hex >> pciusb_device;
 		e.pciusb_device = pciusb_device;
 		f.close();
 	    }
 
 	    e.text = names_vendor(e.vendor);
 	    if (e.text.empty()) {
-		f.open(usbPath + "manufacturer");
+		f.open((usbPath + "manufacturer").c_str());
 		if (f.is_open()) {
 		    getline(f, e.text);
 		    f.close();
@@ -98,19 +104,19 @@ void usb::probe(void) {
 	    } else
 		e.text += productName;
 
-	    f.open(usbPath + "devpath");
+	    f.open((usbPath + "devpath").c_str());
 	    if (f.is_open()) {
 		getline(f, e.devpath);
 		f.close();
 	    }
 
-	    f.open(usbPath + "bConfigurationValue");
+	    f.open((usbPath + "bConfigurationValue").c_str());
 	    if (f.is_open()) {
 		f >> e.usb_port;
 		f.close();
 	    }
 
-	    f.open(usbPath + "bNumInterfaces");
+	    f.open((usbPath + "bNumInterfaces").c_str());
 	    if (f.is_open()) {
 		f >> e.interfaces;
 		f.close();
@@ -132,7 +138,7 @@ void usb::find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e) {
 	std::ostringstream numStr(std::ostringstream::out);
 	numStr << i;
 	std::string devPath(path + numStr.str());
-	f.open(devPath + "/modalias");
+	f.open((devPath + "/modalias").c_str());
 	if (f.is_open()) {
 	    std::string modalias;
 	    getline(f, modalias);
@@ -140,22 +146,22 @@ void usb::find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e) {
 	}
 	f.close();
 	if (!e.class_id) {
-	    f.open(devPath + "/bInterfaceClass");
+	    f.open((devPath + "/bInterfaceClass").c_str());
 	    if (f.is_open()) {
 		uint32_t cid, sub, prot = 0;
 
-		f >> std::hex >> cid;
+		f >> hex >> cid;
 		f.close();
 
-		f.open(devPath + "/bInterfaceSubClass");
+		f.open((devPath + "/bInterfaceSubClass").c_str());
 		if (f.is_open()) {
-		    f >> std::hex >> sub;
+		    f >> hex >> sub;
 		    f.close();
 		}
 
-		f.open(devPath + "/bInterfaceProtocol");
+		f.open((devPath + "/bInterfaceProtocol").c_str());
 		if (f.is_open()) {
-		    f >> std::hex >> prot;
+		    f >> hex >> prot;
 		    f.close();
 		}
 		e.class_id = (cid * 0x100 + sub) * 0x100 + prot;

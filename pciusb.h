@@ -76,7 +76,7 @@ namespace ldetect {
 
 	    int findModules(std::string &&fpciusbtable, bool descr_lookup) {
 		char buf[2048];
-		instream f = fh_open(std::move(fpciusbtable));
+		instream f = fh_open(fpciusbtable.c_str());
 
 		for (int line = 1; f->getline(buf, sizeof(buf)); line++) {
 		    uint16_t vendor, device, subvendor, subdevice;

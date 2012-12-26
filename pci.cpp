@@ -150,7 +150,7 @@ void pci::find_modules_through_aliases(struct kmod_ctx *ctx, pciEntry &e) {
     devname << hexFmt(e.pci_domain, 4, false) << ":" <<  hexFmt(e.bus, 2, false) <<
 	":" << hexFmt(e.pciusb_device, 2, false) << "." << hexFmt(e.pci_function, 0, false);
 
-    std::ifstream f(std::string("/sys/bus/pci/devices/").append(devname.str()).append("/modalias"));
+    std::ifstream f(std::string("/sys/bus/pci/devices/").append(devname.str()).append("/modalias").c_str());
     if (f.is_open()) {
 	std::string modalias;
 	getline(f, modalias);

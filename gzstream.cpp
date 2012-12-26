@@ -29,7 +29,7 @@ gzstreambuf * gzstreambuf::close() {
     return (gzstreambuf*)nullptr;
 }
 
-int gzstreambuf::underflow() {
+std::streambuf::int_type gzstreambuf::underflow() {
     if (gptr() && (gptr() < egptr()))
 	return *reinterpret_cast<uint8_t*>(gptr());
 

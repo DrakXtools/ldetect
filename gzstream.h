@@ -23,7 +23,7 @@ class gzstreambuf : public std::streambuf {
 	gzstreambuf*	close();
 	~gzstreambuf()	{ close(); }
 
-	virtual int     underflow();
+	virtual std::streambuf::int_type  underflow();
 	virtual int	sync();
 
     private:
@@ -55,6 +55,7 @@ class igzstream : public gzstreambase, public std::istream {
     public:
 	igzstream() : std::istream(&buf) {} 
 	igzstream(const char *name) : gzstreambase(name), std::istream(&buf) {}  
+	igzstream(const std::string &&name) : gzstreambase(name.c_str()), std::istream(&buf) {}  
 	gzstreambuf* rdbuf() { return gzstreambase::rdbuf(); }
 	void open(const char *name) {
 	    gzstreambase::open(name);

@@ -29,7 +29,11 @@ std::string modalias_resolve_module(struct kmod_ctx *ctx, const std::string &mod
 #define ifree(p) do { if (p) { free(p); p = nullptr; } } while (0)
 #define alloc_v(v) calloc(1, sizeof(v[0]));
 
+#ifdef __UCLIBCXX_MAJOR__
+typedef std::auto_ptr<std::istream> instream;
+#else
 typedef std::unique_ptr<std::istream> instream;
+#endif
 instream i_open(std::string &&name) NON_EXPORTED;
 instream fh_open(std::string &&name) NON_EXPORTED;
 }

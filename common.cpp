@@ -19,7 +19,7 @@ std::string hexFmt(uint32_t value, uint8_t w, bool prefix) {
 instream i_open(std::string &&name) {
     if (!name.compare(name.size()-3, 3, ".gz"))
     	return instream(new igzstream(name.c_str()));
-    return instream(new std::ifstream(name));
+    return instream(new std::ifstream(name.c_str()));
 }
 
 instream fh_open(std::string &&name) {
@@ -27,7 +27,7 @@ instream fh_open(std::string &&name) {
     if (access(fname.c_str(), R_OK) != 0)
 	fname += ".gz";
 
-    return instream(i_open(std::move(fname)));
+    return instream(i_open(fname.c_str()));
 }
 
 }
