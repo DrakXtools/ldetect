@@ -8,6 +8,7 @@ LDFLAGS += -Wl,--no-undefined
 ifeq (uclibc, $(LIBC))
 CC=uclibc-gcc
 CXX=uclibc-g++ -std=gnu++11
+CXXFLAGS += -fno-exceptions -fno-rtti
 else
 CXX = g++ -std=gnu++11
 CXXFLAGS += -Weffc++ 
