@@ -4,6 +4,7 @@ lib_objs = $(subst .cpp,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
 CXXFLAGS += -Wall -Wextra -pedantic -Os -fPIC -fvisibility=hidden -g 
+LDFLAGS += -Wl,--no-undefined
 ifeq (uclibc, $(LIBC))
 CC=uclibc-gcc
 CXX=uclibc-g++ -std=gnu++11
