@@ -6,7 +6,7 @@ Version 0.13.0 -  7 January 2013, by Per Øyvind Karlsen
 - implement a C++ stream class for zlib
 - use names from dmi rather than the patterns matched against
 - store names of pci classes in a hash map for faster lookups
-- rewrite in C++ (turning the existing code into good C++ certainly remains though)
+- rewrite in C++
 - make ldetect 3x faster
 - fix retrieving info about USB devices with kernel-3.5+ (mga#7248)
 - link with -flto & -Wl,-O1
