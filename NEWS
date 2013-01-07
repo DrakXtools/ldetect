@@ -1,5 +1,6 @@
 Version 0.13.0 -  7 January 2013, by Per Øyvind Karlsen
 
+- install headers into dedicated directory
 - move functions from drakx perl module into a dedicated ldetect perl module
   so that it'll be easier to maintain and also since no stable API nor ABI
   can be expected in any near future
