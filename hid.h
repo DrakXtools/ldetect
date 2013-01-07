@@ -12,7 +12,6 @@
 #pragma GCC visibility push(default)
 
 struct kmod_ctx;
-struct syfs_attribute;
 
 namespace ldetect {
     class hidEntry {
