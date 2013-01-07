@@ -21,6 +21,7 @@ CPPFLAGS += $(shell pkg-config --cflags zlib liblzma) -DHAVE_LIBZ
 LIBS += $(shell pkg-config --libs zlib liblzma)
 endif
 WHOLE_PROGRAM = 1
+FLTO = -flto
 
 ldetect_srcdir ?= .
 
@@ -49,13 +50,13 @@ endif
 
 ifneq (0, $(WHOLE_PROGRAM))
 lspcidrake.static: lspcidrake.cpp $(lib_src)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common -flto -Wl,-O1 -o $@ $^ $(LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common $(FLTO) -Wl,-O1 -o $@ $^ $(LIBS)
 
 lspcidrake: lspcidrake.cpp libldetect.so
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common -flto -Wl,-z,relro -Wl,-O1 -o $@ $^
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common $(FLTO) -Wl,-z,relro -Wl,-O1 -o $@ $^
 
 $(lib_major).$(LIB_MINOR): $(lib_src)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common -flto -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common $(FLTO) -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
 else
 lspcidrake.static: lspcidrake.cpp libldetect.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
@@ -64,7 +65,7 @@ lspcidrake: lspcidrake.cpp libldetect.so
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 $(lib_major).$(LIB_MINOR): $(lib_objs)
-	$(CXX) $(LDFLAGS) -shared -Wl,-z,relro -flto -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
+	$(CXX) $(LDFLAGS) -shared -Wl,-z,relro $(FLTO) -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
 endif
 $(lib_major): $(lib_major).$(LIB_MINOR)
 	ln -sf $< $@
