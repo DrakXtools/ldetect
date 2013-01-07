@@ -88,7 +88,7 @@ clean:
 	rm -f *~ *.o pciclass.cpp usbclass.cpp $(binaries) $(libraries) .depend
 
 install: build
-	install -d $(DESTDIR)$(bindir) $(DESTDIR)$(libdir)/ldetect $(DESTDIR)$(includedir)
+	install -d $(DESTDIR)$(bindir) $(DESTDIR)$(libdir) $(DESTDIR)$(includedir)/ldetect
 	install -m755 $(binaries) $(DESTDIR)$(bindir)
 	cp -a $(libraries) $(DESTDIR)$(libdir)
 	install -m644 $(headers_api) $(DESTDIR)$(includedir)/ldetect
