@@ -22,7 +22,7 @@ static void usage(void)
 	printf(
 	"usage: lspcidrake [options]\n"
 	"\t-p, --pci-file <file>\tPCI devices source [/proc/bus/pci/devices by default]\n"
-	"\t-u, --usb-file <file>\tUSB devices source  [/proc/bus/usb/devices by default]\n"
+	"\t-u, --usb-file <file>\tUSB devices source [/proc/bus/usb/devices by default]\n"
 	"\t-v, --verbose\t\tVerbose mode [print ids and sub-ids], implies full probe\n"
 	"\t-d, --dmidecode <file>\tTo use this dmidecode output instead of calling demicode\n");
 }
