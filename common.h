@@ -22,7 +22,7 @@ struct kmod_ctx* modalias_init(void) NON_EXPORTED;
 std::string modalias_resolve_module(struct kmod_ctx *ctx, const std::string &modalias) EXPORTED;
 #pragma GCC visibility pop
 
-#define MAX_DEVICES 100
+#define MAX_DEVICES 300
 #define BUF_SIZE 512
 
 #define psizeof(a) (sizeof(a) / sizeof(a[0]))

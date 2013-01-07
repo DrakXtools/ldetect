@@ -1,5 +1,6 @@
 Version 0.13.0 -  7 January 2013, by Per Øyvind Karlsen
 
+- bump max devices number per bus from 100 to 300 (mga#8320)
 - add pkgconfig file
 - install headers into dedicated directory
 - move functions from drakx perl module into a dedicated ldetect perl module
