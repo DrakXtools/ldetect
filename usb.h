@@ -46,7 +46,6 @@ namespace ldetect {
 	    usb() EXPORTED;
 	    ~usb() EXPORTED;
 
-	    const std::string& getDescription(uint16_t vendor_id, uint16_t device_id) EXPORTED;
 	    void probe(void) EXPORTED;
 
 	protected:
