@@ -16,8 +16,7 @@ outstr = """
 /* This auto-generated from <pci.h>, don't modify! */
 
 #include <map>
-#include <cstdint>
-#include "libldetect.h"
+#include "pci.h"
 
 namespace ldetect {
 
@@ -33,12 +32,10 @@ for pciclass in pciclasses[1:]:
     outstr += '    { %s, "%s" },\n' % pciclass
 outstr += """};
 
-#pragma GCC visibility push(default) 
 const std::string& pci_class2text(uint16_t classId) {
     std::map<uint16_t, const std::string>::const_iterator it = pciClasses.find(classId);
     return it == pciClasses.end() ? undefined : it->second;
 }
-#pragma GCC visibility pop
 
 #else
 static const std::pair<uint16_t, const std::string> pciClasses[] {
@@ -50,14 +47,12 @@ outstr += """};
 
 static uint16_t nb_classes = sizeof(pciClasses) / sizeof(*pciClasses);
 
-#pragma GCC visibility push(default) 
 const std::string& pci_class2text(uint16_t class_id) {
     for (uint16_t i = 0; i < nb_classes; i++)
         if (pciClasses[i].first == class_id) return pciClasses[i].second;
 
     return undefined;
 }
-#pragma GCC visibility pop
 
 #endif
 

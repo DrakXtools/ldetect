@@ -16,7 +16,7 @@ struct pci_dev;
 struct kmod_ctx;
 
 namespace ldetect {
-    const std::string& pci_class2text(uint16_t class_id) __attribute__((externally_visible));
+    const std::string& pci_class2text(uint16_t class_id) EXPORTED;
 
     class pciEntry : public pciusbEntry {
 	public:
