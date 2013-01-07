@@ -1,5 +1,8 @@
-Version 0.13.0 - 18 November 2012, by Per Øyvind Karlsen
+Version 0.13.0 -  7 January 2013, by Per Øyvind Karlsen
 
+- move functions from drakx perl module into a dedicated ldetect perl module
+  so that it'll be easier to maintain and also since no stable API nor ABI
+  can be expected in any near future
 - implement a C++ stream class for zlib
 - use names from dmi rather than the patterns matched against
 - store names of pci classes in a hash map for faster lookups
