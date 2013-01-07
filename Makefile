@@ -17,8 +17,8 @@ endif
 CPPFLAGS += $(shell getconf LFS_CFLAGS) $(shell pkg-config --cflags libkmod libpci)
 LIBS += $(shell pkg-config --libs libkmod libpci)
 ifneq ($(ZLIB),0)
-CPPFLAGS += $(shell pkg-config --cflags zlib liblzma) -DHAVE_LIBZ
-LIBS += $(shell pkg-config --libs zlib liblzma)
+CPPFLAGS += $(shell pkg-config --cflags zlib) -DHAVE_LIBZ
+LIBS += $(shell pkg-config --libs zlib)
 endif
 WHOLE_PROGRAM = 1
 FLTO = -flto
