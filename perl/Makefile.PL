@@ -4,10 +4,10 @@ $CC = 'g++';
 $libs = '-L.. -lldetect';
 
 WriteMakefile(
-    NAME		=> 'ldetect',
-    VERSION_FROM	=> 'ldetect.pm',
+    NAME		=> 'LDetect',
+    VERSION_FROM	=> 'LDetect.pm',
     OPTIMIZE		=> '-Os',
-    OBJECT		=> "ldetect.o ",
+    OBJECT		=> "LDetect.o ",
     CC			=> $CC,
     LD			=> $CC,
     XSOPT		=> '-C++',
