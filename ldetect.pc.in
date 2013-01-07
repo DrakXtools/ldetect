@@ -1,0 +1,11 @@
+prefix=@PREFIX@
+exec_prefix=@PREFIX@
+libdir=@LIBDIR@
+includedir=@INCLUDEDIR@/ldetect
+
+Name: ldetect
+Description: Light hardware detection library
+Version: @VERSION@
+Cflags: -I${includedir} 
+Libs: -L${libdir} -lldetect
+Requires.private: zlib libkmod libpci
