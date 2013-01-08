@@ -7,13 +7,6 @@ extern "C" {
 #undef do_open
 #undef do_close
 
-#include <cstdint>
-#include <stdio.h>
-#include <iostream>
-#include <cassert>
-#include <string.h>
-#include <unistd.h>
-#include "libldetect.h"
 #include "hid.h"
 #include "pci.h"
 #include "usb.h"
