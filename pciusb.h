@@ -78,7 +78,7 @@ namespace ldetect {
 		char buf[2048];
 		instream f = fh_open(fpciusbtable.c_str());
 
-		for (int line = 1; f->getline(buf, sizeof(buf)); line++) {
+		for (int line = 1; f->getline(buf, sizeof(buf)) && !f->eof(); line++) {
 		    uint16_t vendor, device, subvendor, subdevice;
 		    char *p = nullptr, *q = nullptr;
 		    int offset;
