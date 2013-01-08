@@ -12,12 +12,6 @@
 #include "usb.h"
 #include "libldetect.h"
 
-#ifdef __UCLIBCXX_MAJOR__
-#define	hex	std::ios_base::hex
-#else
-#define	hex	std::hex
-#endif
-
 namespace ldetect {
 
 // FIXME
@@ -51,6 +45,7 @@ void usb::probe(void) {
 
     std::ifstream f;
     std::string usbPath;
+    char buf[16];
     while ((dirp = readdir(dp)) != nullptr) {
 	if (!strcmp(dirp->d_name, ".") || !strcmp(dirp->d_name, ".."))
 	    continue;
@@ -59,30 +54,50 @@ void usb::probe(void) {
 	if (f.is_open()) {
 	    _entries.push_back(usbEntry());
 	    usbEntry &e = _entries.back();
-	    f >> hex >> e.vendor;
+#ifndef __UCLIBCXX_MAJOR__
+	    f >> std::hex >> e.vendor;
+#else
+	    f.get(buf, sizeof(buf));
+	    sscanf(buf, "%hx", &e.vendor);
+#endif
 
 	    f.close();
 	    f.open((usbPath + "idProduct").c_str());
 	    if (f.is_open()) {
-		f >> hex >> e.device;
+#ifndef __UCLIBCXX_MAJOR__
+	    f >> std::hex >> e.device;
+#else
+	    f.get(buf, sizeof(buf));
+	    sscanf(buf, "%hx", &e.device);
+#endif
 		f.close();
 	    }
 
 	    f.open((usbPath + "busnum").c_str());
 	    if (f.is_open()) {
+#ifndef __UCLIBCXX_MAJOR__
 		// FIXME
 		uint16_t bus;
-		f >> hex >> bus;
+		f >> std::hex >> bus;
 		e.bus = bus;
+#else
+		f.get(buf, sizeof(buf));
+		sscanf(buf, "%hhx", &e.bus);
+#endif
 		f.close();
 	    }
 
 	    f.open((usbPath + "devnum").c_str());
 	    if (f.is_open()) {
+#ifndef __UCLIBCXX_MAJOR__
 		// FIXME
 		uint16_t pciusb_device;
-		f >> hex >> pciusb_device;
+		f >> std::hex >> pciusb_device;
 		e.pciusb_device = pciusb_device;
+#else
+		f.get(buf, sizeof(buf));
+		sscanf(buf, "%hhx", &e.pciusb_device);
+#endif
 		f.close();
 	    }
 
@@ -134,6 +149,7 @@ void usb::find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e) {
 
     std::ifstream f;
     std::string path(usbDevs + devname.str());
+    char buf[16];
     for (uint16_t i = 0; i < e.interfaces && e.module.empty(); i++) {
 	std::ostringstream numStr(std::ostringstream::out);
 	numStr << i;
@@ -150,18 +166,33 @@ void usb::find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e) {
 	    if (f.is_open()) {
 		uint32_t cid, sub, prot = 0;
 
-		f >> hex >> cid;
+#ifndef __UCLIBCXX_MAJOR__
+		f >> std::hex >> cid;
+#else
+		f.get(buf, sizeof(buf));
+		sscanf(buf, "%x", &cid);
+#endif
 		f.close();
 
 		f.open((devPath + "/bInterfaceSubClass").c_str());
 		if (f.is_open()) {
-		    f >> hex >> sub;
+#ifndef __UCLIBCXX_MAJOR__
+		    f >> std::hex >> cid;
+#else
+		    f.get(buf, sizeof(buf));
+		    sscanf(buf, "%x", &sub);
+#endif
 		    f.close();
 		}
 
 		f.open((devPath + "/bInterfaceProtocol").c_str());
 		if (f.is_open()) {
-		    f >> hex >> prot;
+#ifndef __UCLIBCXX_MAJOR__
+		    f >> std::hex >> prot;
+#else
+		    f.get(buf, sizeof(buf));
+		    sscanf(buf, "%x", &prot);
+#endif
 		    f.close();
 		}
 		e.class_id = (cid * 0x100 + sub) * 0x100 + prot;
