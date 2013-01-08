@@ -1,6 +1,6 @@
 Version 0.13.1 -  8 January 2013, by Per Øyvind Karlsen
 
-- work around broken implementation of ostream fill in uClibc++
+- work around broken implementation of ostream fill & setw in uClibc++
 
 Version 0.13.0 -  7 January 2013, by Per Øyvind Karlsen
 
