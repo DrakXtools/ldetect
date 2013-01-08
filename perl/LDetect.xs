@@ -19,7 +19,7 @@ extern "C" {
 #include "usb.h"
 #include "dmi.h"
 
-MODULE = ldetect		PACKAGE = ldetect
+MODULE = LDetect		PACKAGE = LDetect
 
 const char*
 get_pci_description(U16 vendor_id, U16 device_id)
