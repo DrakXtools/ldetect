@@ -45,7 +45,9 @@ void usb::probe(void) {
 
     std::ifstream f;
     std::string usbPath;
+#ifdef __UCLIBCXX_MAJOR__
     char buf[16];
+#endif
     while ((dirp = readdir(dp)) != nullptr) {
 	if (!strcmp(dirp->d_name, ".") || !strcmp(dirp->d_name, ".."))
 	    continue;
@@ -149,7 +151,9 @@ void usb::find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e) {
 
     std::ifstream f;
     std::string path(usbDevs + devname.str());
+#ifdef __UCLIBCXX_MAJOR__
     char buf[16];
+#endif
     for (uint16_t i = 0; i < e.interfaces && e.module.empty(); i++) {
 	std::ostringstream numStr(std::ostringstream::out);
 	numStr << i;
