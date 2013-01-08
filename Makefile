@@ -28,7 +28,7 @@ ldetect_srcdir ?= .
 ifndef MDK_STAGE_ONE
 NAME = ldetect
 LIB_MAJOR = 0.13
-LIB_MINOR = 0
+LIB_MINOR = 1
 VERSION=$(LIB_MAJOR).$(LIB_MINOR)
 
 prefix = /usr

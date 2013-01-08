@@ -1,3 +1,7 @@
+Version 0.13.1 -  8 January 2013, by Per Øyvind Karlsen
+
+- work around broken implementation of ostream fill in uClibc++
+
 Version 0.13.0 -  7 January 2013, by Per Øyvind Karlsen
 
 - bump max devices number per bus from 100 to 300 (mga#8320)
