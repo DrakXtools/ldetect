@@ -168,7 +168,7 @@ void usb::find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e) {
 	if (!e.class_id) {
 	    f.open((devPath + "/bInterfaceClass").c_str());
 	    if (f.is_open()) {
-		uint32_t cid, sub, prot = 0;
+		uint32_t cid = 0, sub = 0, prot = 0;
 
 #ifndef __UCLIBCXX_MAJOR__
 		f >> std::hex >> cid;
