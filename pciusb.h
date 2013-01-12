@@ -94,7 +94,7 @@ namespace ldetect {
 			    continue; // skip bad line
 			}
 		    }
-		    for (unsigned int i = 0; i < _entries.size(); i++) {
+		    for (uint16_t i = 0; i < _entries.size(); i++) {
 			T &e = _entries[i];
 			if (e.already_found)
 			    continue;	// skip since already found with sub ids
@@ -127,7 +127,7 @@ namespace ldetect {
 
 		::kmod_ctx *ctx = modalias_init();
 
-		for (unsigned int i = 0; i < _entries.size(); i++) {
+		for (uint16_t i = 0; i < _entries.size(); i++) {
 		    T &e = _entries[i];
 
 		    // No special case found in pcitable ? Then lookup modalias for PCI devices

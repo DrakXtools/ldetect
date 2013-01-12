@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
 	ldetect::pci p = proc_pci_path ? ldetect::pci(proc_pci_path) : ldetect::pci();
 	p.probe();
 	if (!fake) {
-	    for (unsigned int i = 0; i < p.size(); i++) {
+	    for (uint16_t i = 0; i < p.size(); i++) {
 		const pciEntry &e = p[i];
 		std::cout << e;
 		if (verboze)
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
 	ldetect::usb u;
 	u.probe();
 	if (!fake)
-	    for (unsigned int i = 0; i < u.size(); i++)
+	    for (uint16_t i = 0; i < u.size(); i++)
 		std::cout << u[i] << std::endl;
 
 	ldetect::dmi d;
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
 	ldetect::hid h;
 	h.probe();
 	if (!fake)
-	    for (unsigned int i = 0; i < h.size(); i++)
+	    for (uint16_t i = 0; i < h.size(); i++)
 		std::cout << h[i] << std::endl;
 
 	return 0;
