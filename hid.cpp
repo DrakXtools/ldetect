@@ -66,7 +66,7 @@ std::ostream& operator<<(std::ostream& os, const hidEntry& e) {
 #ifndef __UCLIBCXX_MAJOR__
     return os << std::setw(16) << std::left << e.module << ": " << e.text;
 #else
-    char buf[256];
+    char buf[32];
     snprintf(buf, sizeof(buf), "%-16s: ", e.module.c_str());
     return os << buf << e.text;
 #endif

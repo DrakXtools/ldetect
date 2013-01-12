@@ -9,7 +9,7 @@ std::ostream& operator<<(std::ostream& os, const pciusbEntry& e) {
 #ifndef __UCLIBCXX_MAJOR__
     os << std::setw(16) << std::left << (e.module.empty() ? "unknown" : e.module) << ": ";
 #else
-    char buf[256];
+    char buf[32];
     snprintf(buf, sizeof(buf), "%-16s: ", e.module.empty() ? "unknown" : e.module.c_str());
     os << buf;
 #endif
