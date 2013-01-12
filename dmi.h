@@ -11,7 +11,7 @@
 namespace ldetect {
     class dmiEntry {
 	public:
-	    dmiEntry(std::string module, std::string text) EXPORTED :
+	    dmiEntry(const std::string &module, const std::string &text) EXPORTED :
 		module(module), text(text) {}
 
 	    std::string module;

@@ -51,10 +51,11 @@ void hid::probe(void)
 		}
 	    }
 	    f.close();
-	}
+	} else
+	    deviceName = "HID Device";
 
 	if (!modname.empty()) 
-	    _entries.push_back(hidEntry(modname, deviceName.empty() ? "HID Device" : deviceName));
+	    _entries.push_back(hidEntry(modname, deviceName));
     }
 
     kmod_unref(ctx);

@@ -14,7 +14,7 @@
 namespace ldetect {
     class hidEntry {
 	public:
-	    hidEntry(std::string module, std::string text) EXPORTED :
+	    hidEntry(const std::string &module, const std::string &text) EXPORTED :
 		module(module), text(text) {}
 
 	    std::string module;
