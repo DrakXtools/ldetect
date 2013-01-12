@@ -74,7 +74,7 @@ namespace ldetect {
 	protected:
 	    std::vector<T> _entries;
 
-	    int findModules(std::string &&fpciusbtable, bool descr_lookup) {
+	    void findModules(std::string &&fpciusbtable, bool descr_lookup) {
 		char buf[2048];
 		instream f = fh_open(fpciusbtable.c_str());
 
@@ -137,8 +137,6 @@ namespace ldetect {
 		}
 
 		kmod_unref(ctx);
-
-		return 1;
 	    }
 
 	    virtual void find_modules_through_aliases(struct kmod_ctx *ctx, T &e) = 0;
