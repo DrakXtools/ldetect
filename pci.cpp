@@ -78,19 +78,7 @@ const std::string& pci::getDescription(uint16_t vendor_id, uint16_t device_id) {
 	return std::string(vendorbuf).append("|").append(devbuf);
 }
 
-static void __attribute__((noreturn)) error_and_die(char *msg, ...)
-{
-    va_list args;
-
-    va_start(args, msg);
-    fprintf(stderr, "%s: ", "lspcidrake");
-    vfprintf(stderr, msg, args);
-    fputc('\n', stderr);
-    exit(1);
-}
-
 void pci::probe(void) {
-    _pacc->error = error_and_die;
     pci_scan_bus(_pacc);
 
     uint8_t buf[CONFIG_SPACE_SIZE] = {0};

@@ -1,5 +1,6 @@
-Version 0.13.1 -  8 January 2013, by Per Øyvind Karlsen
+Version 0.13.1 - 12 January 2013, by Per Øyvind Karlsen
 
+- kill error_and_die()
 - also check return value of ifstream::eof() as ifstream::getline() has
   different behaviour for return value in uClibc++
 - work around broken implementation of ostream fill & setw in uClibc++
