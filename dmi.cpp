@@ -115,7 +115,7 @@ void dmi::probe(void)
 
 std::ostream& operator<<(std::ostream& os, const dmiEntry& e) {
     // XXX: setw broken in uClibc++...
-#ifdef __UCLIBCXX_MAJOR__
+#ifndef __UCLIBCXX_MAJOR__
     return os << std::setw(16) << std::left << e.module << ": " << e.text;
 #else
     char buf[32];
