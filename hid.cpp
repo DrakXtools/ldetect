@@ -55,22 +55,11 @@ void hid::probe(void)
 	    deviceName = "HID Device";
 
 	if (!modname.empty()) 
-	    _entries.push_back(hidEntry(modname, deviceName));
+	    _entries.push_back(entry(modname, deviceName));
     }
 
     kmod_unref(ctx);
     closedir(dir);
-}
-
-std::ostream& operator<<(std::ostream& os, const hidEntry& e) {
-    // XXX: setw broken in uClibc++...
-#ifndef __UCLIBCXX_MAJOR__
-    return os << std::setw(16) << std::left << e.module << ": " << e.text;
-#else
-    char buf[32];
-    snprintf(buf, sizeof(buf), "%-16s: ", e.module.c_str());
-    return os << buf << e.text;
-#endif
 }
 
 }

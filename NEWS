@@ -1,5 +1,6 @@
 Version 0.13.1 - 12 January 2013, by Per Øyvind Karlsen
 
+- move more stuff into common classes with common interfaces
 - kill error_and_die()
 - also check return value of ifstream::eof() as ifstream::getline() has
   different behaviour for return value in uClibc++

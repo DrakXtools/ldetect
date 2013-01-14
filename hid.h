@@ -8,46 +8,17 @@
 #include <sstream>
 
 #include "libldetect.h"
+#include "intf.h"
 
 #pragma GCC visibility push(default)
 
 namespace ldetect {
-    class hidEntry {
+
+    class hid : public bus, public intf<entry> {
 	public:
-	    hidEntry(const std::string &module, const std::string &text) EXPORTED :
-		module(module), text(text) {}
-
-	    std::string module;
-	    std::string text;
-
-	    friend std::ostream& operator<<(std::ostream& os, const hidEntry& e) EXPORTED;
-    };
-
-    class hid {
-	public:
-	    hid() EXPORTED :
-		_entries() {}
-
-	    const hidEntry& operator[] (uint16_t i) const EXPORTED{
-		return _entries[i];
-	    }
-
-	    operator bool() const throw() EXPORTED {
-		return !_entries.empty();
-	    }
-
-	    bool operator! () const throw() EXPORTED {
-		return _entries.empty();
-	    }
-
-	    uint16_t size() const throw() EXPORTED {
-		return _entries.size();
-	    }
+	    hid() EXPORTED {}
 
 	    void probe(void) EXPORTED;
-
-	private:
-	    std::vector<hidEntry> _entries;
     };
 }
 

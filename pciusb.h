@@ -11,6 +11,8 @@
 #include <cstring>
 #include <libkmod.h>
 
+#include "libldetect.h"
+#include "intf.h"
 #include "common.h"
 
 #pragma GCC visibility push(hidden) 
@@ -50,30 +52,12 @@ namespace ldetect {
 };
 
     template <class T>
-    class pciusb {
+    class pciusb : public intf<T> {
 	public:
-	    pciusb() : _entries() {}
+	    pciusb() : intf<T>() {}
 	    virtual ~pciusb() {}
 
-	    const T& operator[] (uint16_t i) const {
-		return _entries[i];
-	    }
-
-	    operator bool() const throw() {
-		return !_entries.empty();
-	    }
-
-	    bool operator! () const throw() {
-		return _entries.empty();
-	    }
-
-	    uint16_t size() const throw() { return _entries.size(); }
-
-	    virtual void probe(void) = 0;
-
 	protected:
-	    std::vector<T> _entries;
-
 	    void findModules(std::string &&fpciusbtable, bool descr_lookup) {
 		char buf[2048];
 		instream f = fh_open(fpciusbtable.c_str());
@@ -94,8 +78,8 @@ namespace ldetect {
 			    continue; // skip bad line
 			}
 		    }
-		    for (uint16_t i = 0; i < _entries.size(); i++) {
-			T &e = _entries[i];
+		    for (uint16_t i = 0; i < intf<T>::_entries.size(); i++) {
+			T &e = intf<T>::_entries[i];
 			if (e.already_found)
 			    continue;	// skip since already found with sub ids
 			if (vendor != e.vendor ||  device != e.device)
@@ -127,8 +111,8 @@ namespace ldetect {
 
 		::kmod_ctx *ctx = modalias_init();
 
-		for (uint16_t i = 0; i < _entries.size(); i++) {
-		    T &e = _entries[i];
+		for (uint16_t i = 0; i < intf<T>::_entries.size(); i++) {
+		    T &e = intf<T>::_entries[i];
 
 		    // No special case found in pcitable ? Then lookup modalias for PCI devices
 		    if (!e.module.empty() && e.module != "unknown")

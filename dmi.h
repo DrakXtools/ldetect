@@ -5,46 +5,14 @@
 #include <ostream>
 
 #include "libldetect.h"
-
-#include "pciusb.h"
+#include "intf.h"
 
 namespace ldetect {
-    class dmiEntry {
+    class dmi : public bus, public intf<entry> {
 	public:
-	    dmiEntry(const std::string &module, const std::string &text) EXPORTED :
-		module(module), text(text) {}
-
-	    std::string module;
-	    std::string text;
-
-	    friend std::ostream& operator<<(std::ostream& os, const dmiEntry& e) EXPORTED;
-    };
-
-    class dmi {
-	public:
-	    dmi() EXPORTED : _entries() {}
-
-	    const dmiEntry& operator[] (uint16_t i) const EXPORTED {
-		return _entries[i];
-	    }
-
-	    operator bool() const throw() EXPORTED {
-		return !_entries.empty();
-	    }
-
-	    bool operator! () const throw() EXPORTED {
-		return _entries.empty();
-	    }
-
-	    uint16_t size() const throw() EXPORTED {
-		return _entries.size();
-	    }
+	    dmi() EXPORTED {}
 
 	    void probe(void) EXPORTED;
-
-	private:
-
-	    std::vector<dmiEntry> _entries;
     };
 }
 

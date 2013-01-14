@@ -2,6 +2,7 @@
 #include <libkmod.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <cstring>
 
 #include "gzstream.h"
 #include "libldetect.h"
@@ -75,7 +76,7 @@ void dmi::probe(void)
 					!it->attr.compare(0, pos-1, f2val, 0, pos-1)) ||
 				    it->attr == f2val) &&
 				it->item == "Module")
-			    _entries.push_back(dmiEntry(it->value, f1val + "|" + f2val));
+			    _entries.push_back(entry(it->value, f1val + "|" + f2val));
 		    }
 		}
 		f.close();
@@ -105,23 +106,12 @@ void dmi::probe(void)
 	    getline(f, modalias);
 	    std::string modname = modalias_resolve_module(ctx, modalias);
 	    if (!modname.empty()) 
-		_entries.push_back(dmiEntry(modname, deviceName));
+		_entries.push_back(entry(modname, deviceName));
 	}
     }
 
     closedir(dp);
     kmod_unref(ctx);
-}
-
-std::ostream& operator<<(std::ostream& os, const dmiEntry& e) {
-    // XXX: setw broken in uClibc++...
-#ifndef __UCLIBCXX_MAJOR__
-    return os << std::setw(16) << std::left << e.module << ": " << e.text;
-#else
-    char buf[32];
-    snprintf(buf, sizeof(buf), "%-16s: ", e.module.c_str());
-    return os << buf << e.text;
-#endif
 }
 
 }
