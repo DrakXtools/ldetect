@@ -43,65 +43,14 @@
 #define 	usb_close(f)			fclose(f)
 #endif
 
-#include "names.h"
+#include "usbnames.h"
 
 namespace ldetect {
 
 /* ---------------------------------------------------------------------- */
 
-struct vendor {
-	struct vendor *next;
-	uint16_t vendorid;
-	char name[1];
-};
-
-struct product {
-	struct product *next;
-	uint16_t vendorid, productid;
-	char name[1];
-};
-
-struct class_type {
-	struct class_type *next;
-	uint8_t classid;
-	char name[1];
-};
-
-struct subclass_type {
-	struct subclass_type *next;
-	uint8_t classid, subclassid;
-	char name[1];
-};
-
-struct protocol {
-	struct protocol *next;
-	uint8_t classid, subclassid, protocolid;
-	char name[1];
-};
-
-struct audioterminal {
-	struct audioterminal *next;
-	uint16_t termt;
-	char name[1];
-};
-
-struct videoterminal {
-	struct videoterminal *next;
-	uint16_t termt;
-	char name[1];
-};
-
-struct genericstrtable {
-	struct genericstrtable *next;
-	unsigned int num;
-	char name[1];
-};
-
-/* ---------------------------------------------------------------------- */
-
 #define HASH1  0x10
 #define HASH2  0x02
-#define HASHSZ 16
 
 static unsigned int hashnum(unsigned int num)
 {
@@ -115,25 +64,7 @@ static unsigned int hashnum(unsigned int num)
 
 /* ---------------------------------------------------------------------- */
 
-static struct vendor *vendors[HASHSZ] = { nullptr, };
-static struct product *products[HASHSZ] = { nullptr, };
-static struct class_type *class_types[HASHSZ] = { nullptr, };
-static struct subclass_type *subclass_types[HASHSZ] = { nullptr, };
-static struct protocol *protocols[HASHSZ] = { nullptr, };
-static struct audioterminal *audioterminals[HASHSZ] = { nullptr, };
-static struct videoterminal *videoterminals[HASHSZ] = { nullptr, };
-static struct genericstrtable *hiddescriptors[HASHSZ] = { nullptr, };
-static struct genericstrtable *reports[HASHSZ] = { nullptr, };
-static struct genericstrtable *huts[HASHSZ] = { nullptr, };
-static struct genericstrtable *biass[HASHSZ] = { nullptr, };
-static struct genericstrtable *physdess[HASHSZ] = { nullptr, };
-static struct genericstrtable *hutus[HASHSZ] = { nullptr, };
-static struct genericstrtable *langids[HASHSZ] = { nullptr, };
-static struct genericstrtable *countrycodes[HASHSZ] = { nullptr, };
-
-/* ---------------------------------------------------------------------- */
-
-static const char *names_genericstrtable(struct genericstrtable *t[HASHSZ],
+static const char *getGenericStrTable(struct genericstrtable *t[HASHSZ],
 					 unsigned int idx)
 {
 	for (struct genericstrtable *h = t[hashnum(idx)]; h; h = h->next)
@@ -142,102 +73,102 @@ static const char *names_genericstrtable(struct genericstrtable *t[HASHSZ],
 	return nullptr;
 }
 
-const char *names_hid(uint8_t hidd)
+const char *usbNames::getHid(uint8_t hidd)
 {
-	return names_genericstrtable(hiddescriptors, hidd);
+	return getGenericStrTable(_hiddescriptors, hidd);
 }
 
-const char *names_reporttag(uint8_t rt)
+const char *usbNames::getReportTag(uint8_t rt)
 {
-	return names_genericstrtable(reports, rt);
+	return getGenericStrTable(_reports, rt);
 }
 
-const char *names_huts(unsigned int data)
+const char *usbNames::getHuts(unsigned int data)
 {
-	return names_genericstrtable(huts, data);
+	return getGenericStrTable(_huts, data);
 }
 
-const char *names_hutus(unsigned int data)
+const char *usbNames::getHutus(unsigned int data)
 {
-	return names_genericstrtable(hutus, data);
+	return getGenericStrTable(_hutus, data);
 }
 
-const char *names_langid(uint16_t langid)
+const char *usbNames::getLangId(uint16_t langid)
 {
-	return names_genericstrtable(langids, langid);
+	return getGenericStrTable(_langids, langid);
 }
 
-const char *names_physdes(uint8_t ph)
+const char *usbNames::getPhysDes(uint8_t ph)
 {
-	return names_genericstrtable(physdess, ph);
+	return getGenericStrTable(_physdess, ph);
 }
 
-const char *names_bias(uint8_t b)
+const char *usbNames::getBias(uint8_t b)
 {
-	return names_genericstrtable(biass, b);
+	return getGenericStrTable(_biass, b);
 }
 
-const char *names_countrycode(unsigned int countrycode)
+const char *usbNames::getCountryCode(unsigned int countrycode)
 {
-	return names_genericstrtable(countrycodes, countrycode);
+	return getGenericStrTable(_countrycodes, countrycode);
 }
 
-const char *names_vendor(uint16_t vendorid)
+const char *usbNames::getVendor(uint16_t vendorid)
 {
-	for (struct vendor *v = vendors[hashnum(vendorid)]; v; v = v->next)
+	for (struct vendor *v = _vendors[hashnum(vendorid)]; v; v = v->next)
 		if (v->vendorid == vendorid)
 			return v->name;
 	return nullptr;
 }
 
-const char *names_product(uint16_t vendorid, uint16_t productid)
+const char *usbNames::getProduct(uint16_t vendorid, uint16_t productid)
 {
-	for (struct product *p = products[hashnum((vendorid << 16) | productid)];
+	for (struct product *p = _products[hashnum((vendorid << 16) | productid)];
 			p; p = p->next)
 		if (p->vendorid == vendorid && p->productid == productid)
 			return p->name;
 	return nullptr;
 }
 
-const char *names_class_type(uint8_t classid)
+const char *usbNames::getClassType(uint8_t classid)
 {
-	for (struct class_type *c = class_types[hashnum(classid)];
+	for (struct class_type *c = _class_types[hashnum(classid)];
 			c; c = c->next)
 		if (c->classid == classid)
 			return c->name;
 	return nullptr;
 }
 
-const char *names_subclass(uint8_t classid, uint8_t subclassid)
+const char *usbNames::getSubClass(uint8_t classid, uint8_t subclassid)
 {
-	for (struct subclass_type *s = subclass_types[hashnum((classid << 8) | subclassid)];
+	for (struct subclass_type *s = _subclass_types[hashnum((classid << 8) | subclassid)];
 			s; s = s->next)
 		if (s->classid == classid && s->subclassid == subclassid)
 			return s->name;
 	return nullptr;
 }
 
-const char *names_protocol(uint8_t classid, uint8_t subclassid, uint8_t protocolid)
+const char *usbNames::getProtocol(uint8_t classid, uint8_t subclassid, uint8_t protocolid)
 {
-	for (struct protocol *p = protocols[hashnum((classid << 16) | (subclassid << 8) | protocolid)];
+	for (struct protocol *p = _protocols[hashnum((classid << 16) | (subclassid << 8) | protocolid)];
 			p; p = p->next)
 		if (p->classid == classid && p->subclassid == subclassid && p->protocolid == protocolid)
 			return p->name;
 	return nullptr;
 }
 
-const char *names_audioterminal(uint16_t termt)
+const char *usbNames::getAudioTerminal(uint16_t termt)
 {
-	for (struct audioterminal *at = audioterminals[hashnum(termt)];
+	for (struct audioterminal *at = _audioterminals[hashnum(termt)];
 			at; at = at->next)
 		if (at->termt == termt)
 			return at->name;
 	return nullptr;
 }
 
-const char *names_videoterminal(uint16_t termt)
+const char *usbNames::getVideoTerminal(uint16_t termt)
 {
-	for (struct videoterminal *vt = videoterminals[hashnum(termt)];
+	for (struct videoterminal *vt = _videoterminals[hashnum(termt)];
 			vt; vt = vt->next)
 		if (vt->termt == termt)
 			return vt->name;
@@ -246,38 +177,38 @@ const char *names_videoterminal(uint16_t termt)
 
 /* ---------------------------------------------------------------------- */
 
-int get_vendor_string(char *buf, size_t size, uint16_t vid)
+int usbNames::getVendorString(char *buf, size_t size, uint16_t vid)
 {
         const char *cp;
 
         if (size < 1)
                 return 0;
         *buf = 0;
-        if (!(cp = names_vendor(vid)))
+        if (!(cp = getVendor(vid)))
                 return 0;
         return snprintf(buf, size, "%s", cp);
 }
 
-int get_product_string(char *buf, size_t size, uint16_t vid, uint16_t pid)
+int usbNames::getProductString(char *buf, size_t size, uint16_t vid, uint16_t pid)
 {
         const char *cp;
 
         if (size < 1)
                 return 0;
         *buf = 0;
-        if (!(cp = names_product(vid, pid)))
+        if (!(cp = getProduct(vid, pid)))
                 return 0;
         return snprintf(buf, size, "%s", cp);
 }
 
 /* ---------------------------------------------------------------------- */
 
-static int new_vendor(const char *name, uint16_t vendorid)
+int usbNames::newVendor(const char *name, uint16_t vendorid)
 {
 	unsigned int h = hashnum(vendorid);
 	struct vendor *v;
 
-	for (v = vendors[h]; v; v = v->next)
+	for (v = _vendors[h]; v; v = v->next)
 		if (v->vendorid == vendorid)
 			return -1;
 	v = (struct vendor*)malloc(sizeof(struct vendor) + strlen(name));
@@ -285,17 +216,17 @@ static int new_vendor(const char *name, uint16_t vendorid)
 		return -1;
 	strcpy(v->name, name);
 	v->vendorid = vendorid;
-	v->next = vendors[h];
-	vendors[h] = v;
+	v->next = _vendors[h];
+	_vendors[h] = v;
 	return 0;
 }
 
-static int new_product(const char *name, uint16_t vendorid, uint16_t productid)
+int usbNames::newProduct(const char *name, uint16_t vendorid, uint16_t productid)
 {
 	unsigned int h = hashnum((vendorid << 16) | productid);
 	struct product *p;
 
-	for (p = products[h]; p; p = p->next)
+	for (p = _products[h]; p; p = p->next)
 		if (p->vendorid == vendorid && p->productid == productid)
 			return -1;
 	p = (struct product*)malloc(sizeof(struct product) + strlen(name));
@@ -304,17 +235,17 @@ static int new_product(const char *name, uint16_t vendorid, uint16_t productid)
 	strcpy(p->name, name);
 	p->vendorid = vendorid;
 	p->productid = productid;
-	p->next = products[h];
-	products[h] = p;
+	p->next = _products[h];
+	_products[h] = p;
 	return 0;
 }
 
-static int new_class_type(const char *name, uint8_t classid)
+int usbNames::newClassType(const char *name, uint8_t classid)
 {
 	unsigned int h = hashnum(classid);
 	struct class_type *c;
 
-	for (c = class_types[h]; c; c = c->next)
+	for (c = _class_types[h]; c; c = c->next)
 		if (c->classid == classid)
 			return -1;
 	c = (struct class_type*)malloc(sizeof(struct class_type) + strlen(name));
@@ -322,17 +253,17 @@ static int new_class_type(const char *name, uint8_t classid)
 		return -1;
 	strcpy(c->name, name);
 	c->classid = classid;
-	c->next = class_types[h];
-	class_types[h] = c;
+	c->next = _class_types[h];
+	_class_types[h] = c;
 	return 0;
 }
 
-static int new_subclass_type(const char *name, uint8_t classid, uint8_t subclassid)
+int usbNames::newSubclassType(const char *name, uint8_t classid, uint8_t subclassid)
 {
 	unsigned int h = hashnum((classid << 8) | subclassid);
 	struct subclass_type *s;
 
-	for (s = subclass_types[h]; s; s = s->next)
+	for (s = _subclass_types[h]; s; s = s->next)
 		if (s->classid == classid && s->subclassid == subclassid)
 			return -1;
 	s = (struct subclass_type*)malloc(sizeof(struct subclass_type) + strlen(name));
@@ -341,17 +272,17 @@ static int new_subclass_type(const char *name, uint8_t classid, uint8_t subclass
 	strcpy(s->name, name);
 	s->classid = classid;
 	s->subclassid = subclassid;
-	s->next = subclass_types[h];
-	subclass_types[h] = s;
+	s->next = _subclass_types[h];
+	_subclass_types[h] = s;
 	return 0;
 }
 
-static int new_protocol(const char *name, uint8_t classid, uint8_t subclassid, uint8_t protocolid)
+int usbNames::newProtocol(const char *name, uint8_t classid, uint8_t subclassid, uint8_t protocolid)
 {
 	unsigned int h = hashnum((classid << 16) | (subclassid << 8) | protocolid);
 	struct protocol *p;
 
-	for (p = protocols[h]; p; p = p->next)
+	for (p = _protocols[h]; p; p = p->next)
 		if (p->classid == classid && p->subclassid == subclassid && p->protocolid == protocolid)
 			return -1;
 	p = (struct protocol*)malloc(sizeof(struct protocol) + strlen(name));
@@ -361,16 +292,16 @@ static int new_protocol(const char *name, uint8_t classid, uint8_t subclassid, u
 	p->classid = classid;
 	p->subclassid = subclassid;
 	p->protocolid = protocolid;
-	p->next = protocols[h];
-	protocols[h] = p;
+	p->next = _protocols[h];
+	_protocols[h] = p;
 	return 0;
 }
 
-static int new_audioterminal(const char *name, uint16_t termt)
+int usbNames::newAudioTerminal(const char *name, uint16_t termt)
 {
 	unsigned int h = hashnum(termt);
 	struct audioterminal *at;
-	for (at = audioterminals[h]; at; at = at->next)
+	for (at = _audioterminals[h]; at; at = at->next)
 		if (at->termt == termt)
 			return -1;
 	at = (struct audioterminal*)malloc(sizeof(struct audioterminal) + strlen(name));
@@ -378,17 +309,17 @@ static int new_audioterminal(const char *name, uint16_t termt)
 		return -1;
 	strcpy(at->name, name);
 	at->termt = termt;
-	at->next = audioterminals[h];
-	audioterminals[h] = at;
+	at->next = _audioterminals[h];
+	_audioterminals[h] = at;
 	return 0;
 }
 
-static int new_videoterminal(const char *name, uint16_t termt)
+int usbNames::newVideoTerminal(const char *name, uint16_t termt)
 {
 	unsigned int h = hashnum(termt);
 	struct videoterminal *vt;
 
-	for (vt = videoterminals[h]; vt; vt = vt->next)
+	for (vt = _videoterminals[h]; vt; vt = vt->next)
 		if (vt->termt == termt)
 			return -1;
 	vt = (struct videoterminal*)malloc(sizeof(struct videoterminal) + strlen(name));
@@ -396,12 +327,12 @@ static int new_videoterminal(const char *name, uint16_t termt)
 		return -1;
 	strcpy(vt->name, name);
 	vt->termt = termt;
-	vt->next = videoterminals[h];
-	videoterminals[h] = vt;
+	vt->next = _videoterminals[h];
+	_videoterminals[h] = vt;
 	return 0;
 }
 
-static int new_genericstrtable(struct genericstrtable *t[HASHSZ],
+static int newGenericStrtable(struct genericstrtable *t[HASHSZ],
 			       const char *name, unsigned int idx)
 {
 	unsigned int h = hashnum(idx);
@@ -420,54 +351,71 @@ static int new_genericstrtable(struct genericstrtable *t[HASHSZ],
 	return 0;
 }
 
-static int new_hid(const char *name, uint8_t hidd)
+int usbNames::newHid(const char *name, uint8_t hidd)
 {
-	return new_genericstrtable(hiddescriptors, name, hidd);
+	return newGenericStrtable(_hiddescriptors, name, hidd);
 }
 
-static int new_reporttag(const char *name, uint8_t rt)
+int usbNames::newReportTag(const char *name, uint8_t rt)
 {
-	return new_genericstrtable(reports, name, rt);
+	return newGenericStrtable(_reports, name, rt);
 }
 
-static int new_huts(const char *name, unsigned int data)
+int usbNames::newHuts(const char *name, unsigned int data)
 {
-	return new_genericstrtable(huts, name, data);
+	return newGenericStrtable(_huts, name, data);
 }
 
-static int new_hutus(const char *name, unsigned int data)
+int usbNames::newHutus(const char *name, unsigned int data)
 {
-	return new_genericstrtable(hutus, name, data);
+	return newGenericStrtable(_hutus, name, data);
 }
 
-static int new_langid(const char *name, uint16_t langid)
+int usbNames::newLangId(const char *name, uint16_t langid)
 {
-	return new_genericstrtable(langids, name, langid);
+	return newGenericStrtable(_langids, name, langid);
 }
 
-static int new_physdes(const char *name, uint8_t ph)
+int usbNames::newPhysDes(const char *name, uint8_t ph)
 {
-	return new_genericstrtable(physdess, name, ph);
-}
-static int new_bias(const char *name, uint8_t b)
-{
-	return new_genericstrtable(biass, name, b);
+	return newGenericStrtable(_physdess, name, ph);
 }
 
-static int new_countrycode(const char *name, unsigned int countrycode)
+int usbNames::newBias(const char *name, uint8_t b)
 {
-	return new_genericstrtable(countrycodes, name, countrycode);
+	return newGenericStrtable(_biass, name, b);
+}
+
+int usbNames::newCountryCode(const char *name, unsigned int countrycode)
+{
+	return newGenericStrtable(_countrycodes, name, countrycode);
 }
 
 /* ---------------------------------------------------------------------- */
 
-static void free_vendor(void)
+template <class T> void freeList(T** list)
+{
+	T *cur, *tmp;
+
+	for (int i = 0; i < HASHSZ; i++) {
+		cur = list[i];
+		list[i] = nullptr;
+		while (cur) {
+			tmp = cur;
+			cur = cur->next;
+			free(tmp);
+		}
+	}
+}
+
+#if 0
+static void freeVendor(void)
 {
 	struct vendor *cur, *tmp;
 
 	for (int i = 0; i < HASHSZ; i++) {
-		cur = vendors[i];
-		vendors[i] = nullptr;
+		cur = _vendors[i];
+		_vendors[i] = nullptr;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;
@@ -476,13 +424,13 @@ static void free_vendor(void)
 	}
 }
 
-static void free_product(void)
+static void freeProduct(void)
 {
 	struct product *cur, *tmp;
 
 	for (int i = 0; i < HASHSZ; i++) {
-		cur = products[i];
-		products[i] = nullptr;
+		cur = _products[i];
+		_products[i] = nullptr;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;
@@ -491,7 +439,7 @@ static void free_product(void)
 	}
 }
 
-static void free_class_type(void)
+static void freeClassType(void)
 {
 	struct class_type *cur, *tmp;
 
@@ -506,13 +454,13 @@ static void free_class_type(void)
 	}
 }
 
-static void free_subclass_type(void)
+static void freeSubclassType(void)
 {
 	struct subclass_type *cur, *tmp;
 
 	for (int i = 0; i < HASHSZ; i++) {
-		cur = subclass_types[i];
-		subclass_types[i] = nullptr;
+		cur = _subclass_types[i];
+		_subclass_types[i] = nullptr;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;
@@ -521,13 +469,13 @@ static void free_subclass_type(void)
 	}
 }
 
-static void free_protocol(void)
+static void freeProtocol(void)
 {
 	struct protocol *cur, *tmp;
 
 	for (int i = 0; i < HASHSZ; i++) {
-		cur = protocols[i];
-		protocols[i] = nullptr;
+		cur = _protocols[i];
+		_protocols[i] = nullptr;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;
@@ -536,13 +484,13 @@ static void free_protocol(void)
 	}
 }
 
-static void free_audioterminal(void)
+static void freeAudioterminal(void)
 {
 	struct audioterminal *cur, *tmp;
 
 	for (int i = 0; i < HASHSZ; i++) {
-		cur = audioterminals[i];
-		audioterminals[i] = nullptr;
+		cur = _audioterminals[i];
+		_audioterminals[i] = nullptr;
 		while (cur) {
 			tmp = cur;
 			cur = cur->next;
@@ -593,10 +541,11 @@ static void free_genericstrtable(void)
 	_free_genericstrtable(langids);
 	_free_genericstrtable(countrycodes);
 }
+#endif
 
 #define DBG(x)
 
-static void parse(usb_file f)
+void usbNames::parse(instream &f)
 {
 	char buf[512], *cp;
 	unsigned int linectr = 0;
@@ -607,7 +556,7 @@ static void parse(usb_file f)
 	int lastlang = -1;
 	unsigned int u;
 
-	while (usb_fgets(buf, sizeof(buf), f)) {
+	while (f->getline(buf, sizeof(buf)) && !f->eof()) {
 		linectr++;
 		/* remove line ends */
 		cp = strchr(buf, 13);
@@ -635,7 +584,7 @@ static void parse(usb_file f)
 				fprintf(stderr, "Invalid Physdes type at line %u\n", linectr);
 				continue;
 			}
-			if (new_physdes(cp, u))
+			if (newPhysDes(cp, u))
 				fprintf(stderr, "Duplicate Physdes  type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u physdes type %02x %s\n", linectr, u, cp));
 			continue;
@@ -656,7 +605,7 @@ static void parse(usb_file f)
 				fprintf(stderr, "Invalid PHY type at line %u\n", linectr);
 				continue;
 			}
-			if (new_physdes(cp, u))
+			if (newPhysDes(cp, u))
 				fprintf(stderr, "Duplicate PHY type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u PHY type %02x %s\n", linectr, u, cp));
 			continue;
@@ -677,7 +626,7 @@ static void parse(usb_file f)
 				fprintf(stderr, "Invalid BIAS type at line %u\n", linectr);
 				continue;
 			}
-			if (new_bias(cp, u))
+			if (newBias(cp, u))
 				fprintf(stderr, "Duplicate BIAS  type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u BIAS type %02x %s\n", linectr, u, cp));
 			continue;
@@ -698,7 +647,7 @@ static void parse(usb_file f)
 				fprintf(stderr, "Invalid LANGID spec at line %u\n", linectr);
 				continue;
 			}
-			if (new_langid(cp, u))
+			if (newLangId(cp, u))
 				fprintf(stderr, "Duplicate LANGID spec at line %u language-id %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u LANGID %02x %s\n", linectr, u, cp));
 			lasthut = lastclass_type = lastvendor = lastsubclass_type = -1;
@@ -721,7 +670,7 @@ static void parse(usb_file f)
 				fprintf(stderr, "Invalid class spec at line %u\n", linectr);
 				continue;
 			}
-			if (new_class_type(cp, u))
+			if (newClassType(cp, u))
 				fprintf(stderr, "Duplicate class spec at line %u class %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u class %02x %s\n", linectr, u, cp));
 			lasthut = lastlang = lastvendor = lastsubclass_type = -1;
@@ -744,7 +693,7 @@ static void parse(usb_file f)
 				fprintf(stderr, "Invalid audio terminal type at line %u\n", linectr);
 				continue;
 			}
-			if (new_audioterminal(cp, u))
+			if (newAudioTerminal(cp, u))
 				fprintf(stderr, "Duplicate audio terminal type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u audio terminal type %02x %s\n", linectr, u, cp));
 			continue;
@@ -765,7 +714,7 @@ static void parse(usb_file f)
 				fprintf(stderr, "Invalid video terminal type at line %u\n", linectr);
 				continue;
 			}
-			if (new_videoterminal(cp, u))
+			if (newVideoTerminal(cp, u))
 				fprintf(stderr, "Duplicate video terminal type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u video terminal type %02x %s\n", linectr, u, cp));
 			continue;
@@ -786,7 +735,7 @@ static void parse(usb_file f)
 				fprintf(stderr, "Invalid HID country code at line %u\n", linectr);
 				continue;
 			}
-			if (new_countrycode(cp, u))
+			if (newCountryCode(cp, u))
 				fprintf(stderr, "Duplicate HID country code at line %u country %02u %s\n", linectr, u, cp);
 			DBG(printf("line %5u keyboard country code %02u %s\n", linectr, u, cp));
 			continue;
@@ -800,7 +749,7 @@ static void parse(usb_file f)
 				fprintf(stderr, "Invalid vendor spec at line %u\n", linectr);
 				continue;
 			}
-			if (new_vendor(cp, u))
+			if (newVendor(cp, u))
 				fprintf(stderr, "Duplicate vendor spec at line %u vendor %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u vendor %04x %s\n", linectr, u, cp));
 			lastvendor = u;
@@ -817,25 +766,25 @@ static void parse(usb_file f)
 				continue;
 			}
 			if (lastvendor != -1) {
-				if (new_product(cp, lastvendor, u))
+				if (newProduct(cp, lastvendor, u))
 					fprintf(stderr, "Duplicate product spec at line %u product %04x:%04x %s\n", linectr, lastvendor, u, cp);
 				DBG(printf("line %5u product %04x:%04x %s\n", linectr, lastvendor, u, cp));
 				continue;
 			}
 			if (lastclass_type != -1) {
-				if (new_subclass_type(cp, lastclass_type, u))
+				if (newSubclassType(cp, lastclass_type, u))
 					fprintf(stderr, "Duplicate subclass spec at line %u class %02x:%02x %s\n", linectr, lastclass_type, u, cp);
 				DBG(printf("line %5u subclass %02x:%02x %s\n", linectr, lastclass_type, u, cp));
 				lastsubclass_type = u;
 				continue;
 			}
 			if (lasthut != -1) {
-				if (new_hutus(cp, (lasthut << 16)+u))
+				if (newHutus(cp, (lasthut << 16)+u))
 					fprintf(stderr, "Duplicate HUT Usage Spec at line %u\n", linectr);
 				continue;
 			}
 			if (lastlang != -1) {
-				if (new_langid(cp, lastlang+(u<<10)))
+				if (newLangId(cp, lastlang+(u<<10)))
 					fprintf(stderr, "Duplicate LANGID Usage Spec at line %u\n", linectr);
 				continue;
 			}
@@ -852,7 +801,7 @@ static void parse(usb_file f)
 				continue;
 			}
 			if (lastclass_type != -1 && lastsubclass_type != -1) {
-				if (new_protocol(cp, lastclass_type, lastsubclass_type, u))
+				if (newProtocol(cp, lastclass_type, lastsubclass_type, u))
 					fprintf(stderr, "Duplicate protocol spec at line %u class %02x:%02x:%02x %s\n", linectr, lastclass_type, lastsubclass_type, u, cp);
 				DBG(printf("line %5u protocol %02x:%02x:%02x %s\n", linectr, lastclass_types, lastsubclass_type, u, cp));
 				continue;
@@ -875,7 +824,7 @@ static void parse(usb_file f)
 				fprintf(stderr, "Invalid HID type at line %u\n", linectr);
 				continue;
 			}
-			if (new_hid(cp, u))
+			if (newHid(cp, u))
 				fprintf(stderr, "Duplicate HID type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u HID type %02x %s\n", linectr, u, cp));
 			continue;
@@ -896,7 +845,7 @@ static void parse(usb_file f)
 				fprintf(stderr, "Invalid HUT type at line %u\n", linectr);
 				continue;
 			}
-			if (new_huts(cp, u))
+			if (newHuts(cp, u))
 				fprintf(stderr, "Duplicate HUT type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			lastlang = lastclass_type = lastvendor = lastsubclass_type = -1;
 			lasthut = u;
@@ -919,7 +868,7 @@ static void parse(usb_file f)
 				fprintf(stderr, "Invalid Report type at line %u\n", linectr);
 				continue;
 			}
-			if (new_reporttag(cp, u))
+			if (newReportTag(cp, u))
 				fprintf(stderr, "Duplicate Report type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u Report type %02x %s\n", linectr, u, cp));
 			continue;
@@ -931,29 +880,31 @@ static void parse(usb_file f)
 
 /* ---------------------------------------------------------------------- */
 
-int names_init(const char *n)
+usbNames::usbNames(std::string &&n)
 {
-	usb_file f;
-
-	f = usb_fopen(n, "r");
-	if (!f)
-		return errno;
+	instream f = i_open(n.c_str());
 
 	parse(f);
-	usb_close(f);
-	return 0;
 }
 
-void names_exit(void)
+usbNames::~usbNames()
 {
-	free_vendor();
-	free_product();
-	free_class_type();
-	free_subclass_type();
-	free_protocol();
-	free_audioterminal();
-	free_videoterminal();
-	free_genericstrtable();
+	freeList(_vendors);
+	freeList(_products);
+	freeList(_class_types);
+	freeList(_subclass_types);
+	freeList(_protocols);
+	freeList(_audioterminals);
+	freeList(_videoterminals);
+	freeList(_hiddescriptors);
+	freeList(_reports);
+	freeList(_huts);
+	freeList(_biass);
+	freeList(_physdess);
+	freeList(_hutus);
+	freeList(_langids);
+	freeList(_countrycodes);
+
 }
 
 }

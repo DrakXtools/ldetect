@@ -8,13 +8,13 @@
 #include <sstream>
 
 #include "libldetect.h"
-#include "intf.h"
+#include "interface.h"
 
 #pragma GCC visibility push(default)
 
 namespace ldetect {
 
-    class hid : public bus, public intf<entry> {
+    class hid : public bus, public interface<entry> {
 	public:
 	    hid() EXPORTED {}
 

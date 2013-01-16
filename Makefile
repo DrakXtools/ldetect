@@ -1,6 +1,6 @@
-headers = gzstream.h lspcidrake.h names.h
-headers_api = common.h dmi.h hid.h libldetect.h pci.h pciusb.h usb.h
-lib_src = common.cpp modalias.cpp pciusb.cpp pci.cpp usb.cpp pciclass.cpp usbclass.cpp dmi.cpp hid.cpp names.cpp gzstream.cpp libldetect.cpp
+headers = gzstream.h lspcidrake.h
+headers_api = common.h dmi.h hid.h libldetect.h pci.h pciusb.h usb.h usbnames.h interface.h
+lib_src = common.cpp modalias.cpp pciusb.cpp pci.cpp usb.cpp pciclass.cpp usbclass.cpp dmi.cpp hid.cpp usbnames.cpp gzstream.cpp libldetect.cpp
 lib_objs = $(subst .cpp,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
@@ -78,10 +78,10 @@ libldetect.a: $(lib_objs)
 common.o:	common.cpp common.h
 pciusb.o:	pciusb.cpp libldetect.h common.h
 pci.o:		pci.cpp libldetect.h common.h
-usb.o:		usb.cpp libldetect.h common.h names.h
+usb.o:		usb.cpp libldetect.h common.h usbnames.h
 dmi.o:		dmi.cpp libldetect.h common.h
 hid.o:		hid.cpp libldetect.h common.h
-names.o:	names.cpp names.h
+usbnames.o:	usbnames.cpp usbnames.h
 
 clean:
 	rm -f *~ *.o pciclass.cpp usbclass.cpp $(binaries) $(libraries) .depend

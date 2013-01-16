@@ -1,5 +1,7 @@
 Version 0.13.1 - 12 January 2013, by Per Øyvind Karlsen
 
+- rename intf 'class' to 'interface'
+- rewrite names.{h,cpp} into a proper C++ 'usbNames' class
 - move more stuff into common classes with common interfaces
 - kill error_and_die()
 - also check return value of ifstream::eof() as ifstream::getline() has

@@ -7,7 +7,6 @@
 #include <dirent.h>
 
 #include "common.h"
-#include "names.h"
 
 #include "usb.h"
 #include "libldetect.h"
@@ -27,12 +26,10 @@ std::ostream& operator<<(std::ostream& os, const usbEntry& e) {
     return os;
 }
 
-usb::usb() {
-    names_init("/usr/share/usb.ids");
+usb::usb() : _names("/usr/share/usb.ids") {
 }
 
 usb::~usb() {
-    names_exit();
 }
 
 static const std::string usbDevs("/sys/bus/usb/devices/");
@@ -80,7 +77,7 @@ void usb::probe(void) {
 		f.close();
 	    }
 
-	    e.text = names_vendor(e.vendor);
+	    e.text = _names.getVendor(e.vendor);
 	    if (e.text.empty()) {
 		f.open((usbPath + "manufacturer").c_str());
 		if (f.is_open()) {
@@ -90,7 +87,7 @@ void usb::probe(void) {
 	    }
 
 	    e.text += "|";
-	    const char *productName = names_product(e.vendor, e.device);
+	    const char *productName = _names.getProduct(e.vendor, e.device);
 	    if (productName == nullptr) {
 		std::string product;
 		getline(f, product);

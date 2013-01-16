@@ -5,10 +5,10 @@
 #include <ostream>
 
 #include "libldetect.h"
-#include "intf.h"
+#include "interface.h"
 
 namespace ldetect {
-    class dmi : public bus, public intf<entry> {
+    class dmi : public bus, public interface<entry> {
 	public:
 	    dmi() EXPORTED {}
 

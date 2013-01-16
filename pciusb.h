@@ -12,7 +12,7 @@
 #include <libkmod.h>
 
 #include "libldetect.h"
-#include "intf.h"
+#include "interface.h"
 #include "common.h"
 
 #pragma GCC visibility push(hidden) 
@@ -52,9 +52,9 @@ namespace ldetect {
 };
 
     template <class T>
-    class pciusb : public intf<T> {
+    class pciusb : public interface<T> {
 	public:
-	    pciusb() : intf<T>() {}
+	    pciusb() : interface<T>() {}
 	    virtual ~pciusb() {}
 
 	protected:
@@ -78,8 +78,8 @@ namespace ldetect {
 			    continue; // skip bad line
 			}
 		    }
-		    for (uint16_t i = 0; i < intf<T>::_entries.size(); i++) {
-			T &e = intf<T>::_entries[i];
+		    for (uint16_t i = 0; i < interface<T>::_entries.size(); i++) {
+			T &e = interface<T>::_entries[i];
 			if (e.already_found)
 			    continue;	// skip since already found with sub ids
 			if (vendor != e.vendor ||  device != e.device)
@@ -111,8 +111,8 @@ namespace ldetect {
 
 		::kmod_ctx *ctx = modalias_init();
 
-		for (uint16_t i = 0; i < intf<T>::_entries.size(); i++) {
-		    T &e = intf<T>::_entries[i];
+		for (uint16_t i = 0; i < interface<T>::_entries.size(); i++) {
+		    T &e = interface<T>::_entries[i];
 
 		    // No special case found in pcitable ? Then lookup modalias for PCI devices
 		    if (!e.module.empty() && e.module != "unknown")

@@ -1,5 +1,5 @@
-#ifndef _LDETECT_INTF
-#define _LDETECT_INTF
+#ifndef _LDETECT_INTERFACE
+#define _LDETECT_INTERFACE
 
 #include <string>
 #include <ostream>
@@ -10,10 +10,10 @@
 
 namespace ldetect {
     template <class T>
-    class intf {
+    class interface {
 	public:
-	    intf() : _entries() {}
-	    virtual ~intf() {};
+	    interface() : _entries() {}
+	    virtual ~interface() {};
 
 	    const T& operator[] (uint16_t i) const {
 		return _entries[i];

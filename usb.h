@@ -9,6 +9,7 @@
 #include "libldetect.h"
 
 #include "pciusb.h"
+#include "usbnames.h"
 
 #pragma GCC visibility push(default)
 
@@ -50,6 +51,9 @@ namespace ldetect {
 
 	protected:
 	    void find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e);
+
+	private:
+	    usbNames _names;
 	
     };
 
