@@ -30,19 +30,6 @@
 #include <cstdio>
 #include <ctype.h>
 
-#ifdef HAVE_LIBZ
-#include <zlib.h>
-#define 	usb_file			gzFile
-#define 	usb_fopen(path, mode) 		gzopen(path, mode)
-#define 	usb_fgets(s, size, stream)	gzgets(stream, s, size)
-#define 	usb_close(f)			gzclose(f)
-#else
-#define 	usb_file			FILE *
-#define 	usb_fopen(path, mode)		fopen(path, mode)
-#define 	usb_fgets(s, size, stream)	fgets(s, size, stream)
-#define 	usb_close(f)			fclose(f)
-#endif
-
 #include "usbnames.h"
 
 namespace ldetect {
@@ -64,6 +51,7 @@ static unsigned int hashnum(unsigned int num)
 
 /* ---------------------------------------------------------------------- */
 
+#if 0
 static const char *getGenericStrTable(struct genericstrtable *t[HASHSZ],
 					 unsigned int idx)
 {
@@ -112,6 +100,7 @@ const char *usbNames::getCountryCode(unsigned int countrycode)
 {
 	return getGenericStrTable(_countrycodes, countrycode);
 }
+#endif
 
 const char *usbNames::getVendor(uint16_t vendorid)
 {
@@ -130,6 +119,7 @@ const char *usbNames::getProduct(uint16_t vendorid, uint16_t productid)
 	return nullptr;
 }
 
+#if 0
 const char *usbNames::getClassType(uint8_t classid)
 {
 	for (struct class_type *c = _class_types[hashnum(classid)];
@@ -174,9 +164,11 @@ const char *usbNames::getVideoTerminal(uint16_t termt)
 			return vt->name;
 	return nullptr;
 }
+#endif
 
 /* ---------------------------------------------------------------------- */
 
+#if 0
 int usbNames::getVendorString(char *buf, size_t size, uint16_t vid)
 {
         const char *cp;
@@ -200,7 +192,7 @@ int usbNames::getProductString(char *buf, size_t size, uint16_t vid, uint16_t pi
                 return 0;
         return snprintf(buf, size, "%s", cp);
 }
-
+#endif
 /* ---------------------------------------------------------------------- */
 
 int usbNames::newVendor(const char *name, uint16_t vendorid)
@@ -240,6 +232,7 @@ int usbNames::newProduct(const char *name, uint16_t vendorid, uint16_t productid
 	return 0;
 }
 
+#if 0
 int usbNames::newClassType(const char *name, uint8_t classid)
 {
 	unsigned int h = hashnum(classid);
@@ -390,6 +383,7 @@ int usbNames::newCountryCode(const char *name, unsigned int countrycode)
 {
 	return newGenericStrtable(_countrycodes, name, countrycode);
 }
+#endif
 
 /* ---------------------------------------------------------------------- */
 
@@ -550,10 +544,12 @@ void usbNames::parse(instream &f)
 	char buf[512], *cp;
 	unsigned int linectr = 0;
 	int lastvendor = -1;
+#if 0
 	int lastclass_type = -1;
 	int lastsubclass_type = -1;
 	int lasthut = -1;
 	int lastlang = -1;
+#endif
 	unsigned int u;
 
 	while (f->getline(buf, sizeof(buf)) && !f->eof()) {
@@ -570,6 +566,7 @@ void usbNames::parse(instream &f)
 		cp = buf;
 		if (buf[0] == 'P' && buf[1] == 'H' && buf[2] == 'Y' && buf[3] == 'S' && buf[4] == 'D' &&
 		    buf[5] == 'E' && buf[6] == 'S' && /*isspace(buf[7])*/ buf[7] == ' ') {
+#if 0
 			cp = buf + 8;
 			while (isspace(*cp))
 				cp++;
@@ -587,10 +584,12 @@ void usbNames::parse(instream &f)
 			if (newPhysDes(cp, u))
 				fprintf(stderr, "Duplicate Physdes  type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u physdes type %02x %s\n", linectr, u, cp));
+#endif
 			continue;
 
 		}
 		if (buf[0] == 'P' && buf[1] == 'H' && buf[2] == 'Y' && /*isspace(buf[3])*/ buf[3] == ' ') {
+#if 0
 			cp = buf + 4;
 			while (isspace(*cp))
 				cp++;
@@ -608,10 +607,12 @@ void usbNames::parse(instream &f)
 			if (newPhysDes(cp, u))
 				fprintf(stderr, "Duplicate PHY type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u PHY type %02x %s\n", linectr, u, cp));
+#endif
 			continue;
 
 		}
 		if (buf[0] == 'B' && buf[1] == 'I' && buf[2] == 'A' && buf[3] == 'S' && /*isspace(buf[4])*/ buf[4] == ' ') {
+#if 0
 			cp = buf + 5;
 			while (isspace(*cp))
 				cp++;
@@ -629,10 +630,12 @@ void usbNames::parse(instream &f)
 			if (newBias(cp, u))
 				fprintf(stderr, "Duplicate BIAS  type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u BIAS type %02x %s\n", linectr, u, cp));
+#endif
 			continue;
 
 		}
 		if (buf[0] == 'L' && /*isspace(buf[1])*/ buf[1] == ' ') {
+#if 0
 			cp =  buf+2;
 			while (isspace(*cp))
 				cp++;
@@ -652,9 +655,13 @@ void usbNames::parse(instream &f)
 			DBG(printf("line %5u LANGID %02x %s\n", linectr, u, cp));
 			lasthut = lastclass_type = lastvendor = lastsubclass_type = -1;
 			lastlang = u;
+#else
+			lastvendor = -1;
+#endif
 			continue;
 		}
 		if (buf[0] == 'C' && /*isspace(buf[1])*/ buf[1] == ' ') {
+#if 0
 			/* class_type spec */
 			cp = buf+2;
 			while (isspace(*cp))
@@ -675,9 +682,13 @@ void usbNames::parse(instream &f)
 			DBG(printf("line %5u class %02x %s\n", linectr, u, cp));
 			lasthut = lastlang = lastvendor = lastsubclass_type = -1;
 			lastclass_type = u;
+#else
+			lastvendor = -1;
+#endif
 			continue;
 		}
 		if (buf[0] == 'A' && buf[1] == 'T' && isspace(buf[2])) {
+#if 0
 			/* audio terminal type spec */
 			cp = buf+3;
 			while (isspace(*cp))
@@ -696,9 +707,11 @@ void usbNames::parse(instream &f)
 			if (newAudioTerminal(cp, u))
 				fprintf(stderr, "Duplicate audio terminal type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u audio terminal type %02x %s\n", linectr, u, cp));
+#endif
 			continue;
 		}
 		if (buf[0] == 'V' && buf[1] == 'T' && isspace(buf[2])) {
+#if 0
 			/* video terminal type spec */
 			cp = buf+3;
 			while (isspace(*cp))
@@ -717,9 +730,11 @@ void usbNames::parse(instream &f)
 			if (newVideoTerminal(cp, u))
 				fprintf(stderr, "Duplicate video terminal type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u video terminal type %02x %s\n", linectr, u, cp));
+#endif
 			continue;
 		}
 		if (buf[0] == 'H' && buf[1] == 'C' && buf[2] == 'C' && isspace(buf[3])) {
+#if 0
 			/* HID Descriptor bCountryCode */
 			cp =  buf+3;
 			while (isspace(*cp))
@@ -738,6 +753,7 @@ void usbNames::parse(instream &f)
 			if (newCountryCode(cp, u))
 				fprintf(stderr, "Duplicate HID country code at line %u country %02u %s\n", linectr, u, cp);
 			DBG(printf("line %5u keyboard country code %02u %s\n", linectr, u, cp));
+#endif
 			continue;
 		}
 		if (isxdigit(*cp)) {
@@ -753,7 +769,9 @@ void usbNames::parse(instream &f)
 				fprintf(stderr, "Duplicate vendor spec at line %u vendor %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u vendor %04x %s\n", linectr, u, cp));
 			lastvendor = u;
+#if 0
 			lasthut = lastlang = lastclass_type = lastsubclass_type = -1;
+#endif
 			continue;
 		}
 		if (buf[0] == '\t' && isxdigit(buf[1])) {
@@ -771,6 +789,7 @@ void usbNames::parse(instream &f)
 				DBG(printf("line %5u product %04x:%04x %s\n", linectr, lastvendor, u, cp));
 				continue;
 			}
+#if 0
 			if (lastclass_type != -1) {
 				if (newSubclassType(cp, lastclass_type, u))
 					fprintf(stderr, "Duplicate subclass spec at line %u class %02x:%02x %s\n", linectr, lastclass_type, u, cp);
@@ -789,9 +808,11 @@ void usbNames::parse(instream &f)
 				continue;
 			}
 			fprintf(stderr, "Product/Subclass spec without prior Vendor/Class spec at line %u\n", linectr);
+#endif
 			continue;
 		}
 		if (buf[0] == '\t' && buf[1] == '\t' && isxdigit(buf[2])) {
+#if 0
 			/* protocol spec */
 			u = strtoul(buf+2, &cp, 16);
 			while (isspace(*cp))
@@ -807,9 +828,11 @@ void usbNames::parse(instream &f)
 				continue;
 			}
 			fprintf(stderr, "Protocol spec without prior Class and Subclass spec at line %u\n", linectr);
+#endif
 			continue;
 		}
 		if (buf[0] == 'H' && buf[1] == 'I' && buf[2] == 'D' && /*isspace(buf[3])*/ buf[3] == ' ') {
+#if 0
 			cp = buf + 4;
 			while (isspace(*cp))
 				cp++;
@@ -827,10 +850,12 @@ void usbNames::parse(instream &f)
 			if (newHid(cp, u))
 				fprintf(stderr, "Duplicate HID type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u HID type %02x %s\n", linectr, u, cp));
+#endif
 			continue;
 
 		}
 		if (buf[0] == 'H' && buf[1] == 'U' && buf[2] == 'T' && /*isspace(buf[3])*/ buf[3] == ' ') {
+#if 0
 			cp = buf + 4;
 			while (isspace(*cp))
 				cp++;
@@ -850,10 +875,14 @@ void usbNames::parse(instream &f)
 			lastlang = lastclass_type = lastvendor = lastsubclass_type = -1;
 			lasthut = u;
 			DBG(printf("line %5u HUT type %02x %s\n", linectr, u, cp));
+#else
+			lastvendor = -1;
+#endif
 			continue;
 
 		}
 		if (buf[0] == 'R' && buf[1] == ' ') {
+#if 0
 			cp = buf + 2;
 			while (isspace(*cp))
 				cp++;
@@ -871,6 +900,7 @@ void usbNames::parse(instream &f)
 			if (newReportTag(cp, u))
 				fprintf(stderr, "Duplicate Report type spec at line %u terminal type %04x %s\n", linectr, u, cp);
 			DBG(printf("line %5u Report type %02x %s\n", linectr, u, cp));
+#endif
 			continue;
 
 		}
@@ -891,6 +921,7 @@ usbNames::~usbNames()
 {
 	freeList(_vendors);
 	freeList(_products);
+#if 0
 	freeList(_class_types);
 	freeList(_subclass_types);
 	freeList(_protocols);
@@ -904,7 +935,7 @@ usbNames::~usbNames()
 	freeList(_hutus);
 	freeList(_langids);
 	freeList(_countrycodes);
-
+#endif
 }
 
 }

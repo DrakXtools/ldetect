@@ -44,6 +44,7 @@ namespace ldetect {
 		char name[1];
 	};
 
+#if 0
 	struct class_type {
 		struct class_type *next;
 		uint8_t classid;
@@ -79,11 +80,13 @@ namespace ldetect {
 		unsigned int num;
 		char name[1];
 	};
+#endif
 
 	class usbNames {
 	    public:
 		const char *getVendor(uint16_t vendorid);
 		const char *getProduct(uint16_t vendorid, uint16_t productid);
+#if 0
 		const char *getClassType(uint8_t classid);
 		const char *getSubClass(uint8_t classid, uint8_t subclassid);
 		const char *getProtocol(uint8_t classid, uint8_t subclassid,
@@ -101,6 +104,7 @@ namespace ldetect {
 
 		int getVendorString(char *buf, size_t size, uint16_t vid);
 		int getProductString(char *buf, size_t size, uint16_t vid, uint16_t pid);
+#endif
 		
 		usbNames(std::string &&n);
 		~usbNames();
@@ -108,6 +112,7 @@ namespace ldetect {
 	    private:
 		int newVendor(const char *name, uint16_t vendorid);
 		int newProduct(const char *name, uint16_t vendorid, uint16_t productid);
+#if 0
 		int newClassType(const char *name, uint8_t classid);
 		int newSubclassType(const char *name, uint8_t classid, uint8_t subclassid);
 		int newProtocol(const char *name, uint8_t classid, uint8_t subclassid, uint8_t protocolid);
@@ -122,9 +127,11 @@ namespace ldetect {
 		int newPhysDes(const char *name, uint8_t ph);
 		int newBias(const char *name, uint8_t b);
 		int newCountryCode(const char *name, unsigned int countrycode);
+#endif
 
 		struct vendor *_vendors[HASHSZ] = { nullptr, };
 		struct product *_products[HASHSZ] = { nullptr, };
+#if 0
 		struct class_type *_class_types[HASHSZ] = { nullptr, };
 		struct subclass_type *_subclass_types[HASHSZ] = { nullptr, };
 		struct protocol *_protocols[HASHSZ] = { nullptr, };
@@ -138,6 +145,7 @@ namespace ldetect {
 		struct genericstrtable *_hutus[HASHSZ] = { nullptr, };
 		struct genericstrtable *_langids[HASHSZ] = { nullptr, };
 		struct genericstrtable *_countrycodes[HASHSZ] = { nullptr, };
+#endif
 		void parse(instream &f);
 	};
 
