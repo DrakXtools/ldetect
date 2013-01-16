@@ -38,16 +38,13 @@ includedir = $(prefix)/include
 
 binaries = lspcidrake
 
-build: $(binaries) $(libraries) 
-	# .depend
+all: $(binaries) $(libraries) .depend
 
-ifdef runk
 .depend: $(headers) $(headers_api) $(lib_src) lspcidrake.cpp
-	$(CXX) $(DEFS) $(INCLUDES) $(CXXFLAGS) -M $^ -o .depend
+	$(CXX) $(DEFS) $(INCLUDES) $(CXXFLAGS) -M $^ > .depend 
 
 ifeq (.depend,$(wildcard .depend))
 include .depend
-endif
 endif
 
 ifneq (0, $(WHOLE_PROGRAM))
@@ -87,10 +84,9 @@ hid.o:		hid.cpp libldetect.h common.h
 names.o:	names.cpp names.h
 
 clean:
-	rm -f *~ *.o pciclass.cpp usbclass.cpp $(binaries) $(libraries)
-	#.depend
+	rm -f *~ *.o pciclass.cpp usbclass.cpp $(binaries) $(libraries) .depend
 
-install: build
+install: $(binaries) $(libraries)
 	install -d $(DESTDIR)$(bindir) $(DESTDIR)$(libdir)/pkgconfig $(DESTDIR)$(includedir)/ldetect
 	install -m755 $(binaries) $(DESTDIR)$(bindir)
 	cp -a $(libraries) $(DESTDIR)$(libdir)
