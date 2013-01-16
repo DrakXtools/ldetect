@@ -39,9 +39,9 @@ namespace ldetect {
 #define HASH1  0x10
 #define HASH2  0x02
 
-static unsigned int hashnum(unsigned int num)
+static uint32_t hashnum(uint32_t num)
 {
-	for (unsigned int mask1 = HASH1 << 27, mask2 = HASH2 << 27;
+	for (uint32_t mask1 = HASH1 << 27, mask2 = HASH2 << 27;
 			mask1 >= HASH1;
 			mask1 >>= 1, mask2 >>= 1)
 		if (num & mask1)
@@ -53,7 +53,7 @@ static unsigned int hashnum(unsigned int num)
 
 #if 0
 static const char *getGenericStrTable(struct genericstrtable *t[HASHSZ],
-					 unsigned int idx)
+					 uint32_t idx)
 {
 	for (struct genericstrtable *h = t[hashnum(idx)]; h; h = h->next)
 		if (h->num == idx)
@@ -71,12 +71,12 @@ const char *usbNames::getReportTag(uint8_t rt)
 	return getGenericStrTable(_reports, rt);
 }
 
-const char *usbNames::getHuts(unsigned int data)
+const char *usbNames::getHuts(uint32_t data)
 {
 	return getGenericStrTable(_huts, data);
 }
 
-const char *usbNames::getHutus(unsigned int data)
+const char *usbNames::getHutus(uint32_t data)
 {
 	return getGenericStrTable(_hutus, data);
 }
@@ -96,7 +96,7 @@ const char *usbNames::getBias(uint8_t b)
 	return getGenericStrTable(_biass, b);
 }
 
-const char *usbNames::getCountryCode(unsigned int countrycode)
+const char *usbNames::getCountryCode(uint32_t countrycode)
 {
 	return getGenericStrTable(_countrycodes, countrycode);
 }
@@ -197,7 +197,7 @@ int usbNames::getProductString(char *buf, size_t size, uint16_t vid, uint16_t pi
 
 int usbNames::newVendor(const char *name, uint16_t vendorid)
 {
-	unsigned int h = hashnum(vendorid);
+	uint32_t h = hashnum(vendorid);
 	struct vendor *v;
 
 	for (v = _vendors[h]; v; v = v->next)
@@ -215,7 +215,7 @@ int usbNames::newVendor(const char *name, uint16_t vendorid)
 
 int usbNames::newProduct(const char *name, uint16_t vendorid, uint16_t productid)
 {
-	unsigned int h = hashnum((vendorid << 16) | productid);
+	uint32_t h = hashnum((vendorid << 16) | productid);
 	struct product *p;
 
 	for (p = _products[h]; p; p = p->next)
@@ -235,7 +235,7 @@ int usbNames::newProduct(const char *name, uint16_t vendorid, uint16_t productid
 #if 0
 int usbNames::newClassType(const char *name, uint8_t classid)
 {
-	unsigned int h = hashnum(classid);
+	uint32_t h = hashnum(classid);
 	struct class_type *c;
 
 	for (c = _class_types[h]; c; c = c->next)
@@ -253,7 +253,7 @@ int usbNames::newClassType(const char *name, uint8_t classid)
 
 int usbNames::newSubclassType(const char *name, uint8_t classid, uint8_t subclassid)
 {
-	unsigned int h = hashnum((classid << 8) | subclassid);
+	uint32_t h = hashnum((classid << 8) | subclassid);
 	struct subclass_type *s;
 
 	for (s = _subclass_types[h]; s; s = s->next)
@@ -272,7 +272,7 @@ int usbNames::newSubclassType(const char *name, uint8_t classid, uint8_t subclas
 
 int usbNames::newProtocol(const char *name, uint8_t classid, uint8_t subclassid, uint8_t protocolid)
 {
-	unsigned int h = hashnum((classid << 16) | (subclassid << 8) | protocolid);
+	uint32_t h = hashnum((classid << 16) | (subclassid << 8) | protocolid);
 	struct protocol *p;
 
 	for (p = _protocols[h]; p; p = p->next)
@@ -292,7 +292,7 @@ int usbNames::newProtocol(const char *name, uint8_t classid, uint8_t subclassid,
 
 int usbNames::newAudioTerminal(const char *name, uint16_t termt)
 {
-	unsigned int h = hashnum(termt);
+	uint32_t h = hashnum(termt);
 	struct audioterminal *at;
 	for (at = _audioterminals[h]; at; at = at->next)
 		if (at->termt == termt)
@@ -309,7 +309,7 @@ int usbNames::newAudioTerminal(const char *name, uint16_t termt)
 
 int usbNames::newVideoTerminal(const char *name, uint16_t termt)
 {
-	unsigned int h = hashnum(termt);
+	uint32_t h = hashnum(termt);
 	struct videoterminal *vt;
 
 	for (vt = _videoterminals[h]; vt; vt = vt->next)
@@ -326,9 +326,9 @@ int usbNames::newVideoTerminal(const char *name, uint16_t termt)
 }
 
 static int newGenericStrtable(struct genericstrtable *t[HASHSZ],
-			       const char *name, unsigned int idx)
+			       const char *name, uint32_t idx)
 {
-	unsigned int h = hashnum(idx);
+	uint32_t h = hashnum(idx);
 	struct genericstrtable *g;
 
 	for (g = t[h]; g; g = g->next)
@@ -354,12 +354,12 @@ int usbNames::newReportTag(const char *name, uint8_t rt)
 	return newGenericStrtable(_reports, name, rt);
 }
 
-int usbNames::newHuts(const char *name, unsigned int data)
+int usbNames::newHuts(const char *name, uint32_t data)
 {
 	return newGenericStrtable(_huts, name, data);
 }
 
-int usbNames::newHutus(const char *name, unsigned int data)
+int usbNames::newHutus(const char *name, uint32_t data)
 {
 	return newGenericStrtable(_hutus, name, data);
 }
@@ -379,7 +379,7 @@ int usbNames::newBias(const char *name, uint8_t b)
 	return newGenericStrtable(_biass, name, b);
 }
 
-int usbNames::newCountryCode(const char *name, unsigned int countrycode)
+int usbNames::newCountryCode(const char *name, uint32_t countrycode)
 {
 	return newGenericStrtable(_countrycodes, name, countrycode);
 }
@@ -542,7 +542,7 @@ static void free_genericstrtable(void)
 void usbNames::parse(instream &f)
 {
 	char buf[512], *cp;
-	unsigned int linectr = 0;
+	uint32_t linectr = 0;
 	int lastvendor = -1;
 #if 0
 	int lastclass_type = -1;
@@ -550,7 +550,7 @@ void usbNames::parse(instream &f)
 	int lasthut = -1;
 	int lastlang = -1;
 #endif
-	unsigned int u;
+	uint32_t u;
 
 	while (f->getline(buf, sizeof(buf)) && !f->eof()) {
 		linectr++;

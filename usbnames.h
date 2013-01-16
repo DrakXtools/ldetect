@@ -77,7 +77,7 @@ namespace ldetect {
 
 	struct genericstrtable {
 		struct genericstrtable *next;
-		unsigned int num;
+		uint32_t num;
 		char name[1];
 	};
 #endif
@@ -95,12 +95,12 @@ namespace ldetect {
 		const char *getVideoTerminal(uint16_t termt);
 		const char *getHid(uint8_t hidd);
 		const char *getReportTag(uint8_t rt);
-		const char *getHuts(unsigned int data);
-		const char *getHutus(unsigned int data);
+		const char *getHuts(uint32_t data);
+		const char *getHutus(uint32_t data);
 		const char *getLangId(uint16_t langid);
 		const char *getPhysDes(uint8_t ph);
 		const char *getBias(uint8_t b);
-		const char *getCountryCode(unsigned int countrycode);
+		const char *getCountryCode(uint32_t countrycode);
 
 		int getVendorString(char *buf, size_t size, uint16_t vid);
 		int getProductString(char *buf, size_t size, uint16_t vid, uint16_t pid);
@@ -121,12 +121,12 @@ namespace ldetect {
 
 		int newHid(const char *name, uint8_t hidd);
 		int newReportTag(const char *name, uint8_t rt);
-		int newHuts(const char *name, unsigned int data);
-		int newHutus(const char *name, unsigned int data);
+		int newHuts(const char *name, uint32_t data);
+		int newHutus(const char *name, uint32_t data);
 		int newLangId(const char *name, uint16_t langid);
 		int newPhysDes(const char *name, uint8_t ph);
 		int newBias(const char *name, uint8_t b);
-		int newCountryCode(const char *name, unsigned int countrycode);
+		int newCountryCode(const char *name, uint32_t countrycode);
 #endif
 
 		struct vendor *_vendors[HASHSZ] = { nullptr, };
