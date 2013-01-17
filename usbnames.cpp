@@ -69,6 +69,7 @@ const char *usbNames::getProduct(uint16_t vendorid, uint16_t productid)
 
 /* ---------------------------------------------------------------------- */
 
+#if 1
 int usbNames::newVendor(const char *name, uint16_t vendorid)
 {
 	uint32_t h = hashnum(vendorid);
@@ -105,6 +106,7 @@ int usbNames::newProduct(const char *name, uint16_t vendorid, uint16_t productid
 	_products[h] = p;
 	return 0;
 }
+#endif
 
 /* ---------------------------------------------------------------------- */
 
@@ -173,8 +175,12 @@ void usbNames::parse(instream &f)
 				fprintf(stderr, "Invalid vendor spec at line %u\n", linectr);
 				continue;
 			}
+#if 0
+			_vendors[u] = cp;
+#else
 			if (newVendor(cp, u))
 				fprintf(stderr, "Duplicate vendor spec at line %u vendor %04x %s\n", linectr, u, cp);
+#endif
 			DBG(printf("line %5u vendor %04x %s\n", linectr, u, cp));
 			lastvendor = u;
 			continue;
@@ -189,8 +195,12 @@ void usbNames::parse(instream &f)
 				continue;
 			}
 			if (lastvendor != -1) {
+#if 0
+			    _products[std::pair<uint16_t,uint16_t>(lastvendor, u)] = cp;
+#else
 				if (newProduct(cp, lastvendor, u))
 					fprintf(stderr, "Duplicate product spec at line %u product %04x:%04x %s\n", linectr, lastvendor, u, cp);
+#endif
 				DBG(printf("line %5u product %04x:%04x %s\n", linectr, lastvendor, u, cp));
 				continue;
 			}

@@ -30,6 +30,7 @@
 /* ---------------------------------------------------------------------- */
 
 namespace ldetect {
+#if 1
 #define HASHSZ 16
 
 	struct vendor {
@@ -43,19 +44,31 @@ namespace ldetect {
 		uint16_t vendorid, productid;
 		char name[1];
 	};
+#endif
 
 	class usbNames {
 	    public:
+
+#if 0
+		const std::string& getVendor(uint16_t vendorid);
+		const std::string& getProduct(uint16_t vendorid, uint16_t productid);
+#else
 		const char *getVendor(uint16_t vendorid);
 		const char *getProduct(uint16_t vendorid, uint16_t productid);
+#endif
 		usbNames(std::string &&n);
 		~usbNames();
 
 	    private:
+#if 0
+		std::map<uint16_t, std::string> _vendors;
+		std::map<std::pair<uint16_t, uint16_t>, std::string> _products;
+#else
 		int newVendor(const char *name, uint16_t vendorid);
 		int newProduct(const char *name, uint16_t vendorid, uint16_t productid);
 		struct vendor *_vendors[HASHSZ] = { nullptr, };
 		struct product *_products[HASHSZ] = { nullptr, };
+#endif
 		void parse(instream &f);
 	};
 
