@@ -36,6 +36,7 @@ namespace ldetect {
 
 /* ---------------------------------------------------------------------- */
 
+#ifdef __UCLIBCXX_MAJOR__
 #define HASH1  0x10
 #define HASH2  0x02
 
@@ -69,7 +70,6 @@ const char *usbNames::getProduct(uint16_t vendorid, uint16_t productid)
 
 /* ---------------------------------------------------------------------- */
 
-#if 1
 int usbNames::newVendor(const char *name, uint16_t vendorid)
 {
 	uint32_t h = hashnum(vendorid);
@@ -106,7 +106,6 @@ int usbNames::newProduct(const char *name, uint16_t vendorid, uint16_t productid
 	_products[h] = p;
 	return 0;
 }
-#endif
 
 /* ---------------------------------------------------------------------- */
 
@@ -124,6 +123,21 @@ template <class T> void freeList(T** list)
 		}
 	}
 }
+#else
+static const std::string emptyString;
+const std::string& usbNames::getVendor(uint16_t vendorId)
+{
+    std::map<uint16_t, std::string>::const_iterator it = _vendors.find(vendorId);
+    return it == _vendors.end() ? emptyString : it->second;
+}
+
+const std::string& usbNames::getProduct(uint16_t vendorId, uint16_t productId)
+{
+    std::map<std::pair<uint16_t,uint16_t>, std::string>::const_iterator it = _products.find(std::pair<uint16_t, uint16_t>(vendorId, productId));
+    return it == _products.end() ? emptyString : it->second;
+}
+
+#endif
 
 #define DBG(x)
 
@@ -175,11 +189,11 @@ void usbNames::parse(instream &f)
 				fprintf(stderr, "Invalid vendor spec at line %u\n", linectr);
 				continue;
 			}
-#if 0
-			_vendors[u] = cp;
-#else
+#ifdef __UCLIBCXX_MAJOR__
 			if (newVendor(cp, u))
 				fprintf(stderr, "Duplicate vendor spec at line %u vendor %04x %s\n", linectr, u, cp);
+#else
+			_vendors[u] = cp;
 #endif
 			DBG(printf("line %5u vendor %04x %s\n", linectr, u, cp));
 			lastvendor = u;
@@ -195,11 +209,11 @@ void usbNames::parse(instream &f)
 				continue;
 			}
 			if (lastvendor != -1) {
-#if 0
-			    _products[std::pair<uint16_t,uint16_t>(lastvendor, u)] = cp;
+#ifdef __UCLIBCXX_MAJOR__
+			    if (newProduct(cp, lastvendor, u))
+				fprintf(stderr, "Duplicate product spec at line %u product %04x:%04x %s\n", linectr, lastvendor, u, cp);
 #else
-				if (newProduct(cp, lastvendor, u))
-					fprintf(stderr, "Duplicate product spec at line %u product %04x:%04x %s\n", linectr, lastvendor, u, cp);
+			    _products[std::pair<uint16_t,uint16_t>(lastvendor, u)] = cp;
 #endif
 				DBG(printf("line %5u product %04x:%04x %s\n", linectr, lastvendor, u, cp));
 				continue;
@@ -227,6 +241,9 @@ void usbNames::parse(instream &f)
 /* ---------------------------------------------------------------------- */
 
 usbNames::usbNames(std::string &&n)
+#ifndef __UCLIBCXX_MAJOR__
+    : _vendors(), _products()
+#endif
 {
 	instream f = i_open(n.c_str());
 
@@ -235,8 +252,10 @@ usbNames::usbNames(std::string &&n)
 
 usbNames::~usbNames()
 {
+#ifdef __UCLIBCXX_MAJOR__
 	freeList(_vendors);
 	freeList(_products);
+#endif
 }
 
 }

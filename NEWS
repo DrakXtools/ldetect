@@ -1,5 +1,8 @@
-Version 0.13.1 - 12 January 2013, by Per Øyvind Karlsen
+Version 0.13.1 - 17 January 2013, by Per Øyvind Karlsen
 
+- use std::map for usbNames, yielding a ~36% performance increase (libstdc++
+  only, using uClibc++'s std::map implementation suffers insane performance
+  hit, so stick to old C implementation for now...)
 - reduce size quite a bit by dropping unused functionality from usbNames class
 - rename intf 'class' to 'interface'
 - rewrite names.{h,cpp} into a proper C++ 'usbNames' class

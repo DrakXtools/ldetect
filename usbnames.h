@@ -25,12 +25,15 @@
 
 #include <sys/types.h>
 #include <cstdint>
+#ifndef __UCLIBCXX_MAJOR__
+#include <map>
+#endif
 #include "common.h"
 
 /* ---------------------------------------------------------------------- */
 
 namespace ldetect {
-#if 1
+#ifdef __UCLIBCXX_MAJOR__
 #define HASHSZ 16
 
 	struct vendor {
@@ -49,25 +52,25 @@ namespace ldetect {
 	class usbNames {
 	    public:
 
-#if 0
-		const std::string& getVendor(uint16_t vendorid);
-		const std::string& getProduct(uint16_t vendorid, uint16_t productid);
-#else
+#ifdef __UCLIBCXX_MAJOR__
 		const char *getVendor(uint16_t vendorid);
 		const char *getProduct(uint16_t vendorid, uint16_t productid);
+#else
+		const std::string& getVendor(uint16_t vendorid);
+		const std::string& getProduct(uint16_t vendorid, uint16_t productid);
 #endif
 		usbNames(std::string &&n);
 		~usbNames();
 
 	    private:
-#if 0
-		std::map<uint16_t, std::string> _vendors;
-		std::map<std::pair<uint16_t, uint16_t>, std::string> _products;
-#else
+#ifdef __UCLIBCXX_MAJOR__
 		int newVendor(const char *name, uint16_t vendorid);
 		int newProduct(const char *name, uint16_t vendorid, uint16_t productid);
 		struct vendor *_vendors[HASHSZ] = { nullptr, };
 		struct product *_products[HASHSZ] = { nullptr, };
+#else
+		std::map<uint16_t, std::string> _vendors;
+		std::map<std::pair<uint16_t, uint16_t>, std::string> _products;
 #endif
 		void parse(instream &f);
 	};
