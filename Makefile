@@ -40,7 +40,7 @@ binaries = lspcidrake
 
 all: $(binaries) $(libraries) .depend
 
-.depend: $(headers) $(headers_api) $(lib_src) lspcidrake.cpp
+.depend: $(lib_src) lspcidrake.cpp
 	$(CXX) $(DEFS) $(INCLUDES) $(CXXFLAGS) -M $^ > .depend 
 
 ifeq (.depend,$(wildcard .depend))
