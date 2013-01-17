@@ -82,7 +82,7 @@ dmi_probe()
 
   EXTEND(SP, entries.size());
   for (auto i = 0; i < entries.size(); i++) {
-    const ldetect::dmiEntry &e = entries[i];
+    const ldetect::entry &e = entries[i];
 
     snprintf(buf, sizeof(buf), "%s\t%s", 
 	entries[i].module.c_str(), entries[i].text.c_str());
@@ -100,7 +100,7 @@ hid_probe()
 
   EXTEND(SP, entries.size());
   for (auto i = 0; i < entries.size(); i++) {
-    const ldetect::hidEntry &e = entries[i];
+    const ldetect::entry &e = entries[i];
 
     snprintf(buf, sizeof(buf), "%s\t%s", 
 	entries[i].module.c_str(), entries[i].text.c_str());
