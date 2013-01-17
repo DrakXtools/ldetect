@@ -23,10 +23,6 @@ std::string modalias_resolve_module(struct kmod_ctx *ctx, const std::string &mod
 #define MAX_DEVICES 300
 #define BUF_SIZE 512
 
-#define psizeof(a) (sizeof(a) / sizeof(a[0]))
-#define ifree(p) do { if (p) { free(p); p = nullptr; } } while (0)
-#define alloc_v(v) calloc(1, sizeof(v[0]));
-
 instream fh_open(std::string &&name) NON_EXPORTED;
 
 template <class T>
