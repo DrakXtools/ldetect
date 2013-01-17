@@ -15,7 +15,7 @@ namespace ldetect {
 	    interface() : _entries() {}
 	    virtual ~interface() {};
 
-	    const T& operator[] (uint16_t i) const {
+	    const T& operator[] (uint16_t i) const throw() {
 		return _entries[i];
 	    }
 
