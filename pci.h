@@ -8,6 +8,7 @@
 #include <sstream>
 
 #include "pciusb.h"
+#include "interface.h"
 
 #pragma GCC visibility push(default)
 
@@ -43,8 +44,7 @@ namespace ldetect {
 	    friend std::ostream& operator<<(std::ostream& os, const pciEntry& e) EXPORTED;
     };
 
-
-    class pci : public pciusb<pciEntry> {
+    class pci : public pciusb, public interface<pciEntry> {
 	public:
 	    pci(std::string proc_pci_path="/proc/bus/pci/devices") EXPORTED;
 	    pci(const pci &p);
@@ -55,7 +55,7 @@ namespace ldetect {
 	    void probe(void) EXPORTED;
 
 	protected:
-	    void find_modules_through_aliases(struct kmod_ctx *ctx, pciEntry &e);
+	    void findModules(std::string &&fpciusbtable, bool descr_lookup);
 
 	
 	private:

@@ -28,7 +28,7 @@
 #ifndef __UCLIBCXX_MAJOR__
 #include <map>
 #endif
-#include "common.h"
+#include "libldetect.h"
 
 /* ---------------------------------------------------------------------- */
 

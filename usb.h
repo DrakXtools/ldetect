@@ -9,6 +9,7 @@
 #include "libldetect.h"
 
 #include "pciusb.h"
+#include "interface.h"
 #include "usbnames.h"
 
 #pragma GCC visibility push(default)
@@ -42,7 +43,7 @@ namespace ldetect {
 	    friend std::ostream& operator<<(std::ostream& os, const usbEntry& e) EXPORTED;
     };
 
-    class usb : public pciusb<usbEntry> {
+    class usb : public pciusb, public interface<usbEntry> {
 	public:
 	    usb() EXPORTED;
 	    ~usb() EXPORTED;
@@ -50,7 +51,7 @@ namespace ldetect {
 	    void probe(void) EXPORTED;
 
 	protected:
-	    void find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e);
+	    void findModules(std::string &&fpciusbtable, bool descr_lookup);
 
 	private:
 	    usbNames _names;

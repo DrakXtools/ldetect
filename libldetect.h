@@ -5,11 +5,20 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <memory>
 
 #pragma GCC visibility push(default)
 #define EXPORTED __attribute__((externally_visible)) __attribute__((visibility("default")))
+#define NON_EXPORTED __attribute__((visibility("hidden")))
 
 namespace ldetect {
+
+#ifdef __UCLIBCXX_MAJOR__
+    typedef std::auto_ptr<std::istream> instream;
+#else
+    typedef std::unique_ptr<std::istream> instream;
+#endif
+    instream i_open(std::string &&name) NON_EXPORTED;
 
     class entry {
 	public:

@@ -1,5 +1,6 @@
 Version 0.13.1 - 17 January 2013, by Per Øyvind Karlsen
 
+- make template implementations etc. internal
 - use std::map for usbNames, yielding a ~36% performance increase (libstdc++
   only, using uClibc++'s std::map implementation suffers insane performance
   hit, so stick to old C implementation for now...)

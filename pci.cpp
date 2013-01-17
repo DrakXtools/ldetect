@@ -133,17 +133,33 @@ void pci::probe(void) {
     findModules("pcitable", false);
 }
 
-void pci::find_modules_through_aliases(struct kmod_ctx *ctx, pciEntry &e) {
-    std::ostringstream devname(std::ostringstream::out);
-    devname << hexFmt(e.pci_domain, 4, false) << ":" <<  hexFmt(e.bus, 2, false) <<
-	":" << hexFmt(e.pciusb_device, 2, false) << "." << hexFmt(e.pci_function, 0, false);
+void pci::findModules(std::string &&fpciusbtable, bool descr_lookup) {
+    ldetect::findModules(fpciusbtable, descr_lookup, _entries);
+    ::kmod_ctx *ctx = modalias_init();
 
-    std::ifstream f(std::string("/sys/bus/pci/devices/").append(devname.str()).append("/modalias").c_str());
-    if (f.is_open()) {
-	std::string modalias;
-	getline(f, modalias);
-	e.module = modalias_resolve_module(ctx, modalias);
+    for (uint16_t i = 0; i < _entries.size(); i++) {
+	pciEntry &e = _entries[i];
+
+	// No special case found in pcitable ? Then lookup modalias for PCI devices
+	if (!e.module.empty() && e.module != "unknown")
+	    continue;
+	{
+	    std::ostringstream devname(std::ostringstream::out);
+	    devname << hexFmt(e.pci_domain, 4, false) << ":" <<  hexFmt(e.bus, 2, false) <<
+		":" << hexFmt(e.pciusb_device, 2, false) << "." << hexFmt(e.pci_function, 0, false);
+
+	    std::ifstream f(std::string("/sys/bus/pci/devices/").append(devname.str()).append("/modalias").c_str());
+	    if (f.is_open()) {
+		std::string modalias;
+		getline(f, modalias);
+		e.module = modalias_resolve_module(ctx, modalias);
+	    }
+
+	}
     }
+
+    kmod_unref(ctx);
+
 }
 
 }

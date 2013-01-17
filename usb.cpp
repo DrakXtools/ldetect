@@ -124,47 +124,61 @@ void usb::probe(void) {
 
 }
 
-void usb::find_modules_through_aliases(struct kmod_ctx *ctx, usbEntry &e) {
-    std::ostringstream devname(std::ostringstream::out);
-    devname << static_cast<uint16_t>(e.bus) << "-" << e.devpath << ":" << e.usb_port << ".";
+void usb::findModules(std::string &&fpciusbtable, bool descr_lookup) {
+    ldetect::findModules(fpciusbtable, descr_lookup, _entries);
+    ::kmod_ctx *ctx = modalias_init();
 
-    std::ifstream f;
-    std::string path(usbDevs + devname.str());
-    for (uint16_t i = 0; i < e.interfaces && e.module.empty(); i++) {
-	std::ostringstream numStr(std::ostringstream::out);
-	numStr << i;
-	std::string devPath(path + numStr.str());
-	f.open((devPath + "/modalias").c_str());
-	if (f.is_open()) {
-	    std::string modalias;
-	    getline(f, modalias);
-	    e.module = modalias_resolve_module(ctx, modalias);
-	}
-	f.close();
-	if (!e.class_id) {
-	    f.open((devPath + "/bInterfaceClass").c_str());
-	    if (f.is_open()) {
-		uint32_t cid, sub, prot = 0;
+    for (uint16_t i = 0; i < _entries.size(); i++) {
+	usbEntry &e = _entries[i];
 
-		f >> std::hex >> cid;
+	// No special case found in pcitable ? Then lookup modalias for PCI devices
+	if (!e.module.empty() && e.module != "unknown")
+	    continue;
+	{
+	    std::ostringstream devname(std::ostringstream::out);
+	    devname << static_cast<uint16_t>(e.bus) << "-" << e.devpath << ":" << e.usb_port << ".";
+
+	    std::ifstream f;
+	    std::string path(usbDevs + devname.str());
+	    for (uint16_t i = 0; i < e.interfaces && e.module.empty(); i++) {
+		std::ostringstream numStr(std::ostringstream::out);
+		numStr << i;
+		std::string devPath(path + numStr.str());
+		f.open((devPath + "/modalias").c_str());
+		if (f.is_open()) {
+		    std::string modalias;
+		    getline(f, modalias);
+		    e.module = modalias_resolve_module(ctx, modalias);
+		}
 		f.close();
+		if (!e.class_id) {
+		    f.open((devPath + "/bInterfaceClass").c_str());
+		    if (f.is_open()) {
+			uint32_t cid, sub, prot = 0;
 
-		f.open((devPath + "/bInterfaceSubClass").c_str());
-		if (f.is_open()) {
-		    f >> std::hex >> sub;
+			f >> std::hex >> cid;
+			f.close();
+
+			f.open((devPath + "/bInterfaceSubClass").c_str());
+			if (f.is_open()) {
+			    f >> std::hex >> sub;
+			    f.close();
+			}
+
+			f.open((devPath + "/bInterfaceProtocol").c_str());
+			if (f.is_open()) {
+			    f >> std::hex >> prot;
+			    f.close();
+			}
+			e.class_id = (cid * 0x100 + sub) * 0x100 + prot;
+		    }
 		    f.close();
 		}
-
-		f.open((devPath + "/bInterfaceProtocol").c_str());
-		if (f.is_open()) {
-		    f >> std::hex >> prot;
-		    f.close();
-		}
-		e.class_id = (cid * 0x100 + sub) * 0x100 + prot;
 	    }
-	    f.close();
 	}
     }
+
+    kmod_unref(ctx);
 }
 
 }
