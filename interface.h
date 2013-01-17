@@ -29,7 +29,7 @@ namespace ldetect {
 
 	    uint16_t size() const throw() { return _entries.size(); }
 
-	//protected:
+	protected:
 	    std::vector<T> _entries;
     };
 }
