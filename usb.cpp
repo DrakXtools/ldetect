@@ -87,8 +87,13 @@ void usb::probe(void) {
 	    }
 
 	    e.text += "|";
+#ifdef __UCLIBCXX_MAJOR__
 	    const char *productName = _names.getProduct(e.vendor, e.device);
 	    if (productName == nullptr) {
+#else
+	    const std::string &productName = _names.getProduct(e.vendor, e.device);
+	    if (productName.empty()) {
+#endif
 		std::string product;
 		getline(f, product);
 		e.text += product;
