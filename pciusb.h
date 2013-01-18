@@ -9,7 +9,6 @@
 #include <fstream>
 #include <vector>
 #include <cstring>
-#include <libkmod.h>
 
 #include "libldetect.h"
 

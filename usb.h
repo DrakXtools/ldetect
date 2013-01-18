@@ -14,10 +14,6 @@
 
 #pragma GCC visibility push(default)
 
-struct pci_access;
-struct pci_dev;
-struct kmod_ctx;
-
 namespace ldetect {
 
     struct usb_class_text {

@@ -13,8 +13,6 @@
 #pragma GCC visibility push(default)
 
 struct pci_access;
-struct pci_dev;
-struct kmod_ctx;
 
 namespace ldetect {
     const std::string& pci_class2text(uint16_t class_id) EXPORTED;
