@@ -1,3 +1,7 @@
+Version 0.13.2 - 18 January 2013, by Per Øyvind Karlsen
+
+- fix minor memleak
+
 Version 0.13.1 - 17 January 2013, by Per Øyvind Karlsen
 
 - make template implementations etc. internal

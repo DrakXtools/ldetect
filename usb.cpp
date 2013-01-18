@@ -119,6 +119,7 @@ void usb::probe(void) {
 	    }
 	}
     }
+    free(dp);
 
     findModules("usbtable", false);
 
