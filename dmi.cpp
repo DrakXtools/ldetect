@@ -49,7 +49,8 @@ void dmi::probe(void)
     struct kmod_ctx *ctx = modalias_init();
     DIR *dp;
     struct dirent *dirp;
-    if((dp = opendir("/sys/class/dmi")) == nullptr)
+    static const std::string dmiDevs("/sys/class/dmi/");
+    if((dp = opendir(dmiDevs.c_str())) == nullptr)
 	return;
 
     std::ifstream f;
@@ -58,7 +59,7 @@ void dmi::probe(void)
 	if (!strcmp(dirp->d_name, ".") || !strcmp(dirp->d_name, ".."))
 	    continue;
 	size_t pos;
-	dmiPath.assign("/sys/class/dmi/").append(dirp->d_name).append("/");
+	dmiPath.assign(dmiDevs).append(dirp->d_name).append("/");
 	for(std::vector<dmiTable>::const_iterator it = dmitable.begin(); it != dmitable.end(); ++it) {
 	    f.open((dmiPath + it->table).c_str(), std::ifstream::in);
 
