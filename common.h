@@ -46,8 +46,8 @@ void findModules(const std::string &fpciusbtable, bool descr_lookup, std::vector
 		continue; // skip bad line
 	    }
 	}
-	for (uint16_t i = 0; i < entries.size(); i++) {
-	    T &e = entries[i];
+	for (typename std::vector<T>::iterator it = entries.begin(); it != entries.end(); ++it) {
+	    T &e = *it;
 	    if (e.already_found)
 		continue;	// skip since already found with sub ids
 	    if (vendor != e.vendor ||  device != e.device)
