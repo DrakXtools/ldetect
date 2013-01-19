@@ -129,8 +129,9 @@ void usb::findModules(std::string &&fpciusbtable, bool descr_lookup) {
     ldetect::findModules(fpciusbtable, descr_lookup, _entries);
     ::kmod_ctx *ctx = modalias_init();
 
-    for (uint16_t i = 0; i < _entries.size(); i++) {
-	usbEntry &e = _entries[i];
+    for (std::vector<usbEntry>::iterator it = _entries.begin();
+	    it != _entries.end(); ++it) {
+	usbEntry &e = *it;
 
 	// No special case found in pcitable ? Then lookup modalias for PCI devices
 	if (!e.module.empty() && e.module != "unknown")

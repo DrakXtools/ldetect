@@ -137,8 +137,9 @@ void pci::findModules(std::string &&fpciusbtable, bool descr_lookup) {
     ldetect::findModules(fpciusbtable, descr_lookup, _entries);
     ::kmod_ctx *ctx = modalias_init();
 
-    for (uint16_t i = 0; i < _entries.size(); i++) {
-	pciEntry &e = _entries[i];
+    for (std::vector<pciEntry>::iterator it = _entries.begin();
+	    it != _entries.end(); ++it) {
+	pciEntry &e = *it;
 
 	// No special case found in pcitable ? Then lookup modalias for PCI devices
 	if (!e.module.empty() && e.module != "unknown")
