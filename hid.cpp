@@ -15,10 +15,9 @@ namespace ldetect {
  */
 
 
-static const std::string hidDevs("/sys/bus/hid/devices/");
-
 void hid::probe(void)
 {
+    const std::string hidDevs("/sys/bus/hid/devices/");
     DIR *dir = opendir(hidDevs.c_str());
     if (dir == nullptr)
 	return;

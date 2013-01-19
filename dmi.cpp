@@ -49,7 +49,7 @@ void dmi::probe(void)
     struct kmod_ctx *ctx = modalias_init();
     DIR *dp;
     struct dirent *dirp;
-    static const std::string dmiDevs("/sys/class/dmi/");
+    const std::string dmiDevs("/sys/class/dmi/");
     if((dp = opendir(dmiDevs.c_str())) == nullptr)
 	return;
 
