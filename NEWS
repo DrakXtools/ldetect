@@ -1,5 +1,6 @@
-Version 0.13.2 - 18 January 2013, by Per Øyvind Karlsen
+Version 0.13.2 - 31 January 2013, by Per Øyvind Karlsen
 
+- various minor bug fixes & refactoring
 - fix minor memleak
 
 Version 0.13.1 - 17 January 2013, by Per Øyvind Karlsen
