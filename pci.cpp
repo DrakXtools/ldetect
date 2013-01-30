@@ -5,7 +5,6 @@ extern "C" {
 #include <dirent.h>
 #include <pci/header.h>
 #include <libkmod.h>
-#include <sysfs/libsysfs.h>
 
 #include "common.h"
 #include "pci.h"
