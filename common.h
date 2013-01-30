@@ -27,12 +27,13 @@ instream fh_open(std::string &&name) NON_EXPORTED;
 
 template <class T>
 void findModules(const std::string &fpciusbtable, bool descr_lookup, std::vector<T> &entries) {
-    char buf[2048];
+    std::string buff;
     instream f = fh_open(fpciusbtable.c_str());
 
-    for (int line = 1; f->getline(buf, sizeof(buf)) && !f->eof(); line++) {
+    for (int line = 1; getline(*f, buff) && !f->eof(); line++) {
 	uint16_t vendor, device, subvendor, subdevice;
-	char *p = nullptr, *q = nullptr;
+	const char *p = nullptr, *q = nullptr;
+	const char *buf = buff.c_str();
 	int offset;
 	int nb;
 	if (buf[0]=='#')
