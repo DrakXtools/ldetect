@@ -44,7 +44,7 @@ namespace ldetect {
 
     class pci : public pciusb, public interface<pciEntry> {
 	public:
-	    pci(std::string proc_pci_path="/proc/bus/pci/devices") EXPORTED;
+	    pci(std::string proc_pci_path="/proc/bus/pci") EXPORTED;
 	    pci(const pci &p);
 	    pci& operator=(const pci &p);
 	    ~pci() EXPORTED;

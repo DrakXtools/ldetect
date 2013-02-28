@@ -1,3 +1,7 @@
+Version 0.13.2 - 28 February 2013, by Per Øyvind Karlsen
+
+- fix correct /proc/bus/pci path to be used with libpci
+
 Version 0.13.1 - 31 January 2013, by Per Øyvind Karlsen
 
 - various minor bug fixes & refactoring
