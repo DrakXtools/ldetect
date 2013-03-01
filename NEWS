@@ -1,5 +1,7 @@
-Version 0.13.2 - 28 February 2013, by Per Øyvind Karlsen
+Version 0.13.2 -  1 March 2013, by Per Øyvind Karlsen
 
+- remove rest of uClibc++ ostream workarounds no longer needed since uClibc++
+  has now been fixed
 - fix correct /proc/bus/pci path to be used with libpci
 
 Version 0.13.1 - 31 January 2013, by Per Øyvind Karlsen
