@@ -4,7 +4,8 @@ lib_src = common.cpp modalias.cpp pciusb.cpp pci.cpp usb.cpp pciclass.cpp usbcla
 lib_objs = $(subst .cpp,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
-CXXFLAGS += -Wall -Wextra -pedantic -Os -fPIC -fvisibility=hidden -g 
+OPTFLAGS = -g -Os
+CXXFLAGS += -Wall -Wextra -pedantic $(OPTFLAGS) -fPIC -fvisibility=hidden
 LDFLAGS += -Wl,--no-undefined
 ifeq (uclibc, $(LIBC))
 CC=uclibc-gcc
