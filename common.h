@@ -63,8 +63,8 @@ void findModules(const std::string &fpciusbtable, bool descr_lookup, std::vector
 		if (!q) // no description field?
 		    q = strchr(p, '\0') - 1;
 	    }
-	    if (strncmp(p, "unknown", q-p-1)) {
-		e.module.assign(p,q-p-1);
+	    if (strncmp(p, "unknown", q-p)) {
+		e.module.assign(p,q-p);
 	    }
 	    /* special case for buggy 0x0 usb entry */
 	    if (descr_lookup && strlen(q) > 1 && 2 < strlen(q+2) && vendor != 0 && device != 0 && e.class_id != 0x90000d) { /* Hub class */
