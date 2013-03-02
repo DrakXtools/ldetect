@@ -76,14 +76,6 @@ libldetect.a: $(lib_objs)
 	ar -cru $@ $^
 	ranlib $@
 
-common.o:	common.cpp common.h
-pciusb.o:	pciusb.cpp libldetect.h common.h
-pci.o:		pci.cpp libldetect.h common.h
-usb.o:		usb.cpp libldetect.h common.h usbnames.h
-dmi.o:		dmi.cpp libldetect.h common.h
-hid.o:		hid.cpp libldetect.h common.h
-usbnames.o:	usbnames.cpp usbnames.h
-
 clean:
 	rm -f *~ *.o pciclass.cpp usbclass.cpp $(binaries) $(libraries) .depend
 
