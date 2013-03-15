@@ -23,7 +23,7 @@ void hid::probe(void)
     for (struct dirent *dent = readdir(dir); dent != nullptr; dent = readdir(dir)) {
 	if ((dent->d_type != DT_DIR && dent->d_type != DT_LNK) || !strcmp(dent->d_name, ".") || !strcmp(dent->d_name, ".."))
 	    continue;
-	std::string hidDev(std::string(hidDevs).append("/").append(dent->d_name));
+	std::string hidDev(std::string(hidDevs).append(dent->d_name));
 
 	f.open((hidDev + "/modalias").c_str());
 	std::string modname;
