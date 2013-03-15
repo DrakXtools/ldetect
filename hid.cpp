@@ -11,10 +11,6 @@
 
 namespace ldetect {
 
-/* currently untested, lacking any hid devices to test with...
- */
-
-
 void hid::probe(void)
 {
     const std::string hidDevs("/sys/bus/hid/devices/");
@@ -25,7 +21,7 @@ void hid::probe(void)
 
     std::ifstream f;
     for (struct dirent *dent = readdir(dir); dent != nullptr; dent = readdir(dir)) {
-	if (dent->d_type != DT_DIR || !strcmp(dent->d_name, ".") || !strcmp(dent->d_name, ".."))
+	if ((dent->d_type != DT_DIR && dent->d_type != DT_LNK) || !strcmp(dent->d_name, ".") || !strcmp(dent->d_name, ".."))
 	    continue;
 	std::string hidDev(std::string(hidDevs).append("/").append(dent->d_name));
 
@@ -45,8 +41,8 @@ void hid::probe(void)
 	    std::string line;
 	    while (!f.eof()) {
 		getline(f, line);
-		if (!line.compare(0,sizeof("HID_DEVICE")-1, "HID_DEVICE")) {
-		    deviceName.assign(line, sizeof("HID_DEVICE"), line.size()-sizeof("HID_DEVICE"));
+		if (!line.compare(0,sizeof("HID_NAME")-1, "HID_NAME")) {
+		    deviceName.assign(line, sizeof("HID_NAME"), line.size()-sizeof("HID_NAME"));
 		    break;
 		}
 	    }
@@ -54,7 +50,7 @@ void hid::probe(void)
 	} else
 	    deviceName = "HID Device";
 
-	if (!modname.empty()) 
+	if (!modname.empty() && !(!_entries.empty() && _entries.back().module == modname))
 	    _entries.push_back(entry(modname, deviceName));
     }
 
