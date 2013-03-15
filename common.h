@@ -18,7 +18,7 @@ extern const std::string table_name_dir NON_EXPORTED;
 std::string hexFmt(uint32_t value, uint8_t w = 4, bool prefix = true);
 
 struct kmod_ctx* modalias_init(void) NON_EXPORTED;
-std::string modalias_resolve_module(struct kmod_ctx *ctx, const std::string &modalias) NON_EXPORTED;
+std::vector<std::string> modalias_resolve_modules(struct kmod_ctx *ctx, const std::string &modalias) NON_EXPORTED;
 
 #define MAX_DEVICES 300
 #define BUF_SIZE 512

@@ -134,7 +134,7 @@ void usb::findModules(std::string &&fpciusbtable, bool descr_lookup) {
 	usbEntry &e = *it;
 
 	// No special case found in pcitable ? Then lookup modalias for PCI devices
-	if (!e.module.empty() && e.module != "unknown")
+	if (!e.module.empty() && (e.module != "unknown" && e.module.find_first_of(':') != std::string::npos))
 	    continue;
 	{
 	    std::ostringstream devname(std::ostringstream::out);
@@ -150,7 +150,14 @@ void usb::findModules(std::string &&fpciusbtable, bool descr_lookup) {
 		if (f.is_open()) {
 		    std::string modalias;
 		    getline(f, modalias);
-		    e.module = modalias_resolve_module(ctx, modalias);
+		    std::vector<std::string> kmodules = modalias_resolve_modules(ctx, modalias);
+
+		    if (e.module.find_first_of(':') == std::string::npos && kmodules.size() == 1) {
+			e.module = kmodules.front();
+		    }
+		    else {
+			e.kmodules = kmodules;
+		    }
 		}
 		f.close();
 		if (!e.class_id) {

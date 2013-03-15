@@ -20,6 +20,7 @@ namespace ldetect {
 static std::string aliasdefault;
 static std::string dirname("/lib/modules/");
 
+
 static void set_default_alias_file(void) {
     std::string fallback_aliases(table_name_dir + "fallback-modules.alias");
     struct stat st_alias, st_fallback;
@@ -66,9 +67,10 @@ struct kmod_ctx* modalias_init(void) {
 	return ctx;
 }
 
-std::string modalias_resolve_module(struct kmod_ctx *ctx, const std::string &modalias) {
+std::vector<std::string> modalias_resolve_modules(struct kmod_ctx *ctx, const std::string &modalias) {
+
 	struct kmod_list *l = nullptr, *list = nullptr, *filtered = nullptr;
-	std::string str;
+	std::vector<std::string> modules;
 	int err = kmod_module_new_from_lookup(ctx, modalias.c_str(), &list);
 	if (err < 0)
 		goto exit;
@@ -86,10 +88,9 @@ std::string modalias_resolve_module(struct kmod_ctx *ctx, const std::string &mod
 
 	kmod_list_foreach(l, list) {
 		struct kmod_module *mod = kmod_module_get_module(l);
-		//if (str) // keep last one
-		//	free(str);
-		if (str.empty()) // keep first one
-			str = kmod_module_get_name(mod);
+		const char *str = kmod_module_get_name(mod);
+		if (modules.empty() || modules.back() != str)
+		    modules.push_back(str);
 		kmod_module_unref(mod);
 		if (err < 0)
 			break;
@@ -98,7 +99,7 @@ std::string modalias_resolve_module(struct kmod_ctx *ctx, const std::string &mod
 	kmod_module_unref_list(list);
 
 exit:
-	return str;
+	return modules;
 }
 
 }

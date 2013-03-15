@@ -19,7 +19,7 @@ namespace ldetect {
     class pciusbEntry {
 	public:
 	    pciusbEntry(std::string module = "", std::string text= "", std::string class_type = "") :
-		module(module), text(text), class_type(class_type),
+		module(module), kmodules(), text(text), class_type(class_type),
 		vendor(0xffff), device(0xffff),
 
 		subvendor(0xffff), subdevice(0xffff), class_id(0),
@@ -28,6 +28,7 @@ namespace ldetect {
 	    virtual ~pciusbEntry() {}
 
 	    std::string module;
+	    std::vector<std::string> kmodules;
 	    std::string text;
 	    std::string class_type;
 

@@ -23,11 +23,12 @@ namespace ldetect {
     class entry {
 	public:
 	    entry(const std::string &module, const std::string &text) EXPORTED :
-		module(module), text(text) {}
-	    entry() : module(), text() {}
+		module(module), kmodules(), text(text) {}
+	    entry() : module(), kmodules(), text() {}
 	    virtual ~entry() {}
 
 	    std::string module;
+	    std::vector<std::string> kmodules;
 	    std::string text;
 
 	    friend std::ostream& operator<<(std::ostream& os, const entry& e) EXPORTED;

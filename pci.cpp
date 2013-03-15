@@ -141,7 +141,7 @@ void pci::findModules(std::string &&fpciusbtable, bool descr_lookup) {
 	pciEntry &e = *it;
 
 	// No special case found in pcitable ? Then lookup modalias for PCI devices
-	if (!e.module.empty() && e.module != "unknown")
+	if (!e.module.empty() && (e.module != "unknown" && e.module.find_first_of(':') == std::string::npos))
 	    continue;
 	{
 	    std::ostringstream devname(std::ostringstream::out);
@@ -152,7 +152,7 @@ void pci::findModules(std::string &&fpciusbtable, bool descr_lookup) {
 	    if (f.is_open()) {
 		std::string modalias;
 		getline(f, modalias);
-		e.module = modalias_resolve_module(ctx, modalias);
+		e.kmodules = modalias_resolve_modules(ctx, modalias);
 	    }
 
 	}

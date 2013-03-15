@@ -105,7 +105,9 @@ void dmi::probe(void)
 	if (f.is_open()) {
 	    std::string modalias;
 	    getline(f, modalias);
-	    std::string modname = modalias_resolve_module(ctx, modalias);
+	    std::vector<std::string> kmodules = modalias_resolve_modules(ctx, modalias);
+	    const std::string modname = kmodules.front();
+
 	    if (!modname.empty()) 
 		_entries.push_back(entry(modname, deviceName));
 	}
