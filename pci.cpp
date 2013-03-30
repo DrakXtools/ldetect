@@ -153,7 +153,7 @@ void pci::probe(void) {
 	    e.class_id = 0x0200; // NETWORK_ETHERNET
 
 	    e.vendor =  0x1a71; // XenSource
-	    e.device =  0xfffa; // fake
+	    e.device =  0xfffb; // fake
 	    e.subvendor = 0;
 	    e.subdevice = 0;
 	    e.class_id = 0x0200;
