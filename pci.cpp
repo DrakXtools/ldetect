@@ -2,6 +2,7 @@ extern "C" {
 #include <pci/pci.h>
 }
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <dirent.h>
 #include <pci/header.h>
 #include <libkmod.h>
@@ -129,6 +130,36 @@ void pci::probe(void) {
 	}
     }
 
+    // fake two PCI controllers for xen
+    struct stat sb;
+    if (!stat("/sys/bus/xen", &sb)) {
+	{
+	    _entries.push_back(pciEntry());
+	    pciEntry &e = _entries.back();
+	    e.text.append("XenSource, Inc.|Block Frontend");
+	    e.class_id = 0x0106; // STORAGE_SATA
+
+	    e.vendor =  0x1a71; // XenSource
+	    e.device =  0xfffa; // fake
+	    e.subvendor = 0;
+	    e.subdevice = 0;
+	    e.class_id = 0x0106;
+	    e.module = "xen_blkfront";
+	}
+	{
+	    _entries.push_back(pciEntry());
+	    pciEntry &e = _entries.back();
+	    e.text.append("XenSource, Inc.|Network Frontend");
+	    e.class_id = 0x0200; // NETWORK_ETHERNET
+
+	    e.vendor =  0x1a71; // XenSource
+	    e.device =  0xfffa; // fake
+	    e.subvendor = 0;
+	    e.subdevice = 0;
+	    e.class_id = 0x0200;
+	    e.module = "xen_netfront";
+	}
+    }
     findModules("pcitable", false);
 }
 
