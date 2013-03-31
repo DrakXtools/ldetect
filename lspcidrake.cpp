@@ -23,8 +23,7 @@ static void usage(void)
 	"usage: lspcidrake [options]\n"
 	"\t-p, --pci-file <file>\tPCI devices source [/proc/bus/pci/devices by default]\n"
 	"\t-u, --usb-file <file>\tUSB devices source [/proc/bus/usb/devices by default]\n"
-	"\t-v, --verbose\t\tVerbose mode [print ids and sub-ids], implies full probe\n"
-	"\t-d, --dmidecode <file>\tTo use this dmidecode output instead of calling demicode\n");
+	"\t-v, --verbose\t\tVerbose mode [print ids and sub-ids], implies full probe\n");
 }
 
 #ifdef DRAKX_ONE_BINARY
@@ -40,20 +39,15 @@ int main(int argc, char *argv[]) {
 	const char *proc_pci_path = nullptr;
 	struct option options[] = { { "verbose", 0, nullptr, 'v' },
 				    { "pci-file", 1, nullptr, 'p' },
-				    { "dmidecode", 0, nullptr, 'd' },
 				    { nullptr, 0, nullptr, 0 } };
 
-	while ((opt = getopt_long(argc, argv, "vp:u:d", options, nullptr)) != -1) {
+	while ((opt = getopt_long(argc, argv, "vp:u:", options, nullptr)) != -1) {
 		switch (opt) {
 			case 'v':
 				verboze = 1;
 				break;
 			case 'p':
 				proc_pci_path = optarg;
-				fake = 1;
-				break;
-			case 'd':
-				//dmidecode_file = optarg;
 				fake = 1;
 				break;
 			default:
