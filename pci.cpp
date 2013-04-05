@@ -133,31 +133,41 @@ void pci::probe(void) {
     // fake two PCI controllers for xen
     struct stat sb;
     if (!stat("/sys/bus/xen", &sb)) {
-	{
-	    _entries.push_back(pciEntry());
-	    pciEntry &e = _entries.back();
-	    e.text.append("XenSource, Inc.|Block Frontend");
-	    e.class_id = 0x0106; // STORAGE_SATA
+	// FIXME: use C++ streams..
+	FILE *f;
+	if ((f = fopen("/sys/hypervisor/uuid", "r"))) {
+	    char buf[38];
+	    fgets(buf, sizeof(buf) - 1, f);
+	    fclose(f);
+	    if (strncmp(buf, "00000000-0000-0000-0000-000000000000", sizeof(buf))) {
+		// We're now sure to be in a Xen guest:
+		{
+		    _entries.push_back(pciEntry());
+		    pciEntry &e = _entries.back();
+		    e.text.append("XenSource, Inc.|Block Frontend");
+		    e.class_id = 0x0106; // STORAGE_SATA
 
-	    e.vendor =  0x1a71; // XenSource
-	    e.device =  0xfffa; // fake
-	    e.subvendor = 0;
-	    e.subdevice = 0;
-	    e.class_id = 0x0106;
-	    e.module = "xen_blkfront";
-	}
-	{
-	    _entries.push_back(pciEntry());
-	    pciEntry &e = _entries.back();
-	    e.text.append("XenSource, Inc.|Network Frontend");
-	    e.class_id = 0x0200; // NETWORK_ETHERNET
+		    e.vendor =  0x1a71; // XenSource
+		    e.device =  0xfffa; // fake
+		    e.subvendor = 0;
+		    e.subdevice = 0;
+		    e.class_id = 0x0106;
+		    e.module = "xen_blkfront";
+		}
+		{
+		    _entries.push_back(pciEntry());
+		    pciEntry &e = _entries.back();
+		    e.text.append("XenSource, Inc.|Network Frontend");
+		    e.class_id = 0x0200; // NETWORK_ETHERNET
 
-	    e.vendor =  0x1a71; // XenSource
-	    e.device =  0xfffb; // fake
-	    e.subvendor = 0;
-	    e.subdevice = 0;
-	    e.class_id = 0x0200;
-	    e.module = "xen_netfront";
+		    e.vendor =  0x1a71; // XenSource
+		    e.device =  0xfffb; // fake
+		    e.subvendor = 0;
+		    e.subdevice = 0;
+		    e.class_id = 0x0200;
+		    e.module = "xen_netfront";
+		}
+	    }
 	}
     }
     findModules("pcitable", false);
