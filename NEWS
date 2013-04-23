@@ -1,5 +1,6 @@
 Version 0.13.4 - 23 April 2013, by Per Øyvind Karlsen
 
+- check if modalias resolves to any modules before trying to list it
 - do not fake Xen blk & net controllers on dom0 (mga#9546)
 - add support for detecting Xen blk & net controllers (mga#9546)
 
