@@ -88,7 +88,7 @@ install: $(binaries) $(libraries)
 	sed	-e "s#@PREFIX@#$(prefix)#g" \
 	  	-e "s#@LIBDIR@#$(libdir)#g" \
 		-e "s#@INCLUDEDIR@#$(includedir)#g" \
-		-e "s#@VERSION@#$(VERSION)#g"
+		-e "s#@VERSION@#$(VERSION)#g" \
 		ldetect.pc.in > $(DESTDIR)$(libdir)/pkgconfig/ldetect.pc
 
 dist: dist-git
