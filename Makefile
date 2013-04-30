@@ -39,7 +39,7 @@ includedir = $(prefix)/include
 
 binaries = lspcidrake
 
-all: $(binaries) $(libraries) .depend
+all: $(binaries) $(libraries) ldetect.pc .depend
 
 .depend: $(lib_src) lspcidrake.cpp
 	$(CXX) $(DEFS) $(INCLUDES) $(CXXFLAGS) -M $^ > .depend 
@@ -76,16 +76,22 @@ libldetect.a: $(lib_objs)
 	ar -cru $@ $^
 	ranlib $@
 
+ldetect.pc: ldetect.pc.in
+	sed	-e "s#@PREFIX@#$(prefix)#g" \
+	  	-e "s#@LIBDIR@#$(libdir)#g" \
+		-e "s#@INCLUDEDIR@#$(includedir)#g" \
+		-e "s#@VERSION@#$(VERSION)#g" \
+		$^ > $@
+
 clean:
 	rm -f *~ *.o pciclass.cpp usbclass.cpp $(binaries) $(libraries) .depend
 
-install: $(binaries) $(libraries)
-	install -d $(DESTDIR)$(bindir) $(DESTDIR)$(libdir)/pkgconfig $(DESTDIR)$(includedir)/ldetect
+install: $(binaries) $(libraries) ldetect.pc
+	install -d $(DESTDIR)$(bindir) $(DESTDIR)$(includedir)/ldetect
 	install -m755 $(binaries) $(DESTDIR)$(bindir)
 	cp -a $(libraries) $(DESTDIR)$(libdir)
 	install -m644 $(headers_api) $(DESTDIR)$(includedir)/ldetect
-	sed -e "s#@PREFIX@#$(prefix)#g" -e "s#@LIBDIR@#$(libdir)#g" -e "s#@INCLUDEDIR@#$(includedir)#g" \
-		-e "s#@VERSION@#$(VERSION)#g" ldetect.pc.in > $(DESTDIR)$(libdir)/pkgconfig/ldetect.pc
+	intalll -m644 -D $(DESTDIR)$(libdir)/pkgconfig/ldetect.pc
 
 dist: dist-git
 	$(info $(NAME)-$(VERSION).tar.xz is ready)
