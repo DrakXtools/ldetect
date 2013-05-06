@@ -83,6 +83,7 @@ usb_probe()
     snprintf(buf, sizeof(buf), "%s|%s|%s", s.class_text.c_str(), s.sub_text.c_str(), s.prot_text.c_str());
     HV * rh = common_pciusb_hash_init(e);
     hv_store(rh, "usb_port",       8, newSVnv(e.usb_port),   0);
+    hv_store(rh, "media_type",    10, newSVpv(buf, 0),        0);
     PUSHs(newRV((SV *)rh));
   }
 

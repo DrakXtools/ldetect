@@ -1,3 +1,7 @@
+Version 0.13.6 -  6 May 2013, by Per Øyvind Karlsen
+
+- fix detecting some USB devices due to not reporting their class (mga#9674)
+
 Version 0.13.5 - 30 April 2013, by Per Øyvind Karlsen
 
 - place variables in hash map in stead of array
