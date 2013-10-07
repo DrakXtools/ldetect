@@ -117,6 +117,9 @@ dist-git:
 log:
 	svn2cl --authors ../common/username.xml --accum
 
+gdb: lspcidrake
+	LD_LIBRARY_PATH=$(PWD) gdb -q ./lspcidrake
+
 run: lspcidrake
 	LD_LIBRARY_PATH=$(PWD)  ./lspcidrake
 endif
