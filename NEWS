@@ -1,3 +1,5 @@
+- get driver in use from sysfs (Crispin Boylan)
+
 Version 0.13.6 -  6 May 2013, by Per Øyvind Karlsen
 
 - fix detecting some USB devices due to not reporting their class (mga#9674)
