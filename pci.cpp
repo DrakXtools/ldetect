@@ -199,7 +199,7 @@ void pci::findModules(std::string &&fpciusbtable, bool descr_lookup) {
               buf[n] = 0;
 
             char* drv;
-            if (drv = strrchr(buf, '/'))
+            if ((drv = strrchr(buf, '/')))
               e.module = drv +1;
             else
               e.module = buf;
