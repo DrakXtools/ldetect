@@ -18,8 +18,8 @@ namespace ldetect {
 
     class pciusbEntry {
 	public:
-	    pciusbEntry(std::string module = "", std::string text= "", std::string class_type = "") :
-		module(module), kmodules(), text(text), class_type(class_type),
+	    pciusbEntry(std::string module = "", std::string text= "", std::string class_type = "", std::string card = "") :
+		module(module), kmodules(), text(text), class_type(class_type), card(card),
 		vendor(0xffff), device(0xffff),
 
 		subvendor(0xffff), subdevice(0xffff), class_id(0),
@@ -31,6 +31,7 @@ namespace ldetect {
 	    std::vector<std::string> kmodules;
 	    std::string text;
 	    std::string class_type;
+	    std::string card;
 
 	    uint16_t vendor; /* PCI vendor id */
 	    uint16_t device; /* PCI device id */

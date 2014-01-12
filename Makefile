@@ -29,7 +29,7 @@ ldetect_srcdir ?= .
 ifndef MDK_STAGE_ONE
 NAME = ldetect
 LIB_MAJOR = 0.13
-LIB_MINOR = 7
+LIB_MINOR = 8
 VERSION=$(LIB_MAJOR).$(LIB_MINOR)
 
 lib = lib

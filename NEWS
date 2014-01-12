@@ -1,3 +1,9 @@
+Version 0.13.8 - 12 January 2013, by Per Øyvind Karlsen
+
+- store different kind of driver names that starts with ie. 'Card:' in a
+  separate 'card' member string to make sure to always export it at same
+  place
+
 Version 0.13.7 - 30 November 2013, by Per Øyvind Karlsen
 
 - get driver in use from sysfs (Crispin Boylan)

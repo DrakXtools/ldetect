@@ -65,6 +65,8 @@ void findModules(const std::string &fpciusbtable, bool descr_lookup, std::vector
 	    }
 	    if (strncmp(p, "unknown", q-p)) {
 		e.module.assign(p,q-p);
+		if (e.module.find_first_of(':') != std::string::npos)
+		    std::swap(e.module, e.card);
 	    }
 	    /* special case for buggy 0x0 usb entry */
 	    if (descr_lookup && strlen(q) > 1 && 2 < strlen(q+2) && vendor != 0 && device != 0 && e.class_id != 0x90000d) { /* Hub class */

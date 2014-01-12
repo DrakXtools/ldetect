@@ -18,6 +18,7 @@ HV* common_pciusb_hash_init(const ldetect::pciusbEntry &e) {
   hv_store(rh, "subvendor",      9, newSVnv(e.subvendor),  0); 
   hv_store(rh, "id",             2, newSVnv(e.device),     0); 
   hv_store(rh, "subid",          5, newSVnv(e.subdevice),  0); 
+  hv_store(rh, "card",           4, newSVpv(e.card.c_str(), 0);
   hv_store(rh, "driver",         6, newSVpv(!e.module.empty() ? e.module.c_str() : (!e.kmodules.empty() ? e.kmodules.front().c_str() : "unknown"), 0), 0);
   hv_store(rh, "description",   11, newSVpv(e.text.c_str(), 0),    0); 
   hv_store(rh, "pci_bus",        7, newSVnv(e.bus),    0); 
