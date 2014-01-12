@@ -92,6 +92,7 @@ install: $(binaries) $(libraries)
 		ldetect.pc.in > $(DESTDIR)$(libdir)/pkgconfig/ldetect.pc
 
 dist: dist-git
+	git tag $(NAME)-$(VERSION)
 	$(info $(NAME)-$(VERSION).tar.xz is ready)
 
 
