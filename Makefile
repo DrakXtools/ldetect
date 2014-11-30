@@ -7,12 +7,13 @@ libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
 OPTFLAGS = -g -Os
 CXXFLAGS += -Wall -Wextra -pedantic $(OPTFLAGS) -fPIC -fvisibility=hidden
 LDFLAGS += -Wl,--no-undefined
+STDFLAGS += -std=gnu++11
 ifeq (uclibc, $(LIBC))
 CC=uclibc-gcc
-CXX=uclibc-g++ -std=gnu++11
+CXX=uclibc-g++
 CXXFLAGS += -fno-exceptions -fno-rtti
 else
-CXX = g++ -std=gnu++11
+CXX = g++
 CXXFLAGS += -Weffc++ 
 endif
 CPPFLAGS += $(shell getconf LFS_CFLAGS) $(shell pkg-config --cflags libkmod libpci)
@@ -43,7 +44,7 @@ binaries = lspcidrake
 all: $(binaries) $(libraries) .depend
 
 .depend: $(lib_src) lspcidrake.cpp
-	$(CXX) $(DEFS) $(INCLUDES) $(CXXFLAGS) -M $^ > .depend 
+	$(CXX) $(STDFLAGS) $(DEFS) $(INCLUDES) $(CXXFLAGS) -M $^ > .depend 
 
 ifeq (.depend,$(wildcard .depend))
 include .depend
@@ -51,22 +52,22 @@ endif
 
 ifneq (0, $(WHOLE_PROGRAM))
 lspcidrake.static: lspcidrake.cpp $(lib_src)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program  $(FLTO) -Wl,-O1 -o $@ $^ $(LIBS)
+	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program  $(FLTO) -Wl,-O1 -o $@ $^ $(LIBS)
 
 lspcidrake: lspcidrake.cpp libldetect.so
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program  $(FLTO) -Wl,-z,relro -Wl,-O1 -o $@ $^
+	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program  $(FLTO) -Wl,-z,relro -Wl,-O1 -o $@ $^
 
 $(lib_major).$(LIB_MINOR): $(lib_src) $(headers) $(headers_api)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program  $(FLTO) -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $(lib_src) $(LIBS)
+	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program  $(FLTO) -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $(lib_src) $(LIBS)
 else
 lspcidrake.static: lspcidrake.cpp libldetect.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 lspcidrake: lspcidrake.cpp libldetect.so
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 $(lib_major).$(LIB_MINOR): $(lib_objs)
-	$(CXX) $(LDFLAGS) -shared -Wl,-z,relro $(FLTO) -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
+	$(CXX) $(STDFLAGS) $(LDFLAGS) -shared -Wl,-z,relro $(FLTO) -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
 endif
 $(lib_major): $(lib_major).$(LIB_MINOR)
 	ln -sf $< $@
