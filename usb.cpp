@@ -161,7 +161,7 @@ void usb::findModules(std::string &&fpciusbtable, bool descr_lookup) {
 		if (!e.class_id) {
 		    f.open((devPath + "/bInterfaceClass").c_str());
 		    if (f.is_open()) {
-			uint32_t cid, sub, prot = 0;
+			uint32_t cid, sub = 0, prot = 0;
 
 			f >> std::hex >> cid;
 			f.close();
