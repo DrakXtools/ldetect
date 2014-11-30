@@ -13,7 +13,6 @@ namespace ldetect {
 	    dmi() EXPORTED;
 	    ~dmi() EXPORTED;
 
-
 	    void probe(void) EXPORTED;
     };
 }
