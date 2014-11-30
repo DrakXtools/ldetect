@@ -17,9 +17,9 @@ FLTO = -flto -fuse-linker-plugin
 OPTFLAGS += -Os
 endif
 DEBUGFLAGS += -g
-CXXFLAGS += $(DEBUGFLAGS) $(WARNFLAGS) $(OPTFLAGS) -fPIC -fvisibility=hidden
-LDFLAGS += -Wl,--no-undefined
 STDFLAGS += -std=gnu++11
+CXXFLAGS += $(STDFLAGS) $(DEBUGFLAGS) $(WARNFLAGS) $(OPTFLAGS) $(FLTO) -fPIC -fvisibility=hidden
+LDFLAGS += -Wl,--no-undefined
 ifeq (uclibc, $(LIBC))
 CC=uclibc-gcc
 CXX=uclibc-g++
@@ -51,37 +51,34 @@ includedir = $(prefix)/include
 
 binaries = lspcidrake
 
-all: $(binaries) $(libraries) .depend
+all:  .depend $(binaries) $(libraries)
 
 .depend: $(lib_src) lspcidrake.cpp
 	$(CXX) $(STDFLAGS) $(DEFS) $(INCLUDES) $(CXXFLAGS) -M $^ > .depend 
 
 ifeq (.depend,$(wildcard .depend))
-include .depend
+-include .depend
 endif
 
 ifneq (0, $(WHOLE_PROGRAM))
 lspcidrake.static: lspcidrake.cpp $(lib_src)
-	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(WHOLE_FLAGS) $(FLTO) -Wl,-O1 -o $@ $^ $(LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(WHOLE_FLAGS) -Wl,-O1 -o $@ $^ $(LIBS)
 
 lspcidrake: lspcidrake.cpp libldetect.so
-	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(WHOLE_FLAGS) $(FLTO) -Wl,-z,relro -Wl,-O1 -o $@ $^
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(WHOLE_FLAGS) -Wl,-z,relro -Wl,-O1 -o $@ $^
 
 $(lib_major).$(LIB_MINOR): $(lib_src) $(headers) $(headers_api)
-	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(WHOLE_FLAGS) $(FLTO) -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $(lib_src) $(LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(WHOLE_FLAGS) -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $(lib_src) $(LIBS)
 else
 lspcidrake.static: lspcidrake.cpp libldetect.a
-	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 lspcidrake: lspcidrake.cpp libldetect.so
-	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 $(lib_major).$(LIB_MINOR): $(lib_objs)
-	$(CXX) $(STDFLAGS) $(LDFLAGS) -shared -Wl,-z,relro $(FLTO) -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
+	$(CXX) $(LDFLAGS) -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
 endif
-%.o: $(lib_src)
-	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(FLTO) -c $^
-
 $(lib_major): $(lib_major).$(LIB_MINOR)
 	ln -sf $< $@
 libldetect.so: $(lib_major)
