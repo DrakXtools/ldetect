@@ -22,8 +22,13 @@ ifneq ($(ZLIB),0)
 CPPFLAGS += $(shell pkg-config --cflags zlib)
 LIBS += $(shell pkg-config --libs zlib)
 endif
+ifeq ($(CXX), clang++)
+WHOLE_PROGRAM = 0
+FLTO = -flto
+else
 WHOLE_PROGRAM = 1
 FLTO = -flto -fuse-linker-plugin
+endif
 
 ldetect_srcdir ?= .
 
