@@ -4,8 +4,18 @@ lib_src = common.cpp modalias.cpp pciusb.cpp pci.cpp usb.cpp pciclass.cpp usbcla
 lib_objs = $(subst .cpp,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
-OPTFLAGS = -g -Os
-CXXFLAGS += -Wall -Wextra -pedantic $(OPTFLAGS) -fPIC -fvisibility=hidden
+WARNFLAGS += -Wall -Wextra -pedantic
+ifeq ($(CXX), clang++)
+WARNFLAGS = -Wno-attributes
+WHOLE_FLAGS =
+FLTO = -flto
+OPTFLAGS += -g -Oz
+else
+WHOLE_FLAGS = -fwhole-program
+FLTO = -flto -fuse-linker-plugin
+OPTFLAGS += -g -Os
+endif
+CXXFLAGS += $(WARNFLAGS) $(OPTFLAGS) -fPIC -fvisibility=hidden
 LDFLAGS += -Wl,--no-undefined
 STDFLAGS += -std=gnu++11
 ifeq (uclibc, $(LIBC))
@@ -21,13 +31,6 @@ LIBS += $(shell pkg-config --libs libkmod libpci)
 ifneq ($(ZLIB),0)
 CPPFLAGS += $(shell pkg-config --cflags zlib)
 LIBS += $(shell pkg-config --libs zlib)
-endif
-ifeq ($(CXX), clang++)
-WHOLE_PROGRAM = 0
-FLTO = -flto
-else
-WHOLE_PROGRAM = 1
-FLTO = -flto -fuse-linker-plugin
 endif
 
 ldetect_srcdir ?= .
@@ -57,13 +60,13 @@ endif
 
 ifneq (0, $(WHOLE_PROGRAM))
 lspcidrake.static: lspcidrake.cpp $(lib_src)
-	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program  $(FLTO) -Wl,-O1 -o $@ $^ $(LIBS)
+	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(WHOLE_FLAGS) $(FLTO) -Wl,-O1 -o $@ $^ $(LIBS)
 
 lspcidrake: lspcidrake.cpp libldetect.so
-	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program  $(FLTO) -Wl,-z,relro -Wl,-O1 -o $@ $^
+	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(WHOLE_FLAGS) $(FLTO) -Wl,-z,relro -Wl,-O1 -o $@ $^
 
 $(lib_major).$(LIB_MINOR): $(lib_src) $(headers) $(headers_api)
-	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program  $(FLTO) -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $(lib_src) $(LIBS)
+	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(WHOLE_FLAGS) $(FLTO) -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $(lib_src) $(LIBS)
 else
 lspcidrake.static: lspcidrake.cpp libldetect.a
 	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
@@ -75,7 +78,7 @@ $(lib_major).$(LIB_MINOR): $(lib_objs)
 	$(CXX) $(STDFLAGS) $(LDFLAGS) -shared -Wl,-z,relro $(FLTO) -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
 endif
 $(lib_objs): $(lib_src)
-	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $^
+	$(CXX) $(STDFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(FLTO) -c $^
 
 $(lib_major): $(lib_major).$(LIB_MINOR)
 	ln -sf $< $@
