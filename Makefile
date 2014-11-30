@@ -23,7 +23,7 @@ CPPFLAGS += $(shell pkg-config --cflags zlib)
 LIBS += $(shell pkg-config --libs zlib)
 endif
 WHOLE_PROGRAM = 1
-FLTO = -flto
+FLTO = -flto -fuse-linker-plugin
 
 ldetect_srcdir ?= .
 
