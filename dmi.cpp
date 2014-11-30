@@ -11,6 +11,12 @@
 
 namespace ldetect {
 
+dmi::dmi() {
+}
+
+dmi::~dmi() {
+}
+
 void dmi::probe(void)
 {
     struct dmiTable {
