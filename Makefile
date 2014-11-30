@@ -9,13 +9,14 @@ ifeq ($(CXX), clang++)
 WARNFLAGS = -Wno-attributes
 WHOLE_FLAGS =
 FLTO = -flto
-OPTFLAGS += -g -Oz
+OPTFLAGS += -Oz
 else
 WHOLE_FLAGS = -fwhole-program
 FLTO = -flto -fuse-linker-plugin
-OPTFLAGS += -g -Os
+OPTFLAGS += -Os
 endif
-CXXFLAGS += $(WARNFLAGS) $(OPTFLAGS) -fPIC -fvisibility=hidden
+DEBUGFLAGS += -g
+CXXFLAGS += $(DEBUGFLAGS) $(WARNFLAGS) $(OPTFLAGS) -fPIC -fvisibility=hidden
 LDFLAGS += -Wl,--no-undefined
 STDFLAGS += -std=gnu++11
 ifeq (uclibc, $(LIBC))
