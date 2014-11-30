@@ -8,7 +8,8 @@ WARNFLAGS += -Wall -Wextra -pedantic
 ifeq ($(CXX), clang++)
 WARNFLAGS = -Wno-attributes
 WHOLE_FLAGS =
-FLTO = -flto
+# broken
+#FLTO = -flto
 OPTFLAGS += -Oz
 else
 WHOLE_FLAGS = -fwhole-program
