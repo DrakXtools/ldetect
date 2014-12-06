@@ -133,8 +133,8 @@ void usb::findModules(std::string &&fpciusbtable, bool descr_lookup) {
 	    it != _entries.end(); ++it) {
 	usbEntry &e = *it;
 
-	// No special case found in pcitable ? Then lookup modalias for PCI devices
-	if (!e.module.empty() && (e.module != "unknown" && !e.card.empty()))
+	// No special case found in pcitable ? Then lookup modalias for USB devices
+	if (!e.module.empty() && (e.module != "unknown" && e.card.empty()))
 	    continue;
 	{
 	    std::ostringstream devname(std::ostringstream::out);
