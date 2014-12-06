@@ -22,7 +22,7 @@ static void usage(void)
 	printf(
 	"usage: lspcidrake [options]\n"
 	"\t-p, --pci-file <file>\tPCI devices source [/proc/bus/pci/devices by default]\n"
-	"\t-u, --usb-file <file>\tUSB devices source [/proc/bus/usb/devices by default]\n"
+//	"\t-u, --usb-file <file>\tUSB devices source [/proc/bus/usb/devices by default]\n"
 	"\t-v, --verbose\t\tVerbose mode [print ids and sub-ids], implies full probe\n");
 }
 
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 				    { "pci-file", 1, nullptr, 'p' },
 				    { nullptr, 0, nullptr, 0 } };
 
-	while ((opt = getopt_long(argc, argv, "vp:u:", options, nullptr)) != -1) {
+	while ((opt = getopt_long(argc, argv, "vp:", options, nullptr)) != -1) {
 		switch (opt) {
 			case 'v':
 				verboze = 1;
