@@ -21,7 +21,7 @@ static void usage(void)
 {
 	printf(
 	"usage: lspcidrake [options]\n"
-	"\t-p, --pci-file <file>\tPCI devices source [/proc/bus/pci/devices by default]\n"
+	"\t-p, --pci-file <file>\tPCI devices source [/proc/bus/pci by default]\n"
 //	"\t-u, --usb-file <file>\tUSB devices source [/proc/bus/usb/devices by default]\n"
 	"\t-v, --verbose\t\tVerbose mode [print ids and sub-ids], implies full probe\n");
 }
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 	int opt, fake = 0;
-	const char *proc_pci_path = nullptr;
+	const char *proc_pci_path = "/proc/bus/pci";
 	struct option options[] = { { "verbose", 0, nullptr, 'v' },
 				    { "pci-file", 1, nullptr, 'p' },
 				    { nullptr, 0, nullptr, 0 } };
@@ -56,15 +56,17 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	ldetect::pci p = proc_pci_path ? ldetect::pci(proc_pci_path) : ldetect::pci();
-	p.probe();
-	if (!fake) {
-	    for (uint16_t i = 0; i < p.size(); i++) {
-		const pciEntry &e = p[i];
-		std::cout << e;
-		if (verboze)
-		    std::cout << e.verbose();
-		std::cout << e.rev() << std::endl;
+	if (!access(proc_pci_path, F_OK)) {
+	    ldetect::pci p = ldetect::pci(proc_pci_path);
+	    p.probe();
+	    if (!fake) {
+		for (uint16_t i = 0; i < p.size(); i++) {
+		    const pciEntry &e = p[i];
+		    std::cout << e;
+		    if (verboze)
+			std::cout << e.verbose();
+		    std::cout << e.rev() << std::endl;
+		}
 	    }
 	}
 

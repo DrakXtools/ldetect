@@ -1,3 +1,7 @@
+Version 0.13.11 - 6 December 2014, by Per Øyvind Karlsen
+
+- allow lspcidrake to work even without pci bus available (ie. on arm)
+
 Version 0.13.10 - 6 December 2014, by Per Øyvind Karlsen
 
 - minor fixes for LTO to work
