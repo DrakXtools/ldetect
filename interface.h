@@ -15,19 +15,19 @@ namespace ldetect {
 	    interface() : _entries() {}
 	    virtual ~interface() {};
 
-	    const T& operator[] (uint16_t i) const throw() {
+	    const T& operator[] (uint16_t i) const noexcept {
 		return _entries[i];
 	    }
 
-	    operator bool() const throw() {
+	    operator bool() const noexcept {
 		return !_entries.empty();
 	    }
 
-	    bool operator! () const throw() {
+	    bool operator! () const noexcept {
 		return _entries.empty();
 	    }
 
-	    uint16_t size() const throw() { return _entries.size(); }
+	    uint16_t size() const noexcept { return _entries.size(); }
 
 	protected:
 	    std::vector<T> _entries;
