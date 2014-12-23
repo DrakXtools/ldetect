@@ -17,7 +17,7 @@ FLTO = -flto -fuse-linker-plugin
 OPTFLAGS += -Os
 endif
 DEBUGFLAGS += -g
-STDFLAGS += -std=gnu++11
+STDFLAGS += -std=gnu++1y
 CXXFLAGS += $(STDFLAGS) $(DEBUGFLAGS) $(WARNFLAGS) $(OPTFLAGS) $(FLTO) -fPIC -fvisibility=hidden
 LDFLAGS += -Wl,--no-undefined
 ifeq (uclibc, $(LIBC))
