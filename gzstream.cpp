@@ -35,12 +35,12 @@ std::streambuf::int_type gzstreambuf::underflow() {
 
     if (!opened)
 	return EOF;
-    int n_putback = gptr() - eback();
+    auto n_putback = gptr() - eback();
     if (n_putback > 4)
 	n_putback = 4;
     memcpy(buffer + (4 - n_putback), gptr() - n_putback, n_putback);
 
-    int num = gzread(file, buffer+4, bufferSize-4);
+    auto num = gzread(file, buffer+4, bufferSize-4);
     if (num <= 0)
 	return EOF;
 

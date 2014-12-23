@@ -142,7 +142,7 @@ void usb::findModules(std::string &&fpciusbtable, bool descr_lookup) {
 
 	    std::ifstream f;
 	    std::string path(usbDevs + devname.str());
-	    for (uint16_t i = 0; i < e.interfaces && e.module.empty(); i++) {
+	    for (auto i = 0; i < e.interfaces && e.module.empty(); i++) {
 		std::ostringstream numStr(std::ostringstream::out);
 		numStr << i;
 		std::string devPath(path + numStr.str());

@@ -71,7 +71,7 @@ std::vector<std::string> modalias_resolve_modules(struct kmod_ctx *ctx, const st
 
 	struct kmod_list *l = nullptr, *list = nullptr, *filtered = nullptr;
 	std::vector<std::string> modules;
-	int err = kmod_module_new_from_lookup(ctx, modalias.c_str(), &list);
+	auto err = kmod_module_new_from_lookup(ctx, modalias.c_str(), &list);
 	if (err < 0)
 		goto exit;
 

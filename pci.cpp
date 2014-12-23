@@ -192,7 +192,7 @@ void pci::findModules(std::string &&fpciusbtable, bool descr_lookup) {
 
 	    std::string sysDir = std::string("/sys/bus/pci/devices/").append(devname.str());
 	    char buf[1024];
-	    ssize_t n = readlink(std::string(sysDir + "/driver").c_str(), buf, sizeof(buf));
+	    auto n = readlink(std::string(sysDir + "/driver").c_str(), buf, sizeof(buf));
 	    if(n > 0) {
 		buf[n] = 0;
 
