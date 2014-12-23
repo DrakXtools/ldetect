@@ -7,9 +7,9 @@
 #include <sys/utsname.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <libkmod.h>
 #include <dirent.h>
 #include "common.h"
