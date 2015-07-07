@@ -1,0 +1,389 @@
+From 4546bd5030054b196c38ca4c5a7d9a1db15d78b8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Per=20=C3=98yvind=20Karlsen=20=28proyvind=29?=
+ <proyvind@moondrake.org>
+Date: Tue, 7 Jul 2015 08:09:54 +0200
+Subject: [PATCH] implement use of hwdb for usb (more like a proof of concept,
+ can be used for other busses like pci as well...), but as this adds
+ dependency on a >6MB /etc/udev/hwdb.bin, I'm not comfortable with use of
+ yet...
+
+---
+ Makefile     |   4 +-
+ usb.cpp      |   7 +-
+ usbnames.cpp | 221 +++++++----------------------------------------------------
+ usbnames.h   |  41 ++---------
+ 4 files changed, 33 insertions(+), 240 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 6639be2..362058d 100644
+--- a/Makefile
++++ b/Makefile
+@@ -28,8 +28,8 @@ else
+ CXX = g++
+ CXXFLAGS += -Weffc++ 
+ endif
+-CPPFLAGS += $(shell getconf LFS_CFLAGS) $(shell pkg-config --cflags libkmod libpci)
+-LIBS += $(shell pkg-config --libs libkmod libpci)
++CPPFLAGS += $(shell getconf LFS_CFLAGS) $(shell pkg-config --cflags libkmod libpci libudev)
++LIBS += $(shell pkg-config --libs libkmod libpci libudev)
+ ifneq ($(ZLIB),0)
+ CPPFLAGS += $(shell pkg-config --cflags zlib)
+ LIBS += $(shell pkg-config --libs zlib)
+diff --git a/usb.cpp b/usb.cpp
+index 50a2265..bb5a3a3 100644
+--- a/usb.cpp
++++ b/usb.cpp
+@@ -26,7 +26,7 @@ std::ostream& operator<<(std::ostream& os, const usbEntry& e) {
+     return os;
+ }
+ 
+-usb::usb() : _names("/usr/share/usb.ids") {
++usb::usb() : _names() {
+ }
+ 
+ usb::~usb() {
+@@ -87,13 +87,8 @@ void usb::probe(void) {
+ 	    }
+ 
+ 	    e.text += "|";
+-#ifdef __UCLIBCXX_MAJOR__
+ 	    const char *productName = _names.getProduct(e.vendor, e.device);
+ 	    if (productName == nullptr) {
+-#else
+-	    const std::string &productName = _names.getProduct(e.vendor, e.device);
+-	    if (productName.empty()) {
+-#endif
+ 		std::string product;
+ 		getline(f, product);
+ 		e.text += product;
+diff --git a/usbnames.cpp b/usbnames.cpp
+index 4a402ae..b53cac5 100644
+--- a/usbnames.cpp
++++ b/usbnames.cpp
+@@ -27,7 +27,6 @@
+ #include <cerrno>
+ #include <cstdlib>
+ #include <unistd.h>
+-#include <cstdio>
+ #include <ctype.h>
+ 
+ #include "usbnames.h"
+@@ -36,226 +35,52 @@ namespace ldetect {
+ 
+ /* ---------------------------------------------------------------------- */
+ 
+-#ifdef __UCLIBCXX_MAJOR__
+-#define HASH1  0x10
+-#define HASH2  0x02
+-
+-static uint32_t hashnum(uint32_t num)
++// If actually using hwdb, it should rather be moved to a dedicated class
++// for common usage by other device types like pci etc...
++const char *usbNames::hwdb_get(const char *modalias, const char *key)
+ {
+-	for (uint32_t mask1 = HASH1 << 27, mask2 = HASH2 << 27;
+-			mask1 >= HASH1;
+-			mask1 >>= 1, mask2 >>= 1)
+-		if (num & mask1)
+-			num ^= mask2;
+-	return num & (HASHSZ-1);
+-}
++	struct udev_list_entry *entry;
++	const char *ret = nullptr;
+ 
+-/* ---------------------------------------------------------------------- */
+-const char *usbNames::getVendor(uint16_t vendorid)
+-{
+-	for (struct vendor *v = _vendors[hashnum(vendorid)]; v; v = v->next)
+-		if (v->vendorid == vendorid)
+-			return v->name;
+-	return nullptr;
+-}
++	udev_list_entry_foreach(entry, udev_hwdb_get_properties_list_entry(_hwdb, modalias, 0))
++		if (strcmp(udev_list_entry_get_name(entry), key) == 0) {
++			ret = udev_list_entry_get_value(entry);
++			break;
++		}
+ 
+-const char *usbNames::getProduct(uint16_t vendorid, uint16_t productid)
+-{
+-	for (struct product *p = _products[hashnum((vendorid << 16) | productid)];
+-			p; p = p->next)
+-		if (p->vendorid == vendorid && p->productid == productid)
+-			return p->name;
+-	return nullptr;
++	return ret;
+ }
+ 
+ /* ---------------------------------------------------------------------- */
+-
+-int usbNames::newVendor(const char *name, uint16_t vendorid)
+-{
+-	uint32_t h = hashnum(vendorid);
+-	struct vendor *v;
+-
+-	for (v = _vendors[h]; v; v = v->next)
+-		if (v->vendorid == vendorid)
+-			return -1;
+-	v = (struct vendor*)malloc(sizeof(struct vendor) + strlen(name));
+-	if (!v)
+-		return -1;
+-	strcpy(v->name, name);
+-	v->vendorid = vendorid;
+-	v->next = _vendors[h];
+-	_vendors[h] = v;
+-	return 0;
+-}
+-
+-int usbNames::newProduct(const char *name, uint16_t vendorid, uint16_t productid)
++const char *usbNames::getVendor(uint16_t vendorid)
+ {
+-	uint32_t h = hashnum((vendorid << 16) | productid);
+-	struct product *p;
++	char modalias[16];
+ 
+-	for (p = _products[h]; p; p = p->next)
+-		if (p->vendorid == vendorid && p->productid == productid)
+-			return -1;
+-	p = (struct product*)malloc(sizeof(struct product) + strlen(name));
+-	if (!p)
+-		return -1;
+-	strcpy(p->name, name);
+-	p->vendorid = vendorid;
+-	p->productid = productid;
+-	p->next = _products[h];
+-	_products[h] = p;
+-	return 0;
++	sprintf(modalias, "usb:v%04X*", vendorid);
++	return hwdb_get(modalias, "ID_VENDOR_FROM_DATABASE");
+ }
+ 
+-/* ---------------------------------------------------------------------- */
+-
+-template <class T> void freeList(T** list)
++const char *usbNames::getProduct(uint16_t vendorid, uint16_t productid)
+ {
+-	T *cur, *tmp;
++	char modalias[32];
+ 
+-	for (int i = 0; i < HASHSZ; i++) {
+-		cur = list[i];
+-		list[i] = nullptr;
+-		while (cur) {
+-			tmp = cur;
+-			cur = cur->next;
+-			free(tmp);
+-		}
+-	}
+-}
+-#else
+-static const std::string emptyString;
+-const std::string& usbNames::getVendor(uint16_t vendorId)
+-{
+-    std::map<uint16_t, std::string>::const_iterator it = _vendors.find(vendorId);
+-    return it == _vendors.end() ? emptyString : it->second;
++	sprintf(modalias, "usb:v%04Xp%04X*", vendorid, productid);
++	return hwdb_get(modalias, "ID_MODEL_FROM_DATABASE");
+ }
+ 
+-const std::string& usbNames::getProduct(uint16_t vendorId, uint16_t productId)
+-{
+-    std::map<std::pair<uint16_t,uint16_t>, std::string>::const_iterator it = _products.find(std::pair<uint16_t, uint16_t>(vendorId, productId));
+-    return it == _products.end() ? emptyString : it->second;
+-}
+-
+-#endif
+-
+ #define DBG(x)
+ 
+-void usbNames::parse(instream &f)
+-{
+-	char buf[512], *cp;
+-	uint32_t linectr = 0;
+-	int lastvendor = -1;
+-	uint32_t u;
+-
+-	while (f->getline(buf, sizeof(buf)) && !f->eof()) {
+-		linectr++;
+-		if (buf[0] == '#' || !buf[0])
+-			continue;
+-		cp = buf;
+-		if (buf[0] == 'P' && buf[1] == 'H' && buf[2] == 'Y' && buf[3] == 'S' && buf[4] == 'D' &&
+-		    buf[5] == 'E' && buf[6] == 'S' && /*isspace(buf[7])*/ buf[7] == ' ') {
+-			continue;
+-		}
+-		if (buf[0] == 'P' && buf[1] == 'H' && buf[2] == 'Y' && /*isspace(buf[3])*/ buf[3] == ' ') {
+-			continue;
+-		}
+-		if (buf[0] == 'B' && buf[1] == 'I' && buf[2] == 'A' && buf[3] == 'S' && /*isspace(buf[4])*/ buf[4] == ' ') {
+-			continue;
+-		}
+-		if (buf[0] == 'L' && /*isspace(buf[1])*/ buf[1] == ' ') {
+-			lastvendor = -1;
+-			continue;
+-		}
+-		if (buf[0] == 'C' && /*isspace(buf[1])*/ buf[1] == ' ') {
+-			lastvendor = -1;
+-			continue;
+-		}
+-		if (buf[0] == 'A' && buf[1] == 'T' && isspace(buf[2])) {
+-			continue;
+-		}
+-		if (buf[0] == 'V' && buf[1] == 'T' && isspace(buf[2])) {
+-			continue;
+-		}
+-		if (buf[0] == 'H' && buf[1] == 'C' && buf[2] == 'C' && isspace(buf[3])) {
+-			continue;
+-		}
+-		if (isxdigit(*cp)) {
+-			/* vendor */
+-			u = strtoul(cp, &cp, 16);
+-			while (isspace(*cp))
+-				cp++;
+-			if (!*cp) {
+-				fprintf(stderr, "Invalid vendor spec at line %u\n", linectr);
+-				continue;
+-			}
+-#ifdef __UCLIBCXX_MAJOR__
+-			if (newVendor(cp, u))
+-				fprintf(stderr, "Duplicate vendor spec at line %u vendor %04x %s\n", linectr, u, cp);
+-#else
+-			_vendors[u] = cp;
+-#endif
+-			DBG(printf("line %5u vendor %04x %s\n", linectr, u, cp));
+-			lastvendor = u;
+-			continue;
+-		}
+-		if (buf[0] == '\t' && isxdigit(buf[1])) {
+-			/* product or subclass spec */
+-			u = strtoul(buf+1, &cp, 16);
+-			while (isspace(*cp))
+-				cp++;
+-			if (!*cp) {
+-				fprintf(stderr, "Invalid product/subclass spec at line %u\n", linectr);
+-				continue;
+-			}
+-			if (lastvendor != -1) {
+-#ifdef __UCLIBCXX_MAJOR__
+-			    if (newProduct(cp, lastvendor, u))
+-				fprintf(stderr, "Duplicate product spec at line %u product %04x:%04x %s\n", linectr, lastvendor, u, cp);
+-#else
+-			    _products[std::pair<uint16_t,uint16_t>(lastvendor, u)] = cp;
+-#endif
+-				DBG(printf("line %5u product %04x:%04x %s\n", linectr, lastvendor, u, cp));
+-				continue;
+-			}
+-			continue;
+-		}
+-		if (buf[0] == '\t' && buf[1] == '\t' && isxdigit(buf[2])) {
+-			continue;
+-		}
+-		if (buf[0] == 'H' && buf[1] == 'I' && buf[2] == 'D' && /*isspace(buf[3])*/ buf[3] == ' ') {
+-			continue;
+-		}
+-		if (buf[0] == 'H' && buf[1] == 'U' && buf[2] == 'T' && /*isspace(buf[3])*/ buf[3] == ' ') {
+-			lastvendor = -1;
+-			continue;
+-
+-		}
+-		if (buf[0] == 'R' && buf[1] == ' ') {
+-			continue;
+-		}
+-		fprintf(stderr, "Unknown line at line %u\n", linectr);
+-	}
+-}
+-
+ /* ---------------------------------------------------------------------- */
+ 
+-usbNames::usbNames(std::string &&n)
+-#ifndef __UCLIBCXX_MAJOR__
+-    : _vendors(), _products()
+-#endif
++usbNames::usbNames()
++	: _udev(udev_new()), _hwdb(udev_hwdb_new(_udev))
+ {
+-	instream f = i_open(n.c_str());
+-
+-	parse(f);
+ }
+ 
+ usbNames::~usbNames()
+ {
+-#ifdef __UCLIBCXX_MAJOR__
+-	freeList(_vendors);
+-	freeList(_products);
+-#endif
++	udev_hwdb_unref(_hwdb);
++	udev_unref(_udev);
+ }
+ 
+ }
+diff --git a/usbnames.h b/usbnames.h
+index a931c18..ba0a962 100644
+--- a/usbnames.h
++++ b/usbnames.h
+@@ -25,54 +25,27 @@
+ 
+ #include <sys/types.h>
+ #include <cstdint>
+-#ifndef __UCLIBCXX_MAJOR__
+-#include <map>
+-#endif
++#include <libudev.h>
++
+ #include "libldetect.h"
+ 
+ /* ---------------------------------------------------------------------- */
+ 
+ namespace ldetect {
+-#ifdef __UCLIBCXX_MAJOR__
+-#define HASHSZ 16
+-
+-	struct vendor {
+-		struct vendor *next;
+-		uint16_t vendorid;
+-		char name[1];
+-	};
+-
+-	struct product {
+-		struct product *next;
+-		uint16_t vendorid, productid;
+-		char name[1];
+-	};
+-#endif
+ 
+ 	class usbNames {
+ 	    public:
+ 
+-#ifdef __UCLIBCXX_MAJOR__
+ 		const char *getVendor(uint16_t vendorid);
+ 		const char *getProduct(uint16_t vendorid, uint16_t productid);
+-#else
+-		const std::string& getVendor(uint16_t vendorid);
+-		const std::string& getProduct(uint16_t vendorid, uint16_t productid);
+-#endif
+-		usbNames(std::string &&n);
++		usbNames();
+ 		~usbNames();
+ 
+ 	    private:
+-#ifdef __UCLIBCXX_MAJOR__
+-		int newVendor(const char *name, uint16_t vendorid);
+-		int newProduct(const char *name, uint16_t vendorid, uint16_t productid);
+-		struct vendor *_vendors[HASHSZ] = { nullptr, };
+-		struct product *_products[HASHSZ] = { nullptr, };
+-#else
+-		std::map<uint16_t, std::string> _vendors;
+-		std::map<std::pair<uint16_t, uint16_t>, std::string> _products;
+-#endif
+-		void parse(instream &f);
++		struct udev *_udev;
++		struct udev_hwdb *_hwdb;
++		const char *hwdb_get(const char *modalias, const char *key);
++
+ 	};
+ 
+ 
+-- 
+2.4.4
+
