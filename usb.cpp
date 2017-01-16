@@ -133,8 +133,8 @@ void usb::findModules(std::string &&fpciusbtable, bool descr_lookup) {
 	    it != _entries.end(); ++it) {
 	usbEntry &e = *it;
 
-	// No special case found in pcitable ? Then lookup modalias for PCI devices
-	if (!e.module.empty() && (e.module != "unknown" && !e.card.empty()))
+	// No special case found in pcitable ? Then lookup modalias for USB devices
+	if (!e.module.empty() && (e.module != "unknown" && e.card.empty()))
 	    continue;
 	{
 	    std::ostringstream devname(std::ostringstream::out);
@@ -142,7 +142,7 @@ void usb::findModules(std::string &&fpciusbtable, bool descr_lookup) {
 
 	    std::ifstream f;
 	    std::string path(usbDevs + devname.str());
-	    for (uint16_t i = 0; i < e.interfaces && e.module.empty(); i++) {
+	    for (auto i = 0; i < e.interfaces && e.module.empty(); i++) {
 		std::ostringstream numStr(std::ostringstream::out);
 		numStr << i;
 		std::string devPath(path + numStr.str());
@@ -161,7 +161,7 @@ void usb::findModules(std::string &&fpciusbtable, bool descr_lookup) {
 		if (!e.class_id) {
 		    f.open((devPath + "/bInterfaceClass").c_str());
 		    if (f.is_open()) {
-			uint32_t cid, sub, prot = 0;
+			uint32_t cid, sub = 0, prot = 0;
 
 			f >> std::hex >> cid;
 			f.close();

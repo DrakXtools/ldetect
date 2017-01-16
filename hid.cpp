@@ -11,6 +11,12 @@
 
 namespace ldetect {
 
+hid::hid() {
+}
+
+hid::~hid() {
+}
+
 void hid::probe(void)
 {
     const std::string hidDevs("/sys/bus/hid/devices/");

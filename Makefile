@@ -4,8 +4,21 @@ lib_src = common.cpp modalias.cpp pciusb.cpp pci.cpp usb.cpp pciclass.cpp usbcla
 lib_objs = $(subst .cpp,.o,$(lib_src))
 lib_major = libldetect.so.$(LIB_MAJOR)
 libraries = libldetect.so $(lib_major) $(lib_major).$(LIB_MINOR) libldetect.a
-OPTFLAGS = -g -Os
-CXXFLAGS += -Wall -Wextra -pedantic $(OPTFLAGS) -fPIC -fvisibility=hidden
+WARNFLAGS += -Wall -Wextra -pedantic
+ifeq ($(CXX), clang++)
+WARNFLAGS = -Wno-attributes
+WHOLE_FLAGS =
+# broken
+#FLTO = -flto
+OPTFLAGS += -Oz
+else
+WHOLE_FLAGS = -fwhole-program
+FLTO = -flto -fuse-linker-plugin
+OPTFLAGS += -Os
+endif
+DEBUGFLAGS += -g
+STDFLAGS += -std=gnu++14
+CXXFLAGS += $(STDFLAGS) $(DEBUGFLAGS) $(WARNFLAGS) $(OPTFLAGS) $(FLTO) -fPIC -fvisibility=hidden
 LDFLAGS += -Wl,--no-undefined
 ifeq (uclibc, $(LIBC))
 CC=uclibc-gcc
@@ -21,15 +34,13 @@ ifneq ($(ZLIB),0)
 CPPFLAGS += $(shell pkg-config --cflags zlib)
 LIBS += $(shell pkg-config --libs zlib)
 endif
-WHOLE_PROGRAM = 1
-FLTO = -flto
 
 ldetect_srcdir ?= .
 
 ifndef MDK_STAGE_ONE
 NAME = ldetect
 LIB_MAJOR = 0.13
-LIB_MINOR = 8
+LIB_MINOR = 11
 VERSION=$(LIB_MAJOR).$(LIB_MINOR)
 
 lib = lib
@@ -40,24 +51,24 @@ includedir = $(prefix)/include
 
 binaries = lspcidrake
 
-all: $(binaries) $(libraries) .depend
+all:  .depend $(binaries) $(libraries)
 
 .depend: $(lib_src) lspcidrake.cpp
-	$(CXX) $(DEFS) $(INCLUDES) $(CXXFLAGS) -M $^ > .depend 
+	$(CXX) $(STDFLAGS) $(DEFS) $(INCLUDES) $(CXXFLAGS) -M $^ > .depend 
 
 ifeq (.depend,$(wildcard .depend))
-include .depend
+-include .depend
 endif
 
 ifneq (0, $(WHOLE_PROGRAM))
 lspcidrake.static: lspcidrake.cpp $(lib_src)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common $(FLTO) -Wl,-O1 -o $@ $^ $(LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(WHOLE_FLAGS) -Wl,-O1 -o $@ $^ $(LIBS)
 
 lspcidrake: lspcidrake.cpp libldetect.so
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common $(FLTO) -Wl,-z,relro -Wl,-O1 -o $@ $^
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(WHOLE_FLAGS) -Wl,-z,relro -Wl,-O1 -o $@ $^
 
 $(lib_major).$(LIB_MINOR): $(lib_src) $(headers) $(headers_api)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -Os -fwhole-program -Wl,--no-warn-common $(FLTO) -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $(lib_src) $(LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) $(WHOLE_FLAGS) -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $(lib_src) $(LIBS)
 else
 lspcidrake.static: lspcidrake.cpp libldetect.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
@@ -66,7 +77,7 @@ lspcidrake: lspcidrake.cpp libldetect.so
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 $(lib_major).$(LIB_MINOR): $(lib_objs)
-	$(CXX) $(LDFLAGS) -shared -Wl,-z,relro $(FLTO) -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
+	$(CXX) $(LDFLAGS) -shared -Wl,-z,relro -Wl,-O1,-soname,$(lib_major) -o $@ $^ $(LIBS)
 endif
 $(lib_major): $(lib_major).$(LIB_MINOR)
 	ln -sf $< $@

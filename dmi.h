@@ -10,7 +10,8 @@
 namespace ldetect {
     class dmi : public bus, public interface<entry> {
 	public:
-	    dmi() EXPORTED {}
+	    dmi() EXPORTED;
+	    ~dmi() EXPORTED;
 
 	    void probe(void) EXPORTED;
     };

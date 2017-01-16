@@ -45,7 +45,7 @@ for pciclass in pciclasses[1:]:
     outstr += '    { %s, "%s" },\n' % pciclass
 outstr += """};
 
-static uint16_t nb_classes = sizeof(pciClasses) / sizeof(*pciClasses);
+static const uint16_t nb_classes = sizeof(pciClasses) / sizeof(*pciClasses);
 
 const std::string& pci_class2text(uint16_t class_id) {
     for (uint16_t i = 0; i < nb_classes; i++)

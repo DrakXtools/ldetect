@@ -7,9 +7,9 @@
 #include <sys/utsname.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <libkmod.h>
 #include <dirent.h>
 #include "common.h"
@@ -71,7 +71,7 @@ std::vector<std::string> modalias_resolve_modules(struct kmod_ctx *ctx, const st
 
 	struct kmod_list *l = nullptr, *list = nullptr, *filtered = nullptr;
 	std::vector<std::string> modules;
-	int err = kmod_module_new_from_lookup(ctx, modalias.c_str(), &list);
+	auto err = kmod_module_new_from_lookup(ctx, modalias.c_str(), &list);
 	if (err < 0)
 		goto exit;
 

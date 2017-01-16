@@ -16,7 +16,8 @@ namespace ldetect {
 
     class hid : public bus, public interface<entry> {
 	public:
-	    hid() EXPORTED {}
+	    hid() EXPORTED;
+	    ~hid() EXPORTED;
 
 	    void probe(void) EXPORTED;
     };
