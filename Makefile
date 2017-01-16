@@ -9,10 +9,10 @@ CXXFLAGS += -Wall -Wextra -pedantic $(OPTFLAGS) -fPIC -fvisibility=hidden
 LDFLAGS += -Wl,--no-undefined
 ifeq (uclibc, $(LIBC))
 CC=uclibc-gcc
-CXX=uclibc-g++ -std=gnu++11
+CXX=uclibc-g++ -std=gnu++14
 CXXFLAGS += -fno-exceptions -fno-rtti
 else
-CXX = g++ -std=gnu++11
+CXX = g++ -std=gnu++14
 CXXFLAGS += -Weffc++ 
 endif
 CPPFLAGS += $(shell getconf LFS_CFLAGS) $(shell pkg-config --cflags libkmod libpci)

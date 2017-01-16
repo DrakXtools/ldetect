@@ -13,5 +13,5 @@ WriteMakefile(
     XSOPT		=> '-C++',
     INC			=> '-I..',
     LIBS		=> [$libs],
-    DEFINE		=> '-std=gnu++11',
+    DEFINE		=> '-std=gnu++14',
 );
